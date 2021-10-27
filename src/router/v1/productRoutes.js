@@ -1,6 +1,11 @@
 import express from "express";
-import { getProduct } from "../../controller/productController.js";
+import {
+  getProduct,
+  createProduct,
+} from "../../controller/productController.js";
 
 export const productRouter = express.Router();
 
-productRouter.post("/get-product", getProduct);
+productRouter
+  .post("/get-product", getProduct)
+  .post("/create-product", createProduct);

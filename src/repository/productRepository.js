@@ -15,3 +15,28 @@ export const getProductRepository = (request) => {
     );
   });
 };
+
+export const createProductRepository = (request) => {
+  const query = {
+    text: `INSERT INTO product(name, merchant_id, category_id, updated_by, updated_at, created_by, created_at) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
+    values: [
+      request.name,
+      request.merchant_id,
+      request.category_id,
+      request.updated_by,
+      request.updated_at,
+      request.created_by,
+      request.created_at,
+    ],
+  };
+  return new Promise((resolve, reject) => {
+    connection.query(query, (error, result) => {
+      if (error) {
+        console.log(error);
+        reject(new Error(error));
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
