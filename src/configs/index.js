@@ -3,6 +3,7 @@ export const database = {
   user: "postgres",
   password: "maisenpai",
   port: 5433,
-  database: "dashboardoa",
+  database: "POS",
+  schema: "production",
 };
 export const port = 8081;
