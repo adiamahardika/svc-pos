@@ -8,7 +8,13 @@ import { getProductModel } from "../model/productModel.js";
 
 export const getProduct = async (request, response) => {
   try {
-    const result = await getProductModel();
+    const request_data = {
+      search: request.body.search || "",
+      merchant_id: request.body.merchant_id || "",
+      branch_id: request.body.branch_id || "",
+      category_id: request.body.category_id || "",
+    };
+    const result = await getProductModel(request_data);
     standardResponse(response, 200, success_RC, success_desc, result);
   } catch (error) {
     console.log(error);
