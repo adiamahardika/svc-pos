@@ -15,6 +15,6 @@ export const getCategory = async (request, response) => {
     standardResponse(response, 200, success_RC, success_desc, result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error, {});
+    standardResponse(response, 400, error_RC, error, []);
   }
 };
