@@ -8,12 +8,12 @@ import {
   createTransactionDetailRepository,
   createTransactionHeaderRepository,
 } from "../repository/transactionRepository.js";
-import { v4 } from "uuid";
+import { uid } from "uid";
 
 export const createTransaction = async (request, response) => {
   try {
     const date = new Date();
-    const transaction_id = v4();
+    const transaction_id = uid(16);
     const header_request = {
       transaction_id: transaction_id,
       trx_status: success_desc,
