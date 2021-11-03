@@ -1,8 +1,9 @@
 import connection from "../configs/postgres.js";
+import format from "pg-format";
 
 export const createPaymentRepository = (request) => {
   const query = {
-    text: `INSERT INTO lg_payment(invoice_number, payment_method, amount, submit_amount, status, response_code, ecr, updated_by, updated_at, created_by, created_at) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *`,
+    text: `INSERT INTO lg_payment(invoice_number, payment_method, amount, submit_amount, status, response_code, ecr, branch_id, updated_by, updated_at, created_by, created_at) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *`,
     values: [
       request.invoice_number,
       request.payment_method,
@@ -11,6 +12,7 @@ export const createPaymentRepository = (request) => {
       request.status,
       request.response_code,
       request.ecr,
+      request.branch_id,
       request.updated_by,
       request.updated_at,
       request.created_by,
@@ -94,5 +96,25 @@ export const createPaymentEdcRepository = (request) => {
         resolve(result);
       }
     });
+  });
+};
+
+export const createInvoiceHasTrxId = (request) => {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      format(
+        `INSERT INTO invoice_has_trx(transaction_id, invoice_number, updated_by, updated_at, created_by, created_at) VALUES %L RETURNING *`,
+        request
+      ),
+      [],
+      (error, result) => {
+        if (error) {
+          console.log(error);
+          reject(new Error(error));
+        } else {
+          resolve(result);
+        }
+      }
+    );
   });
 };

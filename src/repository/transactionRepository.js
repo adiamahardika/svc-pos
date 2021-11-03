@@ -29,19 +29,6 @@ export const createTransactionHeaderRepository = (request) => {
 };
 
 export const createTransactionDetailRepository = (request) => {
-  //   const query = {
-  //     text: `INSERT INTO transaction_header(transaction_id, product_id, quantity, updated_by, updated_at, created_by, created_by) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
-  //     value: [
-  //       request.transaction_id,
-  //       request.product_id,
-  //       request.quantity,
-  //       request.updated_by,
-  //       request.updated_at,
-  //       request.created_by,
-  //       request.created_by,
-  //     ],
-  //   };
-
   return new Promise((resolve, reject) => {
     connection.query(
       format(

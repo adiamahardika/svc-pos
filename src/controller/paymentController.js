@@ -13,20 +13,23 @@ import {
   createPaymentEdcRepository,
   createPaymentRepository,
   createPaymentCashRepository,
+  createInvoiceHasTrxId,
 } from "../repository/paymentRepository.js";
 
 export const createPayment = async (request, response) => {
   try {
     const date = new Date();
-
+    const invoice_number = `INV-${date.getTime()}`;
     const payment_request = {
-      invoice_number: request.body.invoice_number,
+      invoice_number: invoice_number,
       payment_method: request.body.payment_method.toUpperCase(),
       amount: request.body.amount,
+      submit_amount: request.body.submit_amount,
       submit_amount: request.body.submit_amount,
       status: PAID,
       response_code: success_RC,
       ecr: "-",
+      branch_id: request.body.branch_id,
       updated_by: request.body.created_by,
       updated_at: date,
       created_by: request.body.created_by,
@@ -40,11 +43,26 @@ export const createPayment = async (request, response) => {
       payment_request.response_code = request.body.edc.response_code;
       payment_request.ecr = request.body.edc.ecr;
     } else if (
+      request.body.payment_method.toUpperCase() === PAYMENT_CASH &&
       parseFloat(request.body.amount) > parseFloat(request.body.submit_amount)
     ) {
       payment_request.status = CANCELED;
     }
     const payment_result = await createPaymentRepository(payment_request);
+
+    let trx_id_list = [];
+    await request.body.transaction_id.map((value) => {
+      let array = [
+        value,
+        invoice_number,
+        request.body.created_by,
+        date,
+        request.body.created_by,
+        date,
+      ];
+      trx_id_list.push(array);
+    });
+    await createInvoiceHasTrxId(trx_id_list);
 
     if (
       request.body.payment_method.toUpperCase() === PAYMENT_CC ||
@@ -52,7 +70,7 @@ export const createPayment = async (request, response) => {
     ) {
       const ecr = request.body.edc.ecr;
       const edc_request = {
-        invoice_number: request.body.invoice_number,
+        invoice_number: invoice_number,
         transaction_type: ecr.substring(0, 2),
         tid: ecr.substring(2, 10),
         mid: ecr.substring(10, 25),
@@ -82,7 +100,7 @@ export const createPayment = async (request, response) => {
       payment_result.rows[0].detail = edc_result.rows[0];
     } else if (request.body.payment_method.toUpperCase() === PAYMENT_CASH) {
       const cash_request = {
-        invoice_number: request.body.invoice_number,
+        invoice_number: invoice_number,
         amount: request.body.amount,
         submit_amount: request.body.submit_amount,
         change: request.body.change,
