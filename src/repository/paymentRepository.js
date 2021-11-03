@@ -1,9 +1,10 @@
+import connection from "../configs/postgres.js";
+
 export const createPaymentRepository = (request) => {
   const query = {
-    text: `INSERT INTO lg_payment(transaction_id, payment_status, payment_method, amount, submit_amount, status, response_code, ecr, updated_by, updated_at, created_by, created_at) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *`,
+    text: `INSERT INTO lg_payment(invoice_number, payment_method, amount, submit_amount, status, response_code, ecr, updated_by, updated_at, created_by, created_at) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *`,
     values: [
-      request.transaction_id,
-      request.payment_status,
+      request.invoice_number,
       request.payment_method,
       request.amount,
       request.submit_amount,
@@ -30,9 +31,8 @@ export const createPaymentRepository = (request) => {
 
 export const createPaymentCashRepository = (request) => {
   const query = {
-    text: `INSERT INTO lg_payment_cash(transaction_id, invoice_number, amount, submit_amount, change, updated_by, updated_at, created_by, created_at) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
+    text: `INSERT INTO lg_payment_cash(invoice_number, amount, submit_amount, change, updated_by, updated_at, created_by, created_at) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
     values: [
-      request.transaction_id,
       request.invoice_number,
       request.amount,
       request.submit_amount,
@@ -57,9 +57,8 @@ export const createPaymentCashRepository = (request) => {
 
 export const createPaymentEdcRepository = (request) => {
   const query = {
-    text: `INSERT INTO lg_payment_edc(transaction_id, invoice_number, transaction_type, tid, mid, batch_number, issuer_name, trace_number, entry_mode, amount, total_amount, card_number, cardholder_name, date, time, approval_code, response_code, ref_number, billing_number,balance, top_up_card_number, exp_date, bank_filler, module_name, sn) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25) RETURNING *`,
+    text: `INSERT INTO lg_payment_edc(invoice_number, transaction_type, tid, mid, batch_number, issuer_name, trace_number, entry_mode, amount, total_amount, card_number, cardholder_name, date, time, approval_code, response_code, ref_number, billing_number,balance, top_up_card_number, exp_date, bank_filler, module_name, sn) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24) RETURNING *`,
     values: [
-      request.transaction_id,
       request.invoice_number,
       request.transaction_type,
       request.tid,

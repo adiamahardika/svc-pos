@@ -20,9 +20,8 @@ export const createPayment = async (request, response) => {
     const date = new Date();
 
     const payment_request = {
-      transaction_id: request.body.transaction_id,
-      payment_status: request.body.payment_status,
-      payment_method: request.body.payment_method,
+      invoice_number: request.body.invoice_number,
+      payment_method: request.body.payment_method.toUpperCase(),
       amount: request.body.amount,
       submit_amount: request.body.submit_amount,
       status: PAID,
@@ -39,7 +38,7 @@ export const createPayment = async (request, response) => {
       request.body.payment_method.toUpperCase() === PAYMENT_DEBIT
     ) {
       payment_request.response_code = request.body.edc.response_code;
-      payment_request.response_code = request.body.edc.ecr;
+      payment_request.ecr = request.body.edc.ecr;
     } else if (
       parseFloat(request.body.amount) > parseFloat(request.body.submit_amount)
     ) {
@@ -53,7 +52,6 @@ export const createPayment = async (request, response) => {
     ) {
       const ecr = request.body.edc.ecr;
       const edc_request = {
-        transaction_id: request.body.transaction_id,
         invoice_number: request.body.invoice_number,
         transaction_type: ecr.substring(0, 2),
         tid: ecr.substring(2, 10),
@@ -76,15 +74,14 @@ export const createPayment = async (request, response) => {
         top_up_card_number: ecr.substring(188, 207),
         exp_date: ecr.substring(207, 213),
         bank_filler: ecr.substring(213, 301),
-        module_name: request.body.module_name,
-        sn: request.body.sn,
+        module_name: request.body.edc.module_name,
+        sn: request.body.edc.sn,
       };
 
       const edc_result = await createPaymentEdcRepository(edc_request);
       payment_result.rows[0].detail = edc_result.rows[0];
     } else if (request.body.payment_method.toUpperCase() === PAYMENT_CASH) {
       const cash_request = {
-        transaction_id: request.body.transaction_id,
         invoice_number: request.body.invoice_number,
         amount: request.body.amount,
         submit_amount: request.body.submit_amount,
