@@ -57,3 +57,41 @@ export const countProduct = (request) => {
     );
   });
 };
+
+export const updateProductRepository = (request, id) => {
+  let query = null;
+  if (request.image) {
+    query = {
+      text: `UPDATE product SET name = $1, category_id = $2, image = $3, updated_by = $4, updated_at = $5 WHERE id = $6 RETURNING product.*`,
+      values: [
+        request.name,
+        request.category_id,
+        request.image,
+        request.updated_by,
+        request.updated_at,
+        id,
+      ],
+    };
+  } else {
+    query = {
+      text: `UPDATE product SET name = $1, category_id = $2, updated_by = $3, updated_at = $4 WHERE id = $5 RETURNING product.*`,
+      values: [
+        request.name,
+        request.category_id,
+        request.updated_by,
+        request.updated_at,
+        id,
+      ],
+    };
+  }
+  return new Promise((resolve, reject) => {
+    connection.query(query, (error, result) => {
+      if (error) {
+        console.log(error);
+        reject(new Error(error));
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};

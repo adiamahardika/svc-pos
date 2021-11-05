@@ -6,6 +6,7 @@ import {
   countProduct,
   createProductRepository,
   getProductRepository,
+  updateProductRepository,
 } from "../repository/productRepository.js";
 
 export const getProduct = async (request, response) => {
@@ -59,6 +60,40 @@ export const createProduct = async (request, response) => {
       created_at: date,
     };
     const result = await createProductRepository(request_data);
+    standardResponse(response, 200, success_RC, SUCCESS, result);
+  } catch (error) {
+    console.log(error);
+    standardResponse(response, 400, error_RC, error.toString(), []);
+  }
+};
+
+export const updateProduct = async (request, response) => {
+  try {
+    const product_id = request.params.product_id;
+    let result = null;
+    if (!request.file || Object.keys(request.file).length === 0) {
+      const date = new Date();
+      const request_data = {
+        name: request.body.name,
+        merchant_id: request.body.merchant_id,
+        category_id: request.body.category_id,
+        updated_by: request.body.updated_by,
+        updated_at: date,
+      };
+      result = await updateProductRepository(request_data, product_id);
+    } else {
+      await compress(request.file.path);
+      const date = new Date();
+      const request_data = {
+        name: request.body.name,
+        merchant_id: request.body.merchant_id,
+        category_id: request.body.category_id,
+        image: request.file.filename,
+        updated_by: request.body.updated_by,
+        updated_at: date,
+      };
+      result = await updateProductRepository(request_data, product_id);
+    }
     standardResponse(response, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
