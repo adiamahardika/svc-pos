@@ -3,6 +3,7 @@ import { standardResponse } from "../helpers/standardResponse.js";
 import {
   createCategoryRepository,
   getCategoryRepository,
+  updateCategoryRepository,
 } from "../repository/categoryRepository.js";
 
 export const getCategory = async (request, response) => {
@@ -31,6 +32,23 @@ export const createCategory = async (request, response) => {
       created_at: date,
     };
     const result = await createCategoryRepository(request_data);
+    standardResponse(response, 200, success_RC, SUCCESS, result);
+  } catch (error) {
+    console.log(error);
+    standardResponse(response, 400, error_RC, error.toString(), []);
+  }
+};
+
+export const updateCategory = async (request, response) => {
+  try {
+    const date = new Date();
+    const category_id = request.params.category_id;
+    const request_data = {
+      name: request.body.name,
+      updated_by: request.body.updated_by,
+      updated_at: date,
+    };
+    const result = await updateCategoryRepository(request_data, category_id);
     standardResponse(response, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
