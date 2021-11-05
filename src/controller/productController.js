@@ -72,10 +72,10 @@ export const createProduct = async (request, response) => {
 
 export const updateProduct = async (request, response) => {
   try {
+    const date = new Date();
     const product_id = request.params.product_id;
     let result = null;
     if (!request.file || Object.keys(request.file).length === 0) {
-      const date = new Date();
       const request_data = {
         name: request.body.name,
         merchant_id: request.body.merchant_id,
@@ -86,7 +86,6 @@ export const updateProduct = async (request, response) => {
       result = await updateProductRepository(request_data, product_id);
     } else {
       await compress(request.file.path);
-      const date = new Date();
       const request_data = {
         name: request.body.name,
         merchant_id: request.body.merchant_id,
