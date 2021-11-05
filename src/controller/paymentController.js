@@ -5,7 +5,7 @@ import {
   PAYMENT_CASH,
   PAYMENT_CC,
   PAYMENT_DEBIT,
-  success_desc,
+  SUCCESS,
   success_RC,
 } from "../helpers/generalConstant.js";
 import { standardResponse } from "../helpers/standardResponse.js";
@@ -114,7 +114,7 @@ export const createPayment = async (request, response) => {
       payment_result.rows[0].detail = cash_result.rows[0];
     }
 
-    standardResponse(response, 200, success_RC, success_desc, payment_result);
+    standardResponse(response, 200, success_RC, SUCCESS, payment_result);
   } catch (error) {
     console.log(error);
     standardResponse(response, 400, error_RC, error.toString(), []);

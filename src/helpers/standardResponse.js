@@ -1,4 +1,4 @@
-import { success_desc, success_RC } from "../helpers/generalConstant.js";
+import { SUCCESS, success_RC } from "../helpers/generalConstant.js";
 export const standardResponse = (
   response,
   http_status,
@@ -12,7 +12,7 @@ export const standardResponse = (
 
   result.https_status = http_status || 200;
   result.response_code = response_code || success_RC;
-  result.description = description || success_desc;
+  result.description = description || SUCCESS;
   result.active_page = active_page || 0;
   result.total_pages = total_pages || 1;
   result.result = data.rows;

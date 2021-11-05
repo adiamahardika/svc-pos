@@ -1,7 +1,8 @@
 import {
   error_RC,
-  success_desc,
   success_RC,
+  SUCCESS,
+  UNPAID,
 } from "../helpers/generalConstant.js";
 import { standardResponse } from "../helpers/standardResponse.js";
 import {
@@ -16,7 +17,7 @@ export const createTransaction = async (request, response) => {
     const transaction_id = uid(16);
     const header_request = {
       transaction_id: transaction_id,
-      trx_status: success_desc,
+      trx_status: UNPAID,
       branch_id: request.body.header.branch_id,
       customer_name: request.body.header.customer_name,
       total_quantity: request.body.header.total_quantity,
@@ -48,7 +49,7 @@ export const createTransaction = async (request, response) => {
 
     header_result.rows[0].detail = detail_result.rows;
 
-    standardResponse(response, 200, success_RC, success_desc, header_result);
+    standardResponse(response, 200, success_RC, SUCCESS, header_result);
   } catch (error) {
     console.log(error);
     standardResponse(response, 400, error_RC, error.toString(), []);

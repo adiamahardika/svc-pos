@@ -1,9 +1,5 @@
 import { host } from "../configs/index.js";
-import {
-  error_RC,
-  success_desc,
-  success_RC,
-} from "../helpers/generalConstant.js";
+import { error_RC, SUCCESS, success_RC } from "../helpers/generalConstant.js";
 import { standardResponse } from "../helpers/standardResponse.js";
 import { compress } from "../helpers/uploadFiles.js";
 import {
@@ -37,7 +33,7 @@ export const getProduct = async (request, response) => {
       response,
       200,
       success_RC,
-      success_desc,
+      SUCCESS,
       result,
       active_page,
       total_pages
@@ -63,7 +59,7 @@ export const createProduct = async (request, response) => {
       created_at: date,
     };
     const result = await createProductRepository(request_data);
-    standardResponse(response, 200, success_RC, success_desc, result);
+    standardResponse(response, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
     standardResponse(response, 400, error_RC, error.toString(), []);
