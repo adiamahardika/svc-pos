@@ -3,7 +3,7 @@ import connection from "../configs/postgres.js";
 export const getProductRepository = (request) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT product.*, category.name as category FROM product LEFT OUTER JOIN category ON (product.category_id = CAST(category.id AS varchar(10))) WHERE product.merchant_id LIKE '%${request.merchant_id}%' AND product.name LIKE '%${request.search}%' AND product.category_id LIKE '%${request.category_id}%' ORDER BY ${request.order_by} LIMIT ${request.limit} OFFSET ${request.start_index}`,
+      `SELECT product.*, category.name as category FROM product LEFT OUTER JOIN category ON (product.category_id = CAST(category.id AS varchar(10))) WHERE product.merchant_id LIKE '%${request.merchant_id}%' AND product.name LIKE '%${request.search}%' AND product.category_id LIKE '%${request.category_id}%' AND product.is_active = '${request.is_active}' ORDER BY ${request.order_by} LIMIT ${request.limit} OFFSET ${request.start_index} `,
       (error, result) => {
         if (error) {
           console.log(error);
@@ -18,12 +18,13 @@ export const getProductRepository = (request) => {
 
 export const createProductRepository = (request) => {
   const query = {
-    text: `INSERT INTO product(name, merchant_id, category_id, image, updated_by, updated_at, created_by, created_at) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+    text: `INSERT INTO product(name, merchant_id, category_id, image, is_active, updated_by, updated_at, created_by, created_at) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
     values: [
       request.name,
       request.merchant_id,
       request.category_id,
       request.image,
+      request.is_active,
       request.updated_by,
       request.updated_at,
       request.created_by,
@@ -84,6 +85,23 @@ export const updateProductRepository = (request, id) => {
       ],
     };
   }
+  return new Promise((resolve, reject) => {
+    connection.query(query, (error, result) => {
+      if (error) {
+        console.log(error);
+        reject(new Error(error));
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
+
+export const deleteProductRepository = (request, id) => {
+  const query = {
+    text: `UPDATE product SET is_active = $1 WHERE id = $2`,
+    values: [request.is_active, id],
+  };
   return new Promise((resolve, reject) => {
     connection.query(query, (error, result) => {
       if (error) {

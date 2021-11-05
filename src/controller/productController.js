@@ -5,6 +5,7 @@ import { compress } from "../helpers/uploadFiles.js";
 import {
   countProduct,
   createProductRepository,
+  deleteProductRepository,
   getProductRepository,
   updateProductRepository,
 } from "../repository/productRepository.js";
@@ -20,6 +21,7 @@ export const getProduct = async (request, response) => {
       branch_id: request.body.branch_id || "",
       category_id: request.body.category_id || "",
       order_by: request.body.order_by || "name",
+      is_active: request.body.is_active || "true",
       start_index: start_index || 0,
       limit: limit,
     };
@@ -54,6 +56,7 @@ export const createProduct = async (request, response) => {
       merchant_id: request.body.merchant_id,
       category_id: request.body.category_id,
       image: request.file.filename,
+      is_active: "true",
       updated_by: request.body.created_by,
       updated_at: date,
       created_by: request.body.created_by,
@@ -94,6 +97,20 @@ export const updateProduct = async (request, response) => {
       };
       result = await updateProductRepository(request_data, product_id);
     }
+    standardResponse(response, 200, success_RC, SUCCESS, result);
+  } catch (error) {
+    console.log(error);
+    standardResponse(response, 400, error_RC, error.toString(), []);
+  }
+};
+
+export const deleteProduct = async (request, response) => {
+  try {
+    const product_id = request.params.product_id;
+    const request_data = {
+      is_active: "false",
+    };
+    const result = await deleteProductRepository(request_data, product_id);
     standardResponse(response, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
