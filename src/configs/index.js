@@ -7,3 +7,5 @@ export const database = {
   schema: "production",
 };
 export const port = 8081;
+export const image_location = "D:/point_of_sales/";
+export const host = "https://localhost:8081/v1/";

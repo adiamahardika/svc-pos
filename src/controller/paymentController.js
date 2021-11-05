@@ -1,5 +1,5 @@
 import {
-  CANCELED,
+  CANCEL,
   error_RC,
   PAID,
   PAYMENT_CASH,
@@ -46,7 +46,7 @@ export const createPayment = async (request, response) => {
       request.body.payment_method.toUpperCase() === PAYMENT_CASH &&
       parseFloat(request.body.amount) > parseFloat(request.body.submit_amount)
     ) {
-      payment_request.status = CANCELED;
+      payment_request.status = CANCEL;
     }
     const payment_result = await createPaymentRepository(payment_request);
 

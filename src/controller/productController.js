@@ -1,9 +1,11 @@
+import { host } from "../configs/index.js";
 import {
   error_RC,
   success_desc,
   success_RC,
 } from "../helpers/generalConstant.js";
 import { standardResponse } from "../helpers/standardResponse.js";
+import { compress } from "../helpers/uploadFiles.js";
 import {
   countProduct,
   createProductRepository,
@@ -27,6 +29,10 @@ export const getProduct = async (request, response) => {
     const total_data = await countProduct(request_data);
     const total_pages = Math.ceil(total_data / limit);
     const result = await getProductRepository(request_data);
+    await result.rows.map((value) => {
+      value.image = host + "assets/" + value.image;
+    });
+
     standardResponse(
       response,
       200,
@@ -44,11 +50,13 @@ export const getProduct = async (request, response) => {
 
 export const createProduct = async (request, response) => {
   try {
+    await compress(request.file.path);
     const date = new Date();
     const request_data = {
       name: request.body.name,
       merchant_id: request.body.merchant_id,
       category_id: request.body.category_id,
+      image: request.file.filename,
       updated_by: request.body.created_by,
       updated_at: date,
       created_by: request.body.created_by,
