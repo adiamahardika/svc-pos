@@ -6,6 +6,10 @@ import {
   registerRepository,
   usernameCheckRepository,
 } from "../repository/authRepository.js";
+import jwt from "jsonwebtoken";
+import { jwt_secret_key } from "../configs/index.js";
+import { getUserHasBranch } from "../repository/branchRepository.js";
+
 export const register = async (request, response) => {
   try {
     const date = new Date();
@@ -46,6 +50,53 @@ export const register = async (request, response) => {
         error_RC,
         "Email has already registered!"
       );
+    }
+  } catch (error) {
+    console.log(error);
+    standardResponse(response, 400, error_RC, error.toString());
+  }
+};
+
+export const login = async (request, response) => {
+  try {
+    const request_data = {
+      email: request.body.email,
+      password: request.body.password,
+    };
+
+    const email_check = await emailCheckRepository(request_data);
+    if (email_check.rows.length > 0) {
+      const match = await bcrypt.compare(
+        request_data.password,
+        email_check.rows[0].hash_password
+      );
+      if (match) {
+        const user_data = email_check.rows[0];
+        const token = jwt.sign(
+          { email: user_data.email, password: user_data.hash_password },
+          jwt_secret_key,
+          {
+            expiresIn: "16h",
+          }
+        );
+        const branch = await getUserHasBranch(user_data.id);
+
+        user_data.token = token;
+        user_data.branch = branch.rows;
+
+        delete user_data.is_active;
+        delete user_data.hash_password;
+        delete user_data.created_at;
+        delete user_data.created_by;
+        delete user_data.updated_at;
+        delete user_data.updated_by;
+
+        standardResponse(response, 200, success_RC, SUCCESS, email_check);
+      } else {
+        standardResponse(response, 200, error_RC, "Your password is invalid!");
+      }
+    } else {
+      standardResponse(response, 200, error_RC, "Your email is invalid!");
     }
   } catch (error) {
     console.log(error);
