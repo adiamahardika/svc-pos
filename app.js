@@ -41,9 +41,8 @@ app.use(logger("dev"));
 
 app.use(json());
 app.use(urlencoded({ extended: true }));
-
-sslServer.listen(port, () =>
-  console.log(`This Secure Server is Running on port ${port}`)
-);
+sslServer.listen(port, () => {
+  console.log(`This Secure Server is Running on port ${port}`);
+});
 
 app.use("/", allRouter);
