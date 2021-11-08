@@ -21,6 +21,7 @@ export const getProduct = async (request, response) => {
       branch_id: request.body.branch_id || "",
       category_id: request.body.category_id || "",
       order_by: request.body.order_by || "name",
+      sort_by: request.body.sort_by || "asc",
       is_active: request.body.is_active || "true",
       start_index: start_index || 0,
       limit: limit,
