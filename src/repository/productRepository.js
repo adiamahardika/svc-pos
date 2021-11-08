@@ -18,7 +18,7 @@ export const getProductRepository = (request) => {
 
 export const createProductRepository = (request) => {
   const query = {
-    text: `INSERT INTO product(name, merchant_id, category_id, image, is_active, updated_by, updated_at, created_by, created_at) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+    text: `INSERT INTO product(name, merchant_id, category_id, image, is_active, updated_by, updated_at, created_by, created_at) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
     values: [
       request.name,
       request.merchant_id,
