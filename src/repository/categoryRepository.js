@@ -18,10 +18,11 @@ export const getCategoryRepository = (request) => {
 
 export const createCategoryRepository = (request) => {
   const query = {
-    text: `INSERT INTO category(name, merchant_id, is_active, updated_by, updated_at, created_by, created_at) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
+    text: `INSERT INTO category(name, merchant_id, icon, is_active, updated_by, updated_at, created_by, created_at) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
     values: [
       request.name,
       request.merchant_id,
+      request.icon,
       request.is_active,
       request.updated_by,
       request.updated_at,
@@ -43,8 +44,14 @@ export const createCategoryRepository = (request) => {
 
 export const updateCategoryRepository = (request, id) => {
   const query = {
-    text: `UPDATE category SET name = $1, updated_by = $2, updated_at = $3 WHERE id = $4 RETURNING category.*`,
-    values: [request.name, request.updated_by, request.updated_at, id],
+    text: `UPDATE category SET name = $1, icon = $2, updated_by = $3, updated_at = $4 WHERE id = $5 RETURNING category.*`,
+    values: [
+      request.name,
+      request.icon,
+      request.updated_by,
+      request.updated_at,
+      id,
+    ],
   };
   return new Promise((resolve, reject) => {
     connection.query(query, (error, result) => {

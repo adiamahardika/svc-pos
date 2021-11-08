@@ -179,7 +179,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\":\"Snack\",\r\n    \"merchant_id\": \"1\",\r\n    \"created_by\":\"Adia\"\r\n}",
+							"raw": "{\r\n    \"name\":\"Snack\",\r\n    \"merchant_id\": \"1\",\r\n    \"icon\": \"ppp\",\r\n    \"created_by\":\"Adia\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -209,7 +209,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\":\"Snack\",\r\n    \"updated_by\":\"Adia\"\r\n}",
+							"raw": "{\r\n    \"name\":\"Snack\",\r\n    \"icon\": \"ppp\",\r\n    \"updated_by\":\"Adia\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"

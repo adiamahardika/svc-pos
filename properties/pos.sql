@@ -71,7 +71,8 @@ CREATE TABLE production.category (
     updated_at timestamp without time zone DEFAULT now() NOT NULL,
     created_by character varying(255),
     created_at timestamp without time zone DEFAULT now() NOT NULL,
-    is_active character varying(255)
+    is_active character varying(255),
+    icon character varying(255)
 );
 
 
@@ -564,9 +565,9 @@ INSERT INTO production.branch VALUES
 --
 
 INSERT INTO production.category VALUES
-	(1, 'Food', '1', 'Adia', '2021-10-25 16:17:08.343609', 'Adia', '2021-10-25 16:17:08.343609', 'true'),
-	(2, 'Beverages', '1', 'Adia', '2021-11-05 14:18:16.477', 'Adia', '2021-11-05 14:18:16.477', 'true'),
-	(4, 'Snack', '1', 'Adia', '2021-11-05 14:27:06.527', 'Adia', '2021-11-05 14:19:39.391', 'false');
+	(1, 'Food', '1', 'Adia', '2021-10-25 16:17:08.343609', 'Adia', '2021-10-25 16:17:08.343609', 'true', NULL),
+	(2, 'Beverages', '1', 'Adia', '2021-11-05 14:18:16.477', 'Adia', '2021-11-05 14:18:16.477', 'true', NULL),
+	(4, 'Snack', '1', 'Adia', '2021-11-05 14:27:06.527', 'Adia', '2021-11-05 14:19:39.391', 'false', NULL);
 
 
 --

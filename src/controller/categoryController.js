@@ -27,6 +27,7 @@ export const createCategory = async (request, response) => {
     const request_data = {
       name: request.body.name,
       merchant_id: request.body.merchant_id,
+      icon: request.body.icon,
       is_active: "true",
       updated_by: request.body.created_by,
       updated_at: date,
@@ -47,6 +48,7 @@ export const updateCategory = async (request, response) => {
     const category_id = request.params.category_id;
     const request_data = {
       name: request.body.name,
+      icon: request.body.icon,
       updated_by: request.body.updated_by,
       updated_at: date,
     };
