@@ -63,6 +63,8 @@ export const createProduct = async (request, response) => {
       created_at: date,
     };
     const result = await createProductRepository(request_data);
+    result.rows[0].image = host + "assets/" + result.rows[0].image;
+
     standardResponse(response, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
