@@ -357,6 +357,43 @@ ALTER SEQUENCE production.product_id_seq OWNED BY production.product.id;
 
 
 --
+-- Name: role; Type: TABLE; Schema: production; Owner: postgres
+--
+
+CREATE TABLE production.role (
+    id bigint NOT NULL,
+    name character varying(255),
+    updated_by character varying(255),
+    updated_at timestamp without time zone DEFAULT now() NOT NULL,
+    created_by character varying(255),
+    created_at timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE production.role OWNER TO postgres;
+
+--
+-- Name: role_id_seq; Type: SEQUENCE; Schema: production; Owner: postgres
+--
+
+CREATE SEQUENCE production.role_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE production.role_id_seq OWNER TO postgres;
+
+--
+-- Name: role_id_seq; Type: SEQUENCE OWNED BY; Schema: production; Owner: postgres
+--
+
+ALTER SEQUENCE production.role_id_seq OWNED BY production.role.id;
+
+
+--
 -- Name: stock; Type: TABLE; Schema: production; Owner: postgres
 --
 
@@ -476,6 +513,86 @@ ALTER SEQUENCE production.transaction_header_id_seq OWNED BY production.transact
 
 
 --
+-- Name: user_has_branch; Type: TABLE; Schema: production; Owner: postgres
+--
+
+CREATE TABLE production.user_has_branch (
+    id bigint NOT NULL,
+    user_id character varying(255),
+    branch_id character varying(255),
+    updated_by character varying(255),
+    updated_at timestamp without time zone DEFAULT now() NOT NULL,
+    created_by character varying(255),
+    created_at timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE production.user_has_branch OWNER TO postgres;
+
+--
+-- Name: user_has_branch_id_seq; Type: SEQUENCE; Schema: production; Owner: postgres
+--
+
+CREATE SEQUENCE production.user_has_branch_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE production.user_has_branch_id_seq OWNER TO postgres;
+
+--
+-- Name: user_has_branch_id_seq; Type: SEQUENCE OWNED BY; Schema: production; Owner: postgres
+--
+
+ALTER SEQUENCE production.user_has_branch_id_seq OWNED BY production.user_has_branch.id;
+
+
+--
+-- Name: users; Type: TABLE; Schema: production; Owner: postgres
+--
+
+CREATE TABLE production.users (
+    id bigint NOT NULL,
+    username character varying(255),
+    name character varying(255),
+    email character varying(255),
+    role_id character varying(255),
+    hash_password character varying(255),
+    is_active character varying(255),
+    updated_by character varying(255),
+    updated_at timestamp without time zone DEFAULT now() NOT NULL,
+    created_by character varying(255),
+    created_at timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE production.users OWNER TO postgres;
+
+--
+-- Name: users_id_seq; Type: SEQUENCE; Schema: production; Owner: postgres
+--
+
+CREATE SEQUENCE production.users_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE production.users_id_seq OWNER TO postgres;
+
+--
+-- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: production; Owner: postgres
+--
+
+ALTER SEQUENCE production.users_id_seq OWNED BY production.users.id;
+
+
+--
 -- Name: branch id; Type: DEFAULT; Schema: production; Owner: postgres
 --
 
@@ -532,6 +649,13 @@ ALTER TABLE ONLY production.product ALTER COLUMN id SET DEFAULT nextval('product
 
 
 --
+-- Name: role id; Type: DEFAULT; Schema: production; Owner: postgres
+--
+
+ALTER TABLE ONLY production.role ALTER COLUMN id SET DEFAULT nextval('production.role_id_seq'::regclass);
+
+
+--
 -- Name: stock id; Type: DEFAULT; Schema: production; Owner: postgres
 --
 
@@ -553,11 +677,26 @@ ALTER TABLE ONLY production.transaction_header ALTER COLUMN id SET DEFAULT nextv
 
 
 --
+-- Name: user_has_branch id; Type: DEFAULT; Schema: production; Owner: postgres
+--
+
+ALTER TABLE ONLY production.user_has_branch ALTER COLUMN id SET DEFAULT nextval('production.user_has_branch_id_seq'::regclass);
+
+
+--
+-- Name: users id; Type: DEFAULT; Schema: production; Owner: postgres
+--
+
+ALTER TABLE ONLY production.users ALTER COLUMN id SET DEFAULT nextval('production.users_id_seq'::regclass);
+
+
+--
 -- Data for Name: branch; Type: TABLE DATA; Schema: production; Owner: postgres
 --
 
 INSERT INTO production.branch VALUES
-	(1, 'PIM 1', '1', 'Pondok Indah Mall 1 Lantai 1', 'Adia', '2021-10-27 11:14:35.695598', 'Adia', '2021-10-27 11:14:35.695598');
+	(1, 'PIM 1', '1', 'Pondok Indah Mall 1 Lantai 1', 'Adia', '2021-10-27 11:14:35.695598', 'Adia', '2021-10-27 11:14:35.695598'),
+	(2, 'PIM 2', '1', 'Pondok Indah Mall 2 Lantai 2', 'Adia', '2021-11-08 13:32:44.470859', 'Adia', '2021-11-08 13:32:44.470859');
 
 
 --
@@ -622,6 +761,14 @@ INSERT INTO production.product VALUES
 
 
 --
+-- Data for Name: role; Type: TABLE DATA; Schema: production; Owner: postgres
+--
+
+INSERT INTO production.role VALUES
+	(1, 'Superadmin', 'Adia', '2021-11-08 13:09:02.883839', 'Adia', '2021-11-08 13:09:02.883839');
+
+
+--
 -- Data for Name: stock; Type: TABLE DATA; Schema: production; Owner: postgres
 --
 
@@ -658,10 +805,27 @@ INSERT INTO production.transaction_header VALUES
 
 
 --
+-- Data for Name: user_has_branch; Type: TABLE DATA; Schema: production; Owner: postgres
+--
+
+INSERT INTO production.user_has_branch VALUES
+	(1, '1', '1', 'Adia', '2021-11-08 13:24:43.531934', 'Adia', '2021-11-08 13:24:43.531934'),
+	(2, '1', '2', 'Adia', '2021-11-08 13:34:12.070199', 'Adia', '2021-11-08 13:34:12.070199');
+
+
+--
+-- Data for Name: users; Type: TABLE DATA; Schema: production; Owner: postgres
+--
+
+INSERT INTO production.users VALUES
+	(1, 'adia', 'Adia', 'adia@mail.com', '1', '$2b$10$ukjUuMlfSutf/VLwDn1OnuttdVOVkMTF0hneZ1AVc/vwI4WNjKuQm', 'true', 'Adia', '2021-11-08 11:59:02.815', 'Adia', '2021-11-08 11:59:02.815');
+
+
+--
 -- Name: branch_id_seq; Type: SEQUENCE SET; Schema: production; Owner: postgres
 --
 
-SELECT pg_catalog.setval('production.branch_id_seq', 1, true);
+SELECT pg_catalog.setval('production.branch_id_seq', 2, true);
 
 
 --
@@ -714,6 +878,13 @@ SELECT pg_catalog.setval('production.product_id_seq', 10, true);
 
 
 --
+-- Name: role_id_seq; Type: SEQUENCE SET; Schema: production; Owner: postgres
+--
+
+SELECT pg_catalog.setval('production.role_id_seq', 1, true);
+
+
+--
 -- Name: stock_id_seq; Type: SEQUENCE SET; Schema: production; Owner: postgres
 --
 
@@ -732,6 +903,20 @@ SELECT pg_catalog.setval('production.transaction_detail_id_seq', 16, true);
 --
 
 SELECT pg_catalog.setval('production.transaction_header_id_seq', 19, true);
+
+
+--
+-- Name: user_has_branch_id_seq; Type: SEQUENCE SET; Schema: production; Owner: postgres
+--
+
+SELECT pg_catalog.setval('production.user_has_branch_id_seq', 2, true);
+
+
+--
+-- Name: users_id_seq; Type: SEQUENCE SET; Schema: production; Owner: postgres
+--
+
+SELECT pg_catalog.setval('production.users_id_seq', 16, true);
 
 
 --
@@ -799,6 +984,14 @@ ALTER TABLE ONLY production.product
 
 
 --
+-- Name: role role_pkey; Type: CONSTRAINT; Schema: production; Owner: postgres
+--
+
+ALTER TABLE ONLY production.role
+    ADD CONSTRAINT role_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: stock stock_pkey; Type: CONSTRAINT; Schema: production; Owner: postgres
 --
 
@@ -820,6 +1013,22 @@ ALTER TABLE ONLY production.transaction_detail
 
 ALTER TABLE ONLY production.transaction_header
     ADD CONSTRAINT transaction_header_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: user_has_branch user_has_branch_pkey; Type: CONSTRAINT; Schema: production; Owner: postgres
+--
+
+ALTER TABLE ONLY production.user_has_branch
+    ADD CONSTRAINT user_has_branch_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: production; Owner: postgres
+--
+
+ALTER TABLE ONLY production.users
+    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
 
 
 --
