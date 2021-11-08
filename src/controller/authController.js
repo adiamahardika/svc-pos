@@ -6,7 +6,7 @@ import {
   registerRepository,
   usernameCheckRepository,
 } from "../repository/authRepository.js";
-import jwt from "jsonwebtoken";
+import jwt, { decode } from "jsonwebtoken";
 import { jwt_secret_key } from "../configs/index.js";
 import { getUserHasBranch } from "../repository/branchRepository.js";
 
@@ -101,5 +101,22 @@ export const login = async (request, response) => {
   } catch (error) {
     console.log(error);
     standardResponse(response, 400, error_RC, error.toString());
+  }
+};
+
+export const authentication = (request, response, next) => {
+  const header_token = request.headers.token;
+  if (!header_token) {
+    standardResponse(response, 200, error_RC, "Please provide your token!");
+  } else {
+    jwt.verify(header_token, jwt_secret_key, (error, decoded) => {
+      if (error && error.name === "TokenExpiredError") {
+        standardResponse(response, 200, error_RC, "Your token has expired!");
+      } else if (error && error.name === "JsonWebTokenError") {
+        standardResponse(response, 200, error_RC, "Your token is invalid!");
+      } else {
+        next();
+      }
+    });
   }
 };
