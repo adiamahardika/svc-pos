@@ -3,7 +3,7 @@ import connection from "../configs/postgres.js";
 export const getProductRepository = (request) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT product.*, category.name as category FROM product LEFT OUTER JOIN category ON (product.category_id = CAST(category.id AS varchar(10))) WHERE product.merchant_id LIKE '%${request.merchant_id}%' AND product.name LIKE '%${request.search}%' AND product.category_id LIKE '%${request.category_id}%' AND product.is_active = '${request.is_active}' ORDER BY ${request.order_by} LIMIT ${request.limit} OFFSET ${request.start_index} `,
+      `SELECT product.*, category.name as category FROM product LEFT OUTER JOIN category ON (product.category_id = CAST(category.id AS varchar(10))) WHERE product.merchant_id LIKE '%${request.merchant_id}%' AND product.name LIKE '%${request.search}%' AND product.category_id LIKE '%${request.category_id}%' AND product.is_active = '${request.is_active}' ORDER BY ${request.order_by} ${request.sort_by} LIMIT ${request.limit} OFFSET ${request.start_index} `,
       (error, result) => {
         if (error) {
           console.log(error);
