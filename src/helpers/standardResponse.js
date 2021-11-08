@@ -15,7 +15,7 @@ export const standardResponse = (
   result.description = description || SUCCESS;
   result.active_page = active_page || 0;
   result.total_pages = total_pages || 1;
-  result.result = data.rows;
+  result.result = data ? data.rows : [];
 
   return response.status(result.https_status).json(result);
 };
