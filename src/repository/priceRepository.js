@@ -25,3 +25,27 @@ export const createPriceRepository = (request) => {
     });
   });
 };
+
+export const updatePriceRepository = (request, id) => {
+  const query = {
+    text: `UPDATE price SET starting_price = $1, dine_in_price = $2, take_away_price = $3, updated_by = $4, updated_at = $5 WHERE product_id = $6 RETURNING price.*`,
+    values: [
+      request.starting_price,
+      request.dine_in_price,
+      request.take_away_price,
+      request.updated_by,
+      request.updated_at,
+      id,
+    ],
+  };
+  return new Promise((resolve, reject) => {
+    connection.query(query, (error, result) => {
+      if (error) {
+        console.log(error);
+        reject(new Error(error));
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};

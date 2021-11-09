@@ -2,7 +2,10 @@ import { host } from "../configs/index.js";
 import { error_RC, SUCCESS, success_RC } from "../helpers/generalConstant.js";
 import { standardResponse } from "../helpers/standardResponse.js";
 import { compress } from "../helpers/uploadFiles.js";
-import { createPriceRepository } from "../repository/priceRepository.js";
+import {
+  createPriceRepository,
+  updatePriceRepository,
+} from "../repository/priceRepository.js";
 import {
   countProduct,
   createProductRepository,
@@ -67,7 +70,7 @@ export const createProduct = async (request, response) => {
     const result = await createProductRepository(request_data);
 
     const price_request = {
-      product_id: result.rows[0].image,
+      product_id: result.rows[0].id,
       starting_price: request.body.starting_price,
       dine_in_price: request.body.dine_in_price,
       take_away_price: request.body.take_away_price,
@@ -98,6 +101,7 @@ export const updateProduct = async (request, response) => {
     const date = new Date();
     const product_id = request.params.product_id;
     let result = null;
+
     if (!request.file || Object.keys(request.file).length === 0) {
       const request_data = {
         name: request.body.name,
@@ -119,7 +123,24 @@ export const updateProduct = async (request, response) => {
       };
       result = await updateProductRepository(request_data, product_id);
     }
-    result.rows[0].image = host + "assets/" + result.rows[0].image;
+
+    const price_request = {
+      starting_price: request.body.starting_price,
+      dine_in_price: request.body.dine_in_price,
+      take_away_price: request.body.take_away_price,
+      updated_by: request.body.updated_by,
+      updated_at: date,
+    };
+    const price_result = await updatePriceRepository(price_request, product_id);
+
+    result.rows[0] = {
+      ...result.rows[0],
+      image: host + "assets/" + result.rows[0].image,
+      starting_price: price_result.rows[0].starting_price,
+      dine_in_price: price_result.rows[0].dine_in_price,
+      take_away_price: price_result.rows[0].take_away_price,
+    };
+
     standardResponse(response, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
