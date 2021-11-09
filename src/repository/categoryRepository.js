@@ -18,7 +18,7 @@ export const getCategoryRepository = (request) => {
 
 export const createCategoryRepository = (request) => {
   const query = {
-    text: `INSERT INTO category(name, merchant_id, icon, is_active, updated_by, updated_at, created_by, created_at) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
+    text: `INSERT INTO category(name, merchant_id, icon, is_active, updated_by, updated_at, created_by, created_at) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
     values: [
       request.name,
       request.merchant_id,
@@ -67,7 +67,7 @@ export const updateCategoryRepository = (request, id) => {
 
 export const deleteCategoryRepository = (request, id) => {
   const query = {
-    text: `UPDATE category SET is_active = $1 WHERE id = $2`,
+    text: `UPDATE category SET is_active = $1 WHERE id = $2 RETURNING category.*`,
     values: [request.is_active, id],
   };
   return new Promise((resolve, reject) => {

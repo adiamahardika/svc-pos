@@ -99,7 +99,7 @@ export const updateProductRepository = (request, id) => {
 
 export const deleteProductRepository = (request, id) => {
   const query = {
-    text: `UPDATE product SET is_active = $1 WHERE id = $2`,
+    text: `UPDATE product SET is_active = $1 WHERE id = $2 RETURNING product.*`,
     values: [request.is_active, id],
   };
   return new Promise((resolve, reject) => {
