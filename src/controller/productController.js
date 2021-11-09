@@ -2,6 +2,7 @@ import { host } from "../configs/index.js";
 import { error_RC, SUCCESS, success_RC } from "../helpers/generalConstant.js";
 import { standardResponse } from "../helpers/standardResponse.js";
 import { compress } from "../helpers/uploadFiles.js";
+import { createPriceRepository } from "../repository/priceRepository.js";
 import {
   countProduct,
   createProductRepository,
@@ -64,7 +65,26 @@ export const createProduct = async (request, response) => {
       created_at: date,
     };
     const result = await createProductRepository(request_data);
-    result.rows[0].image = host + "assets/" + result.rows[0].image;
+
+    const price_request = {
+      product_id: result.rows[0].image,
+      starting_price: request.body.starting_price,
+      dine_in_price: request.body.dine_in_price,
+      take_away_price: request.body.take_away_price,
+      updated_by: request.body.created_by,
+      updated_at: date,
+      created_by: request.body.created_by,
+      created_at: date,
+    };
+    const price_result = await createPriceRepository(price_request);
+
+    result.rows[0] = {
+      ...result.rows[0],
+      image: host + "assets/" + result.rows[0].image,
+      starting_price: price_result.rows[0].starting_price,
+      dine_in_price: price_result.rows[0].dine_in_price,
+      take_away_price: price_result.rows[0].take_away_price,
+    };
 
     standardResponse(response, 200, success_RC, SUCCESS, result);
   } catch (error) {
