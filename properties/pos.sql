@@ -316,6 +316,46 @@ ALTER SEQUENCE production.merchant_id_seq OWNED BY production.merchant.id;
 
 
 --
+-- Name: price; Type: TABLE; Schema: production; Owner: postgres
+--
+
+CREATE TABLE production.price (
+    id bigint NOT NULL,
+    product_id character varying(255),
+    starting_price character varying(255),
+    dine_in_price character varying(255),
+    take_away_price character varying(255),
+    updated_by character varying(255),
+    updated_at timestamp without time zone DEFAULT now() NOT NULL,
+    created_by character varying(255),
+    created_at timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE production.price OWNER TO postgres;
+
+--
+-- Name: price_id_seq; Type: SEQUENCE; Schema: production; Owner: postgres
+--
+
+CREATE SEQUENCE production.price_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE production.price_id_seq OWNER TO postgres;
+
+--
+-- Name: price_id_seq; Type: SEQUENCE OWNED BY; Schema: production; Owner: postgres
+--
+
+ALTER SEQUENCE production.price_id_seq OWNED BY production.price.id;
+
+
+--
 -- Name: product; Type: TABLE; Schema: production; Owner: postgres
 --
 
@@ -642,6 +682,13 @@ ALTER TABLE ONLY production.merchant ALTER COLUMN id SET DEFAULT nextval('produc
 
 
 --
+-- Name: price id; Type: DEFAULT; Schema: production; Owner: postgres
+--
+
+ALTER TABLE ONLY production.price ALTER COLUMN id SET DEFAULT nextval('production.price_id_seq'::regclass);
+
+
+--
 -- Name: product id; Type: DEFAULT; Schema: production; Owner: postgres
 --
 
@@ -750,14 +797,23 @@ INSERT INTO production.merchant VALUES
 
 
 --
+-- Data for Name: price; Type: TABLE DATA; Schema: production; Owner: postgres
+--
+
+INSERT INTO production.price VALUES
+	(1, '1', '10000', '12000', '11000', 'Adia', '2021-11-09 11:40:24.140405', 'Adia', '2021-11-09 11:40:24.140405');
+
+
+--
 -- Data for Name: product; Type: TABLE DATA; Schema: production; Owner: postgres
 --
 
 INSERT INTO production.product VALUES
 	(7, 'Nasi Padang', '1', '1', 'Adia', '2021-11-05 09:34:52.653', 'Adia', '2021-11-05 09:34:52.653', '16360796926226b12cc446670.jpg', 'true'),
 	(8, 'Nasi Uduk', '1', '1', 'Adia', '2021-11-05 09:43:46.701', 'Adia', '2021-11-05 09:43:46.701', '163608022665802ee13fa8d66.jpg', 'true'),
-	(1, 'Nasi Goreng Pedas', '1', '1', 'Adia', '2021-11-05 10:32:20.28', 'Adia', '2021-10-25 16:16:13.955639', '1636082867093125fd10b923f.jpeg', 'true'),
-	(2, 'Soto Banjar', '1', '1', 'Adia', '2021-11-05 13:58:03.589', 'Adia', '2021-10-27 14:34:24.7', '1636095481269f06cd2658b3f.jpeg', 'true');
+	(12, 'Nasi Uduk', '1', '1', 'Adia', '2021-11-08 15:48:58.063', 'Adia', '2021-11-08 15:48:58.063', '16363613379244d298355dc38.jpg', 'true'),
+	(2, 'Soto Banjar', '1', '1', 'Adia', '2021-11-09 09:32:02.753', 'Adia', '2021-10-27 14:34:24.7', '1636095481269f06cd2658b3f.jpeg', 'true'),
+	(1, 'Nasi Goreng Pedas', '1', '1', 'Adia', '2021-11-05 10:32:20.28', 'Adia', '2021-10-25 16:16:13.955639', '1636082867093125fd10b923f.jpeg', 'true');
 
 
 --
@@ -871,10 +927,17 @@ SELECT pg_catalog.setval('production.merchant_id_seq', 1, true);
 
 
 --
+-- Name: price_id_seq; Type: SEQUENCE SET; Schema: production; Owner: postgres
+--
+
+SELECT pg_catalog.setval('production.price_id_seq', 1, true);
+
+
+--
 -- Name: product_id_seq; Type: SEQUENCE SET; Schema: production; Owner: postgres
 --
 
-SELECT pg_catalog.setval('production.product_id_seq', 10, true);
+SELECT pg_catalog.setval('production.product_id_seq', 12, true);
 
 
 --
@@ -973,6 +1036,14 @@ ALTER TABLE ONLY production.lg_payment
 
 ALTER TABLE ONLY production.merchant
     ADD CONSTRAINT merchant_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: price price_pkey; Type: CONSTRAINT; Schema: production; Owner: postgres
+--
+
+ALTER TABLE ONLY production.price
+    ADD CONSTRAINT price_pkey PRIMARY KEY (id);
 
 
 --
