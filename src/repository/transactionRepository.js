@@ -3,7 +3,7 @@ import format from "pg-format";
 
 export const createTransactionHeaderRepository = (request) => {
   const query = {
-    text: `INSERT INTO transaction_header(transaction_id, trx_status, branch_id, customer_name, total_quantity, total_price, updated_by, updated_at, created_by, created_at) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *`,
+    text: `INSERT INTO transaction_header(transaction_id, trx_status, branch_id, customer_name, total_quantity, total_price, trx_type, updated_by, updated_at, created_by, created_at) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *`,
     values: [
       request.transaction_id,
       request.trx_status,
@@ -11,6 +11,7 @@ export const createTransactionHeaderRepository = (request) => {
       request.customer_name,
       request.total_quantity,
       request.total_price,
+      request.trx_type,
       request.updated_by,
       request.updated_at,
       request.created_by,

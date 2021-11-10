@@ -527,7 +527,8 @@ CREATE TABLE production.transaction_header (
     created_by character varying(255),
     created_at timestamp without time zone DEFAULT now() NOT NULL,
     trx_status character varying(255),
-    total_price character varying(255)
+    total_price character varying(255),
+    trx_type character varying(255)
 );
 
 
@@ -841,7 +842,9 @@ INSERT INTO production.stock VALUES
 
 INSERT INTO production.transaction_detail VALUES
 	(19, '6116679250d16bd1', '1', '5', 'Adia', '2021-11-10 09:35:47', 'Adia', '2021-11-10 09:35:47', '25000'),
-	(20, '6116679250d16bd1', '2', '5', 'Adia', '2021-11-10 09:35:47', 'Adia', '2021-11-10 09:35:47', '25000');
+	(20, '6116679250d16bd1', '2', '5', 'Adia', '2021-11-10 09:35:47', 'Adia', '2021-11-10 09:35:47', '25000'),
+	(21, '372f80ab406758a5', '1', '5', 'Adia', '2021-11-10 09:57:37', 'Adia', '2021-11-10 09:57:37', '25000'),
+	(22, '372f80ab406758a5', '2', '5', 'Adia', '2021-11-10 09:57:37', 'Adia', '2021-11-10 09:57:37', '25000');
 
 
 --
@@ -849,7 +852,8 @@ INSERT INTO production.transaction_detail VALUES
 --
 
 INSERT INTO production.transaction_header VALUES
-	(21, '6116679250d16bd1', '1', 'Adia', '10', 'Adia', '2021-11-10 09:40:14', 'Adia', '2021-11-10 09:35:47', 'PAID', '50000');
+	(21, '6116679250d16bd1', '1', 'Adia', '10', 'Adia', '2021-11-10 09:40:14', 'Adia', '2021-11-10 09:35:47', 'PAID', '50000', 'Dine In'),
+	(22, '372f80ab406758a5', '1', 'Adia', '10', 'Adia', '2021-11-10 09:57:37', 'Adia', '2021-11-10 09:57:37', 'UNPAID', '50000', 'Dine In');
 
 
 --
@@ -950,14 +954,14 @@ SELECT pg_catalog.setval('production.stock_id_seq', 1, true);
 -- Name: transaction_detail_id_seq; Type: SEQUENCE SET; Schema: production; Owner: postgres
 --
 
-SELECT pg_catalog.setval('production.transaction_detail_id_seq', 20, true);
+SELECT pg_catalog.setval('production.transaction_detail_id_seq', 22, true);
 
 
 --
 -- Name: transaction_header_id_seq; Type: SEQUENCE SET; Schema: production; Owner: postgres
 --
 
-SELECT pg_catalog.setval('production.transaction_header_id_seq', 21, true);
+SELECT pg_catalog.setval('production.transaction_header_id_seq', 22, true);
 
 
 --

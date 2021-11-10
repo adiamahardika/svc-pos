@@ -23,6 +23,7 @@ export const createTransaction = async (request, response) => {
       customer_name: request.body.header.customer_name,
       total_quantity: request.body.header.total_quantity,
       total_price: request.body.header.total_price,
+      trx_type: request.body.header.trx_type,
       updated_by: request.body.header.created_by,
       updated_at: date,
       created_by: request.body.header.created_by,
