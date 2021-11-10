@@ -15,6 +15,8 @@ import {
   createPaymentRepository,
   createPaymentCashRepository,
   createInvoiceHasTrxId,
+  countPayment,
+  getPaymentRepository,
 } from "../repository/paymentRepository.js";
 import { updateTrasactionStatusRepository } from "../repository/transactionRepository.js";
 
@@ -132,5 +134,42 @@ export const createPayment = async (request, response) => {
   } catch (error) {
     console.log(error);
     standardResponse(response, 400, error_RC, error.toString(), []);
+  }
+};
+
+export const getPayment = async (request, response) => {
+  try {
+    const active_page = parseInt(request.body.page);
+    const limit = parseInt(request.body.limit) || 12;
+    const start_index = active_page * limit;
+    const request_data = {
+      search: request.body.search || "",
+      branch_id: request.body.branch_id || "",
+      payment_method: request.body.payment_method || "",
+      status: request.body.status || "",
+      response_code: request.body.response_code || "",
+      start_date: request.body.start_date || "",
+      end_date: request.body.end_date + " 23:59:59" || "",
+      order_by: request.body.order_by || "created_date",
+      sort_by: request.body.sort_by || "DESC",
+      start_index: start_index || 0,
+      limit: limit,
+    };
+    const total_data = await countPayment(request_data);
+    const total_pages = Math.ceil(total_data / limit);
+    const result = await getPaymentRepository(request_data);
+
+    standardResponse(
+      response,
+      200,
+      success_RC,
+      SUCCESS,
+      result,
+      active_page,
+      total_pages
+    );
+  } catch (error) {
+    console.log(error);
+    standardResponse(response, 400, error_RC, error.toString());
   }
 };
