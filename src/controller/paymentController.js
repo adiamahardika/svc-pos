@@ -17,6 +17,10 @@ import {
   createInvoiceHasTrxId,
   countPayment,
   getPaymentRepository,
+  getDetailPaymentRepository,
+  getDetailEdcRepository,
+  getDetailCashRepository,
+  getInvoiceHasTrx,
 } from "../repository/paymentRepository.js";
 import { updateTrasactionStatusRepository } from "../repository/transactionRepository.js";
 
@@ -168,6 +172,36 @@ export const getPayment = async (request, response) => {
       active_page,
       total_pages
     );
+  } catch (error) {
+    console.log(error);
+    standardResponse(response, 400, error_RC, error.toString());
+  }
+};
+
+export const getDetailPayment = async (request, response) => {
+  try {
+    const invoice_number = request.params.invoice_number;
+    const result = await getDetailPaymentRepository(invoice_number);
+
+    let detail = null;
+    if (
+      result.rows[0].payment_method.toUpperCase() === PAYMENT_CC ||
+      result.rows[0].payment_method.toUpperCase() === PAYMENT_DEBIT
+    ) {
+      detail = await getDetailEdcRepository(invoice_number);
+    } else {
+      detail = await getDetailCashRepository(invoice_number);
+    }
+
+    const transaction_list = await getInvoiceHasTrx(invoice_number);
+
+    result.rows[0] = {
+      ...result.rows[0],
+      detail: detail.rows[0],
+      transaction_list: transaction_list.rows,
+    };
+
+    standardResponse(response, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
     standardResponse(response, 400, error_RC, error.toString());

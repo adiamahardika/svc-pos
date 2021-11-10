@@ -150,3 +150,67 @@ export const getPaymentRepository = (request) => {
     );
   });
 };
+
+export const getDetailPaymentRepository = (invoice_number) => {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `SELECT lg_payment.*, branch.name as branch_name FROM lg_payment LEFT OUTER JOIN branch ON (CAST(branch.id AS varchar(10)) = lg_payment.branch_id) WHERE invoice_number LIKE '%${invoice_number}%'`,
+      (error, result) => {
+        if (error) {
+          console.log(error);
+          reject(new Error(error));
+        } else {
+          resolve(result);
+        }
+      }
+    );
+  });
+};
+
+export const getDetailCashRepository = (invoice_number) => {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `SELECT * FROM lg_payment_cash WHERE invoice_number LIKE '%${invoice_number}%'`,
+      (error, result) => {
+        if (error) {
+          console.log(error);
+          reject(new Error(error));
+        } else {
+          resolve(result);
+        }
+      }
+    );
+  });
+};
+
+export const getDetailEdcRepository = (invoice_number) => {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `SELECT * FROM lg_payment_edc WHERE invoice_number LIKE '%${invoice_number}%'`,
+      (error, result) => {
+        if (error) {
+          console.log(error);
+          reject(new Error(error));
+        } else {
+          resolve(result);
+        }
+      }
+    );
+  });
+};
+
+export const getInvoiceHasTrx = (invoice_number) => {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `SELECT * FROM transaction_header WHERE transaction_id IN (SELECT invoice_has_trx.transaction_id FROM invoice_has_trx WHERE invoice_number LIKE '%${invoice_number}%') ORDER BY created_at DESC`,
+      (error, result) => {
+        if (error) {
+          console.log(error);
+          reject(new Error(error));
+        } else {
+          resolve(result);
+        }
+      }
+    );
+  });
+};
