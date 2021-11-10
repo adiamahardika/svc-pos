@@ -130,3 +130,19 @@ export const getDetailTransactionDetailRepository = (transaction_id) => {
     );
   });
 };
+
+export const getTrxHasInvoice = (transaction_id) => {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `SELECT * FROM lg_payment WHERE invoice_number IN (SELECT invoice_has_trx.invoice_number FROM invoice_has_trx WHERE transaction_id LIKE '%${transaction_id}%') ORDER BY created_at DESC`,
+      (error, result) => {
+        if (error) {
+          console.log(error);
+          reject(new Error(error));
+        } else {
+          resolve(result);
+        }
+      }
+    );
+  });
+};

@@ -12,6 +12,7 @@ import {
   getDetailTransactionDetailRepository,
   getDetailTransactionHeaderRepository,
   getTransactionHeaderRepository,
+  getTrxHasInvoice,
 } from "../repository/transactionRepository.js";
 import { uid } from "uid";
 import { host } from "../configs/index.js";
@@ -111,13 +112,15 @@ export const getDetailTransaction = async (request, response) => {
     const detail_result = await getDetailTransactionDetailRepository(
       transaction_id
     );
+    const payment_list = await getTrxHasInvoice(transaction_id);
 
-    await detail_result.rows.map((value, index) => {
+    await detail_result.rows.map((value) => {
       value.product_image = host + "assets/" + value.product_image;
     });
     result.rows[0] = {
       ...result.rows[0],
       detail: detail_result.rows,
+      payment_list: payment_list.rows,
     };
 
     standardResponse(response, 200, success_RC, SUCCESS, result);
