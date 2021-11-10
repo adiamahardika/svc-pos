@@ -1,5 +1,6 @@
 import {
   CANCEL,
+  cancel_RC,
   error_RC,
   PAID,
   PAYMENT_CASH,
@@ -15,11 +16,13 @@ import {
   createPaymentCashRepository,
   createInvoiceHasTrxId,
 } from "../repository/paymentRepository.js";
+import { updateTrasactionStatusRepository } from "../repository/transactionRepository.js";
 
 export const createPayment = async (request, response) => {
   try {
-    const date = new Date();
-    const invoice_number = `INV-${date.getTime()}`;
+    const new_date = new Date();
+    const date = new_date.toLocaleString();
+    const invoice_number = `INV-${new_date.getTime()}`;
     const payment_request = {
       invoice_number: invoice_number,
       payment_method: request.body.payment_method.toUpperCase(),
@@ -46,14 +49,16 @@ export const createPayment = async (request, response) => {
       request.body.payment_method.toUpperCase() === PAYMENT_CASH &&
       parseFloat(request.body.amount) > parseFloat(request.body.submit_amount)
     ) {
+      payment_request.response_code = cancel_RC;
       payment_request.status = CANCEL;
     }
+    // Insert to lg_payment
     const payment_result = await createPaymentRepository(payment_request);
 
     let trx_id_list = [];
-    await request.body.transaction_id.map((value) => {
+    await request.body.transaction_id.map(async (transaction_id) => {
       let array = [
-        value,
+        transaction_id,
         invoice_number,
         request.body.created_by,
         date,
@@ -61,6 +66,15 @@ export const createPayment = async (request, response) => {
         date,
       ];
       trx_id_list.push(array);
+
+      const update_trx_req = {
+        trx_status: PAID,
+        updated_by: request.body.created_by,
+        updated_at: date,
+      };
+      if (payment_request.response_code === success_RC) {
+        await updateTrasactionStatusRepository(update_trx_req, transaction_id);
+      }
     });
     await createInvoiceHasTrxId(trx_id_list);
 

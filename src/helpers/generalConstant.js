@@ -1,5 +1,6 @@
 export const success_RC = "00";
 export const error_RC = "01";
+export const cancel_RC = "02";
 
 export const PAYMENT_CC = "CC";
 export const PAYMENT_DEBIT = "DEBIT";

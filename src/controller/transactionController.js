@@ -13,7 +13,8 @@ import { uid } from "uid";
 
 export const createTransaction = async (request, response) => {
   try {
-    const date = new Date();
+    const new_date = new Date();
+    const date = new_date.toLocaleString();
     const transaction_id = uid(16);
     const header_request = {
       transaction_id: transaction_id,
@@ -21,11 +22,13 @@ export const createTransaction = async (request, response) => {
       branch_id: request.body.header.branch_id,
       customer_name: request.body.header.customer_name,
       total_quantity: request.body.header.total_quantity,
+      total_price: request.body.header.total_price,
       updated_by: request.body.header.created_by,
       updated_at: date,
       created_by: request.body.header.created_by,
       created_at: date,
     };
+    // Insert to transaction_hader
     const header_result = await createTransactionHeaderRepository(
       header_request
     );
@@ -36,6 +39,7 @@ export const createTransaction = async (request, response) => {
         transaction_id,
         value.product_id,
         value.quantity,
+        value.price,
         request.body.header.created_by,
         date,
         request.body.header.created_by,
@@ -43,6 +47,7 @@ export const createTransaction = async (request, response) => {
       ];
       detail_request.push(array);
     });
+    // Insert to transaction_detail
     const detail_result = await createTransactionDetailRepository(
       detail_request
     );
