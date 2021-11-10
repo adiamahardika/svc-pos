@@ -112,7 +112,7 @@ export const getDetailTransaction = async (request, response) => {
       transaction_id
     );
 
-    detail_result.rows.map((value, index) => {
+    await detail_result.rows.map((value, index) => {
       value.product_image = host + "assets/" + value.product_image;
     });
     result.rows[0] = {
