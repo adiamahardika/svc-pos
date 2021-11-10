@@ -66,3 +66,35 @@ export const updateTrasactionStatusRepository = (request, id) => {
     });
   });
 };
+
+export const countTransaction = (request) => {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `SELECT count(*) as total_data FROM (SELECT * FROM transaction_header WHERE branch_id LIKE '%${request.branch_id}%' AND trx_type LIKE '%${request.trx_type}%' AND trx_status LIKE '%${request.trx_status}%' AND created_at >= '${request.start_date}' AND created_at <= '${request.end_date}') as trx WHERE trx.transaction_id LIKE '%${request.search}%' OR trx.customer_name LIKE '%${request.search}%'`,
+      (error, result) => {
+        if (error) {
+          console.log(error);
+          reject(new Error(error));
+        } else {
+          resolve(result);
+        }
+      }
+    );
+  });
+};
+
+export const getTransactionRepository = (request) => {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `SELECT * FROM (SELECT * FROM transaction_header WHERE branch_id LIKE '%${request.branch_id}%' AND trx_type LIKE '%${request.trx_type}%' AND trx_status LIKE '%${request.trx_status}%' AND created_at >= '${request.start_date}' AND created_at <= '${request.end_date}' ORDER BY ${request.order_by} ${request.sort_by} LIMIT ${request.limit} OFFSET ${request.start_index}) as trx WHERE trx.transaction_id LIKE '%${request.search}%' OR trx.customer_name LIKE '%${request.search}%'`,
+      (error, result) => {
+        if (error) {
+          console.log(error);
+          reject(new Error(error));
+        } else {
+          resolve(result);
+        }
+      }
+    );
+  });
+};
