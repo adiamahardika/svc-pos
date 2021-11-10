@@ -52,7 +52,7 @@ export const countProduct = (request) => {
           console.log(error);
           reject(new Error(error));
         } else {
-          resolve(result);
+          resolve(result.rows[0].total_data);
         }
       }
     );
