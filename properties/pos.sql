@@ -484,7 +484,8 @@ CREATE TABLE production.transaction_detail (
     updated_by character varying(255),
     updated_at timestamp without time zone DEFAULT now() NOT NULL,
     created_by character varying(255),
-    created_at timestamp without time zone DEFAULT now() NOT NULL
+    created_at timestamp without time zone DEFAULT now() NOT NULL,
+    price character varying(255)
 );
 
 
@@ -525,7 +526,8 @@ CREATE TABLE production.transaction_header (
     updated_at timestamp without time zone DEFAULT now() NOT NULL,
     created_by character varying(255),
     created_at timestamp without time zone DEFAULT now() NOT NULL,
-    trx_status character varying(255)
+    trx_status character varying(255),
+    total_price character varying(255)
 );
 
 
@@ -761,7 +763,7 @@ INSERT INTO production.category VALUES
 --
 
 INSERT INTO production.invoice_has_trx VALUES
-	(1, '1', 'INV-1635924103696', 'Adia', '2021-11-03 07:21:43.696', 'Adia', '2021-11-03 07:21:43.696');
+	(5, '6116679250d16bd1', 'INV-1636512014594', 'Adia', '2021-11-10 09:40:14', 'Adia', '2021-11-10 09:40:14');
 
 
 --
@@ -769,9 +771,7 @@ INSERT INTO production.invoice_has_trx VALUES
 --
 
 INSERT INTO production.lg_payment VALUES
-	(8, 'INV-1635924030715', 'CASH', '1000', '1200', 'PAID', '00', 'Adia', '2021-11-03 14:20:30.715', 'Adia', '2021-11-03 14:20:30.715', '-', NULL),
-	(9, 'INV-1635924066310', 'CASH', '1000', '1200', 'PAID', '00', 'Adia', '2021-11-03 14:21:06.31', 'Adia', '2021-11-03 14:21:06.31', '-', '1'),
-	(10, 'INV-1635924103696', 'CASH', '1000', '1200', 'PAID', '00', 'Adia', '2021-11-03 14:21:43.696', 'Adia', '2021-11-03 14:21:43.696', '-', '1');
+	(24, 'INV-1636512014594', 'CASH', '50000', '55000', 'PAID', '00', 'Adia', '2021-11-10 09:40:14', 'Adia', '2021-11-10 09:40:14', '-', '1');
 
 
 --
@@ -779,7 +779,7 @@ INSERT INTO production.lg_payment VALUES
 --
 
 INSERT INTO production.lg_payment_cash VALUES
-	(3, 'INV-1635924103696', '1000', '1200', '200', 'Adia', '2021-11-03 14:21:43.696', 'Adia', '2021-11-03 14:21:43.696');
+	(17, 'INV-1636512014594', '50000', '55000', '5000', 'Adia', '2021-11-10 09:40:14', 'Adia', '2021-11-10 09:40:14');
 
 
 --
@@ -801,7 +801,9 @@ INSERT INTO production.merchant VALUES
 --
 
 INSERT INTO production.price VALUES
-	(1, '1', '10000', '12000', '11000', 'Adia', '2021-11-09 11:40:24.140405', 'Adia', '2021-11-09 11:40:24.140405');
+	(1, '1', '10000', '12000', '11000', 'Adia', '2021-11-09 11:40:24.140405', 'Adia', '2021-11-09 11:40:24.140405'),
+	(2, '13', '5000', '10000', '7500', 'Adia', '2021-11-09 13:23:11.279', 'Adia', '2021-11-09 13:23:11.279'),
+	(3, '2', '10000', '15000', '14500', 'Adia', '2021-11-09 13:35:31.488', 'Adia', '2021-11-09 13:34:44.886602');
 
 
 --
@@ -812,8 +814,9 @@ INSERT INTO production.product VALUES
 	(7, 'Nasi Padang', '1', '1', 'Adia', '2021-11-05 09:34:52.653', 'Adia', '2021-11-05 09:34:52.653', '16360796926226b12cc446670.jpg', 'true'),
 	(8, 'Nasi Uduk', '1', '1', 'Adia', '2021-11-05 09:43:46.701', 'Adia', '2021-11-05 09:43:46.701', '163608022665802ee13fa8d66.jpg', 'true'),
 	(12, 'Nasi Uduk', '1', '1', 'Adia', '2021-11-08 15:48:58.063', 'Adia', '2021-11-08 15:48:58.063', '16363613379244d298355dc38.jpg', 'true'),
-	(2, 'Soto Banjar', '1', '1', 'Adia', '2021-11-09 09:32:02.753', 'Adia', '2021-10-27 14:34:24.7', '1636095481269f06cd2658b3f.jpeg', 'true'),
-	(1, 'Nasi Goreng Pedas', '1', '1', 'Adia', '2021-11-05 10:32:20.28', 'Adia', '2021-10-25 16:16:13.955639', '1636082867093125fd10b923f.jpeg', 'true');
+	(1, 'Nasi Goreng Pedas', '1', '1', 'Adia', '2021-11-05 10:32:20.28', 'Adia', '2021-10-25 16:16:13.955639', '1636082867093125fd10b923f.jpeg', 'true'),
+	(13, 'Nasi Uduk', '1', '1', 'Adia', '2021-11-09 13:23:11.279', 'Adia', '2021-11-09 13:23:11.279', '16364389888853bb505f43a2c.jpg', 'true'),
+	(2, 'Soto Banjar', '1', '1', 'Adia', '2021-11-09 13:35:31.488', 'Adia', '2021-10-27 14:34:24.7', '1636095481269f06cd2658b3f.jpeg', 'true');
 
 
 --
@@ -837,10 +840,8 @@ INSERT INTO production.stock VALUES
 --
 
 INSERT INTO production.transaction_detail VALUES
-	(13, 'ce7c71bcc74a4a88', '1', '5', 'Adia', '2021-11-01 03:52:59.234', 'Adia', '2021-11-01 03:52:59.234'),
-	(14, 'ce7c71bcc74a4a88', '2', '5', 'Adia', '2021-11-01 03:52:59.234', 'Adia', '2021-11-01 03:52:59.234'),
-	(15, '06b1d0bcaaffbb9e', '1', '5', 'Adia', '2021-11-01 04:02:45.013', 'Adia', '2021-11-01 04:02:45.013'),
-	(16, '06b1d0bcaaffbb9e', '2', '5', 'Adia', '2021-11-01 04:02:45.013', 'Adia', '2021-11-01 04:02:45.013');
+	(19, '6116679250d16bd1', '1', '5', 'Adia', '2021-11-10 09:35:47', 'Adia', '2021-11-10 09:35:47', '25000'),
+	(20, '6116679250d16bd1', '2', '5', 'Adia', '2021-11-10 09:35:47', 'Adia', '2021-11-10 09:35:47', '25000');
 
 
 --
@@ -848,16 +849,7 @@ INSERT INTO production.transaction_detail VALUES
 --
 
 INSERT INTO production.transaction_header VALUES
-	(10, 'ce7c71bcc74a4a88', '1', 'Adia', '10', 'Adia', '2021-11-01 10:52:59.234', 'Adia', '2021-11-01 10:52:59.234', 'SUCCESS'),
-	(11, 'e7c71bcc74a4a882', '1', 'Adia', '10', 'Adia', '2021-11-01 10:55:54.105', 'Adia', '2021-11-01 10:55:54.105', 'SUCCESS'),
-	(12, '0f984071d9a4024f', '1', 'Adia', '10', 'Adia', '2021-11-01 10:59:17.496', 'Adia', '2021-11-01 10:59:17.496', 'SUCCESS'),
-	(13, '3d42d178cdbdad2c', '1', 'Adia', '10', 'Adia', '2021-11-01 10:59:30.763', 'Adia', '2021-11-01 10:59:30.763', 'SUCCESS'),
-	(14, 'afa10bb6442490fd', '1', 'Adia', '10', 'Adia', '2021-11-01 11:00:17.565', 'Adia', '2021-11-01 11:00:17.565', 'SUCCESS'),
-	(15, '399bc23306f02747', '1', 'Adia', '10', 'Adia', '2021-11-01 11:00:33.983', 'Adia', '2021-11-01 11:00:33.983', 'SUCCESS'),
-	(16, '2bab7cef991ac385', '1', 'Adia', '10', 'Adia', '2021-11-01 11:01:12.261', 'Adia', '2021-11-01 11:01:12.261', 'SUCCESS'),
-	(17, '5104a078ca020f83', '1', 'Adia', '10', 'Adia', '2021-11-01 11:01:33.692', 'Adia', '2021-11-01 11:01:33.692', 'SUCCESS'),
-	(18, 'e06b1d0bcaaffbb9', '1', 'Adia', '10', 'Adia', '2021-11-01 11:02:35.968', 'Adia', '2021-11-01 11:02:35.968', 'SUCCESS'),
-	(19, '06b1d0bcaaffbb9e', '1', 'Adia', '10', 'Adia', '2021-11-01 11:02:45.013', 'Adia', '2021-11-01 11:02:45.013', 'SUCCESS');
+	(21, '6116679250d16bd1', '1', 'Adia', '10', 'Adia', '2021-11-10 09:40:14', 'Adia', '2021-11-10 09:35:47', 'PAID', '50000');
 
 
 --
@@ -895,14 +887,14 @@ SELECT pg_catalog.setval('production.category_id_seq', 4, true);
 -- Name: invoice_has_trx_id_seq; Type: SEQUENCE SET; Schema: production; Owner: postgres
 --
 
-SELECT pg_catalog.setval('production.invoice_has_trx_id_seq', 1, true);
+SELECT pg_catalog.setval('production.invoice_has_trx_id_seq', 5, true);
 
 
 --
 -- Name: lg_payment_cash_id_seq; Type: SEQUENCE SET; Schema: production; Owner: postgres
 --
 
-SELECT pg_catalog.setval('production.lg_payment_cash_id_seq', 3, true);
+SELECT pg_catalog.setval('production.lg_payment_cash_id_seq', 17, true);
 
 
 --
@@ -916,7 +908,7 @@ SELECT pg_catalog.setval('production.lg_payment_edc_id_seq', 2, true);
 -- Name: lg_payment_id_seq; Type: SEQUENCE SET; Schema: production; Owner: postgres
 --
 
-SELECT pg_catalog.setval('production.lg_payment_id_seq', 10, true);
+SELECT pg_catalog.setval('production.lg_payment_id_seq', 24, true);
 
 
 --
@@ -930,14 +922,14 @@ SELECT pg_catalog.setval('production.merchant_id_seq', 1, true);
 -- Name: price_id_seq; Type: SEQUENCE SET; Schema: production; Owner: postgres
 --
 
-SELECT pg_catalog.setval('production.price_id_seq', 1, true);
+SELECT pg_catalog.setval('production.price_id_seq', 3, true);
 
 
 --
 -- Name: product_id_seq; Type: SEQUENCE SET; Schema: production; Owner: postgres
 --
 
-SELECT pg_catalog.setval('production.product_id_seq', 12, true);
+SELECT pg_catalog.setval('production.product_id_seq', 13, true);
 
 
 --
@@ -958,14 +950,14 @@ SELECT pg_catalog.setval('production.stock_id_seq', 1, true);
 -- Name: transaction_detail_id_seq; Type: SEQUENCE SET; Schema: production; Owner: postgres
 --
 
-SELECT pg_catalog.setval('production.transaction_detail_id_seq', 16, true);
+SELECT pg_catalog.setval('production.transaction_detail_id_seq', 20, true);
 
 
 --
 -- Name: transaction_header_id_seq; Type: SEQUENCE SET; Schema: production; Owner: postgres
 --
 
-SELECT pg_catalog.setval('production.transaction_header_id_seq', 19, true);
+SELECT pg_catalog.setval('production.transaction_header_id_seq', 21, true);
 
 
 --
