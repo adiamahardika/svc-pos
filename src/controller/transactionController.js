@@ -9,9 +9,12 @@ import {
   countTransaction,
   createTransactionDetailRepository,
   createTransactionHeaderRepository,
-  getTransactionRepository,
+  getDetailTransactionDetailRepository,
+  getDetailTransactionHeaderRepository,
+  getTransactionHeaderRepository,
 } from "../repository/transactionRepository.js";
 import { uid } from "uid";
+import { host } from "../configs/index.js";
 
 export const createTransaction = async (request, response) => {
   try {
@@ -71,7 +74,6 @@ export const getTransaction = async (request, response) => {
     const start_index = active_page * limit;
     const request_data = {
       search: request.body.search || "",
-      merchant_id: request.body.merchant_id || "",
       branch_id: request.body.branch_id || "",
       trx_type: request.body.trx_type || "",
       trx_status: request.body.trx_status || "",
@@ -84,7 +86,7 @@ export const getTransaction = async (request, response) => {
     };
     const total_data = await countTransaction(request_data);
     const total_pages = Math.ceil(total_data / limit);
-    const result = await getTransactionRepository(request_data);
+    const result = await getTransactionHeaderRepository(request_data);
 
     standardResponse(
       response,
@@ -95,6 +97,30 @@ export const getTransaction = async (request, response) => {
       active_page,
       total_pages
     );
+  } catch (error) {
+    console.log(error);
+    standardResponse(response, 400, error_RC, error.toString());
+  }
+};
+
+export const getDetailTransaction = async (request, response) => {
+  try {
+    const transaction_id = request.params.transaction_id;
+
+    const result = await getDetailTransactionHeaderRepository(transaction_id);
+    const detail_result = await getDetailTransactionDetailRepository(
+      transaction_id
+    );
+
+    detail_result.rows.map((value, index) => {
+      value.product_image = host + "assets/" + value.product_image;
+    });
+    result.rows[0] = {
+      ...result.rows[0],
+      detail: detail_result.rows,
+    };
+
+    standardResponse(response, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
     standardResponse(response, 400, error_RC, error.toString());
