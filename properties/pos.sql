@@ -72,7 +72,7 @@ CREATE TABLE production.category (
     created_by character varying(255),
     created_at timestamp without time zone DEFAULT now() NOT NULL,
     is_active character varying(255),
-    icon character varying(255)
+    icon text
 );
 
 
