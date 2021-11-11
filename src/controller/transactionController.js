@@ -13,6 +13,7 @@ import {
   getDetailTransactionHeaderRepository,
   getTransactionHeaderRepository,
   getTrxHasInvoice,
+  updateTransactionStatusRepository,
 } from "../repository/transactionRepository.js";
 import { uid } from "uid";
 import { host } from "../configs/index.js";
@@ -123,6 +124,27 @@ export const getDetailTransaction = async (request, response) => {
       payment_list: payment_list.rows,
     };
 
+    standardResponse(response, 200, success_RC, SUCCESS, result);
+  } catch (error) {
+    console.log(error);
+    standardResponse(response, 400, error_RC, error.toString());
+  }
+};
+
+export const updateTransactionStatus = async (request, response) => {
+  try {
+    const date = new Date();
+    const transaction_id = request.params.transaction_id;
+    const request_data = {
+      trx_status: request.body.trx_status.toUpperCase(),
+      updated_by: request.body.updated_by,
+      updated_at: date,
+    };
+
+    const result = await updateTransactionStatusRepository(
+      request_data,
+      transaction_id
+    );
     standardResponse(response, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);

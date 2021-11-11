@@ -22,7 +22,7 @@ import {
   getDetailCashRepository,
   getInvoiceHasTrx,
 } from "../repository/paymentRepository.js";
-import { updateTrasactionStatusRepository } from "../repository/transactionRepository.js";
+import { updateTransactionStatusRepository } from "../repository/transactionRepository.js";
 
 export const createPayment = async (request, response) => {
   try {
@@ -79,7 +79,7 @@ export const createPayment = async (request, response) => {
         updated_at: date,
       };
       if (payment_request.response_code === success_RC) {
-        await updateTrasactionStatusRepository(update_trx_req, transaction_id);
+        await updateTransactionStatusRepository(update_trx_req, transaction_id);
       }
     });
     await createInvoiceHasTrxId(trx_id_list);

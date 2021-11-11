@@ -50,9 +50,9 @@ export const createTransactionDetailRepository = (request) => {
   });
 };
 
-export const updateTrasactionStatusRepository = (request, id) => {
+export const updateTransactionStatusRepository = (request, id) => {
   const query = {
-    text: `UPDATE transaction_header SET trx_status = $1, updated_by = $2, updated_at = $3 WHERE transaction_id = $4`,
+    text: `UPDATE transaction_header SET trx_status = $1, updated_by = $2, updated_at = $3 WHERE transaction_id = $4 RETURNING transaction_header.*`,
     values: [request.trx_status, request.updated_by, request.updated_at, id],
   };
   return new Promise((resolve, reject) => {
