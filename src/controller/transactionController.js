@@ -108,6 +108,7 @@ export const getTransaction = async (request, response) => {
     const request_data = {
       search: request.body.search || "",
       branch_id: request.body.branch_id || "",
+      merchant_id: request.body.merchant_id || "",
       trx_type: request.body.trx_type || "",
       trx_status: request.body.trx_status || "",
       start_date: request.body.start_date || "",

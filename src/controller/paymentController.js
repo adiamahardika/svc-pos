@@ -10,6 +10,8 @@ import {
   success_RC,
 } from "../helpers/generalConstant.js";
 import { standardResponse } from "../helpers/standardResponse.js";
+import { getDetailBranch } from "../repository/branchRepository.js";
+import { getDetailMerchantRepository } from "../repository/merchantRepository.js";
 import {
   createPaymentEdcRepository,
   createPaymentRepository,
@@ -21,6 +23,7 @@ import {
   getDetailEdcRepository,
   getDetailCashRepository,
   getInvoiceHasTrx,
+  countPaymentByBranchAndDate,
 } from "../repository/paymentRepository.js";
 import { updateTransactionStatusRepository } from "../repository/transactionRepository.js";
 
@@ -28,7 +31,34 @@ export const createPayment = async (request, response) => {
   try {
     const new_date = new Date();
     const date = new_date.toLocaleString();
-    const invoice_number = `INV-${new_date.getTime()}`;
+    const today =
+      new_date.getFullYear() +
+      "-" +
+      (new_date.getMonth() + 1) +
+      "-" +
+      new_date.getDate();
+    const count_request = {
+      branch_id: request.body.branch_id,
+      start: today,
+      end: today + " 23:59:59",
+    };
+    const count_result = await countPaymentByBranchAndDate(count_request);
+    const detail_merchant = await getDetailMerchantRepository(
+      request.body.merchant_id
+    );
+    const detail_branch = await getDetailBranch(request.body.branch_id);
+    const invoice_number =
+      "INV/" +
+      detail_merchant.rows[0].merchant_code +
+      "/" +
+      detail_branch.rows[0].branch_number +
+      "/" +
+      new_date.getFullYear().toString().substr(-2) +
+      (new_date.getMonth() + 1) +
+      new_date.getDate() +
+      "/" +
+      (parseInt(count_result, 10) + 1);
+
     const payment_request = {
       invoice_number: invoice_number,
       payment_method: request.body.payment_method.toUpperCase(),
@@ -37,8 +67,8 @@ export const createPayment = async (request, response) => {
       submit_amount: request.body.submit_amount,
       status: PAID,
       response_code: success_RC,
-      ecr: "-",
       branch_id: request.body.branch_id,
+      merchant_id: request.body.merchant_id,
       updated_by: request.body.created_by,
       updated_at: date,
       created_by: request.body.created_by,
@@ -46,13 +76,6 @@ export const createPayment = async (request, response) => {
     };
 
     if (
-      request.body.payment_method.toUpperCase() === PAYMENT_CC ||
-      request.body.payment_method.toUpperCase() === PAYMENT_DEBIT
-    ) {
-      payment_request.response_code = request.body.edc.response_code;
-      payment_request.ecr = request.body.edc.ecr;
-    } else if (
-      request.body.payment_method.toUpperCase() === PAYMENT_CASH &&
       parseFloat(request.body.amount) > parseFloat(request.body.submit_amount)
     ) {
       payment_request.response_code = cancel_RC;
@@ -88,32 +111,16 @@ export const createPayment = async (request, response) => {
       request.body.payment_method.toUpperCase() === PAYMENT_CC ||
       request.body.payment_method.toUpperCase() === PAYMENT_DEBIT
     ) {
-      const ecr = request.body.edc.ecr;
       const edc_request = {
         invoice_number: invoice_number,
-        transaction_type: ecr.substring(0, 2),
-        tid: ecr.substring(2, 10),
-        mid: ecr.substring(10, 25),
-        batch_number: ecr.substring(25, 31),
-        issuer_name: ecr.substring(31, 46),
-        trace_number: ecr.substring(46, 52),
-        entry_mode: ecr.substring(58, 59),
-        amount: ecr.substring(59, 71),
-        total_amount: ecr.substring(71, 83),
-        card_number: ecr.substring(83, 102),
-        cardholder_name: ecr.substring(102, 128),
-        date: ecr.substring(128, 134),
-        time: ecr.substring(134, 140),
-        approval_code: ecr.substring(140, 146),
-        response_code: ecr.substring(146, 148),
-        ref_number: ecr.substring(148, 160),
-        billing_number: ecr.substring(160, 176),
-        balance: ecr.substring(176, 188),
-        top_up_card_number: ecr.substring(188, 207),
-        exp_date: ecr.substring(207, 213),
-        bank_filler: ecr.substring(213, 301),
-        module_name: request.body.edc.module_name,
-        sn: request.body.edc.sn,
+        amount: request.body.amount,
+        submit_amount: request.body.submit_amount,
+        approval_code: request.body.edc.approval_code,
+        bank_name: request.body.edc.bank_name,
+        updated_by: request.body.created_by,
+        updated_at: date,
+        created_by: request.body.created_by,
+        created_at: date,
       };
 
       const edc_result = await createPaymentEdcRepository(edc_request);
@@ -149,6 +156,7 @@ export const getPayment = async (request, response) => {
     const request_data = {
       search: request.body.search || "",
       branch_id: request.body.branch_id || "",
+      merchant_id: request.body.merchant_id || "",
       payment_method: request.body.payment_method || "",
       status: request.body.status || "",
       response_code: request.body.response_code || "",
@@ -180,7 +188,7 @@ export const getPayment = async (request, response) => {
 
 export const getDetailPayment = async (request, response) => {
   try {
-    const invoice_number = request.params.invoice_number;
+    const invoice_number = request.query.invoice_number;
     const result = await getDetailPaymentRepository(invoice_number);
 
     let detail = null;
