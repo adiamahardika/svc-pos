@@ -3,6 +3,7 @@ import {
   createTransaction,
   getDetailTransaction,
   getTransaction,
+  updateTransaction,
   updateTransactionStatus,
 } from "../../controller/transactionController.js";
 
@@ -12,4 +13,5 @@ transactionRouter
   .post("/create-transaction", createTransaction)
   .post("/get-transaction", getTransaction)
   .get("/detail-transaction/:transaction_id", getDetailTransaction)
-  .put("/update-transaction-status/:transaction_id", updateTransactionStatus);
+  .put("/update-transaction-status/:transaction_id", updateTransactionStatus)
+  .put("/update-transaction/:transaction_id", updateTransaction);

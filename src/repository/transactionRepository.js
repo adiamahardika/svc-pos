@@ -146,3 +146,39 @@ export const getTrxHasInvoice = (transaction_id) => {
     );
   });
 };
+
+export const updateTransactionHeaderRepository = (request, transaction_id) => {
+  const query = {
+    text: `UPDATE transaction_header SET total_quantity = $1, total_price = $2, updated_by = $3, updated_at = $4 WHERE transaction_id = $5 RETURNING transaction_header.*`,
+    values: [
+      request.total_quantity,
+      request.total_price,
+      request.updated_by,
+      request.updated_at,
+      transaction_id,
+    ],
+  };
+  return new Promise((resolve, reject) => {
+    connection.query(query, (error, result) => {
+      if (error) {
+        console.log(error);
+        reject(new Error(error));
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
+
+export const deleteTransactionDetailRepository = (transaction_id) => {
+  const query = {
+    text: `DELETE FROM transaction_detail WHERE transaction_id = $1`,
+    values: [transaction_id],
+  };
+  return new Promise((resolve, reject) => {
+    connection.query(query, (error, result) => {
+      if (error) reject(new Error(error), console.log(error));
+      resolve(result);
+    });
+  });
+};

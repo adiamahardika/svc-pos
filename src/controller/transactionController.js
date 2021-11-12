@@ -9,10 +9,12 @@ import {
   countTransaction,
   createTransactionDetailRepository,
   createTransactionHeaderRepository,
+  deleteTransactionDetailRepository,
   getDetailTransactionDetailRepository,
   getDetailTransactionHeaderRepository,
   getTransactionHeaderRepository,
   getTrxHasInvoice,
+  updateTransactionHeaderRepository,
   updateTransactionStatusRepository,
 } from "../repository/transactionRepository.js";
 import { uid } from "uid";
@@ -146,6 +148,54 @@ export const updateTransactionStatus = async (request, response) => {
       transaction_id
     );
     standardResponse(response, 200, success_RC, SUCCESS, result);
+  } catch (error) {
+    console.log(error);
+    standardResponse(response, 400, error_RC, error.toString());
+  }
+};
+
+export const updateTransaction = async (request, response) => {
+  try {
+    const date = new Date();
+    const transaction_id = request.params.transaction_id;
+    const header_request = {
+      total_quantity: request.body.header.total_quantity,
+      total_price: request.body.header.total_price,
+      trx_type: request.body.header.trx_type,
+      updated_by: request.body.header.updated_by,
+      updated_at: date,
+    };
+    // Update to transaction_header
+    const header_result = await updateTransactionHeaderRepository(
+      header_request,
+      transaction_id
+    );
+
+    // Delete product list in transaction_detail
+    await deleteTransactionDetailRepository(transaction_id);
+
+    let detail_request = [];
+    await request.body.detail.map((value) => {
+      let array = [
+        transaction_id,
+        value.product_id,
+        value.quantity,
+        value.price,
+        request.body.header.updated_by,
+        date,
+        request.body.header.updated_by,
+        date,
+      ];
+      detail_request.push(array);
+    });
+    // Insert to transaction_detail
+    const detail_result = await createTransactionDetailRepository(
+      detail_request
+    );
+
+    header_result.rows[0].detail = detail_result.rows;
+
+    standardResponse(response, 200, success_RC, SUCCESS, header_result);
   } catch (error) {
     console.log(error);
     standardResponse(response, 400, error_RC, error.toString());
