@@ -154,8 +154,8 @@ CREATE TABLE production.lg_payment (
     updated_at timestamp without time zone DEFAULT now() NOT NULL,
     created_by character varying(255),
     created_at timestamp without time zone DEFAULT now() NOT NULL,
-    ecr text,
-    branch_id character varying(255)
+    branch_id character varying(255),
+    merchant_id character varying(255)
 );
 
 
@@ -207,30 +207,15 @@ ALTER SEQUENCE production.lg_payment_cash_id_seq OWNED BY production.lg_payment_
 
 CREATE TABLE production.lg_payment_edc (
     id bigint NOT NULL,
-    invoice_number character varying(255),
-    transaction_type character varying(255),
-    tid character varying(255),
-    batch_number character varying(255),
-    issuer_name character varying(255),
-    trace_number character varying(255),
-    entry_mode character varying(255),
-    amount character varying(255),
-    total_amount character varying(255),
-    card_number character varying(255),
-    cardholder_name character varying(255),
-    date character varying(255),
-    "time" character varying(255),
     approval_code character varying(255),
-    response_code character varying(255),
-    ref_number character varying(255),
-    billing_number character varying(255),
-    balance character varying(255),
-    top_up_card_number character varying(255),
-    exp_date character varying(255),
-    bank_filler character varying(255),
-    module_name character varying(255),
-    sn character varying(255),
-    mid character varying(255)
+    bank_name character varying(255),
+    amount character varying(255),
+    submit_amount character varying(255),
+    updated_by character varying(255),
+    updated_at timestamp without time zone DEFAULT now() NOT NULL,
+    created_by character varying(255),
+    created_at timestamp without time zone DEFAULT now() NOT NULL,
+    invoice_number character varying(255)
 );
 
 
@@ -766,8 +751,9 @@ INSERT INTO production.category VALUES
 --
 
 INSERT INTO production.invoice_has_trx VALUES
-	(5, '6116679250d16bd1', 'INV-1636512014594', 'Adia', '2021-11-10 09:40:14', 'Adia', '2021-11-10 09:40:14'),
-	(7, '372f80ab406758a5', 'INV-1636526506658', 'Adia', '2021-11-10 13:41:46', 'Adia', '2021-11-10 13:41:46');
+	(8, 'NAH-1-211112-3', 'INV/NAH/1/211112/1', 'Adia', '2021-11-12 15:28:57', 'Adia', '2021-11-12 15:28:57'),
+	(9, 'NAH-1-211112-3', 'INV/NAH/1/211112/1', 'Adia', '2021-11-12 15:32:39', 'Adia', '2021-11-12 15:32:39'),
+	(10, 'NAH-1-211112-3', 'INV/NAH/1/211112/2', 'Adia', '2021-11-12 15:32:53', 'Adia', '2021-11-12 15:32:53');
 
 
 --
@@ -775,8 +761,8 @@ INSERT INTO production.invoice_has_trx VALUES
 --
 
 INSERT INTO production.lg_payment VALUES
-	(24, 'INV-1636512014594', 'CASH', '50000', '55000', 'PAID', '00', 'Adia', '2021-11-10 09:40:14', 'Adia', '2021-11-10 09:40:14', '-', '1'),
-	(26, 'INV-1636526506658', 'CC', '50000', '55000', 'PAID', '00', 'Adia', '2021-11-10 13:41:46', 'Adia', '2021-11-10 13:41:46', '0118625901000100218116259000356DA BCA 2       002216001249D000002000000000002000000537941******6388                       211103084819084819000000000022160000000000000000000000000000                   000000                                                                                                                                                                        ', '1');
+	(28, 'INV/NAH/1/211112/1', 'CC', '50000', '50000', 'PAID', '00', 'Adia', '2021-11-12 15:32:39', 'Adia', '2021-11-12 15:32:39', '1', '1'),
+	(29, 'INV/NAH/1/211112/2', 'CC', '50000', '50000', 'PAID', '00', 'Adia', '2021-11-12 15:32:53', 'Adia', '2021-11-12 15:32:53', '1', '1');
 
 
 --
@@ -792,7 +778,8 @@ INSERT INTO production.lg_payment_cash VALUES
 --
 
 INSERT INTO production.lg_payment_edc VALUES
-	(3, 'INV-1636526506658', '01', '18625901', '000356', 'DA BCA 2       ', '002216', 'D', '000002000000', '000002000000', '537941******6388   ', '                    211103', '084819', '084819', '000000', '00', '002216000000', '0000000000000000', '000000      ', '             000000', '      ', '                                                                                        ', 'Toko Makanan', '123', '000100218116259');
+	(3, '123', 'Mandiri', '50000', '50000', 'Adia', '2021-11-12 15:32:53', 'Adia', '2021-11-12 15:32:53', 'INV/NAH/1/211112/2'),
+	(2, '123', 'BCA', '50000', '50000', 'Adia', '2021-11-12 15:28:57', 'Adia', '2021-11-12 15:28:57', 'INV/NAH/1/211112/1');
 
 
 --
@@ -849,14 +836,6 @@ INSERT INTO production.stock VALUES
 --
 
 INSERT INTO production.transaction_detail VALUES
-	(19, '6116679250d16bd1', '1', '5', 'Adia', '2021-11-10 09:35:47', 'Adia', '2021-11-10 09:35:47', '25000'),
-	(20, '6116679250d16bd1', '2', '5', 'Adia', '2021-11-10 09:35:47', 'Adia', '2021-11-10 09:35:47', '25000'),
-	(21, '372f80ab406758a5', '1', '5', 'Adia', '2021-11-10 09:57:37', 'Adia', '2021-11-10 09:57:37', '25000'),
-	(22, '372f80ab406758a5', '2', '5', 'Adia', '2021-11-10 09:57:37', 'Adia', '2021-11-10 09:57:37', '25000'),
-	(23, '2233b22f012b349e', '1', '5', 'Adia', '2021-11-10 15:40:33', 'Adia', '2021-11-10 15:40:33', '25000'),
-	(24, '2233b22f012b349e', '2', '5', 'Adia', '2021-11-10 15:40:33', 'Adia', '2021-11-10 15:40:33', '25000'),
-	(30, 'df6a40bf02dd5f3f', '1', '2', 'Adia', '2021-11-12 02:34:19.774', 'Adia', '2021-11-12 02:34:19.774', '10000'),
-	(31, 'df6a40bf02dd5f3f', '2', '3', 'Adia', '2021-11-12 02:34:19.774', 'Adia', '2021-11-12 02:34:19.774', '25000'),
 	(34, 'NAH-1-211110-41', '1', '2', 'Adia', '2021-11-12 04:17:59.374', 'Adia', '2021-11-12 04:17:59.374', '10000'),
 	(35, 'NAH-1-211110-41', '2', '3', 'Adia', '2021-11-12 04:17:59.374', 'Adia', '2021-11-12 04:17:59.374', '25000'),
 	(36, 'NAH-1-211112-11', '1', '5', 'Adia', '2021-11-12 11:20:09', 'Adia', '2021-11-12 11:20:09', '25000'),
@@ -872,11 +851,7 @@ INSERT INTO production.transaction_detail VALUES
 INSERT INTO production.transaction_header VALUES
 	(25, 'NAH-1-211110-41', '1', 'Adia', '4', 'Adia', '2021-11-12 11:17:59.374', 'Adia', '2021-11-12 11:14:30', 'UNPAID', '35000', 'Dine In', '1'),
 	(26, 'NAH-1-211112-11', '1', 'Adia', '10', 'Adia', '2021-11-12 11:20:09', 'Adia', '2021-11-12 11:20:09', 'UNPAID', '50000', 'Dine In', '1'),
-	(27, 'NAH-1-211112-3', '1', 'Adia', '10', 'Adia', '2021-11-12 11:21:18', 'Adia', '2021-11-12 11:21:18', 'UNPAID', '50000', 'Dine In', '1'),
-	(21, '6116679250d16bd1', '1', 'Adia', '10', 'Adia', '2021-11-10 09:40:14', 'Adia', '2021-11-10 09:35:47', 'PAID', '50000', 'Dine In', '1'),
-	(22, '372f80ab406758a5', '1', 'Adia', '10', 'Adia', '2021-11-10 13:41:46', 'Adia', '2021-11-10 09:57:37', 'UNPAID', '50000', 'Dine In', '1'),
-	(23, '2233b22f012b349e', '1', 'Adia', '10', 'Adia', '2021-11-10 15:40:33', 'Adia', '2021-11-10 15:40:33', 'UNPAID', '50000', 'Dine In', '1'),
-	(24, 'df6a40bf02dd5f3f', '1', 'Adia', '4', 'Adia', '2021-11-12 09:34:19.774', 'Adia', '2021-11-10 15:53:44', 'UNPAID', '35000', 'Dine In', '1');
+	(27, 'NAH-1-211112-3', '1', 'Adia', '10', 'Adia', '2021-11-12 15:32:53', 'Adia', '2021-11-12 11:21:18', 'PAID', '50000', 'Dine In', '1');
 
 
 --
@@ -914,7 +889,7 @@ SELECT pg_catalog.setval('production.category_id_seq', 4, true);
 -- Name: invoice_has_trx_id_seq; Type: SEQUENCE SET; Schema: production; Owner: postgres
 --
 
-SELECT pg_catalog.setval('production.invoice_has_trx_id_seq', 7, true);
+SELECT pg_catalog.setval('production.invoice_has_trx_id_seq', 10, true);
 
 
 --
@@ -935,7 +910,7 @@ SELECT pg_catalog.setval('production.lg_payment_edc_id_seq', 3, true);
 -- Name: lg_payment_id_seq; Type: SEQUENCE SET; Schema: production; Owner: postgres
 --
 
-SELECT pg_catalog.setval('production.lg_payment_id_seq', 26, true);
+SELECT pg_catalog.setval('production.lg_payment_id_seq', 29, true);
 
 
 --
