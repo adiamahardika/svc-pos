@@ -72,8 +72,8 @@ export const createProduct = async (request, response) => {
     const price_request = {
       product_id: result.rows[0].id,
       starting_price: request.body.starting_price,
-      dine_in_price: request.body.dine_in_price,
-      take_away_price: request.body.take_away_price,
+      selling_price: request.body.selling_price,
+
       updated_by: request.body.created_by,
       updated_at: date,
       created_by: request.body.created_by,
@@ -85,8 +85,7 @@ export const createProduct = async (request, response) => {
       ...result.rows[0],
       image: host + "assets/" + result.rows[0].image,
       starting_price: price_result.rows[0].starting_price,
-      dine_in_price: price_result.rows[0].dine_in_price,
-      take_away_price: price_result.rows[0].take_away_price,
+      selling_price: price_result.rows[0].selling_price,
     };
 
     standardResponse(response, 200, success_RC, SUCCESS, result);
@@ -126,8 +125,7 @@ export const updateProduct = async (request, response) => {
 
     const price_request = {
       starting_price: request.body.starting_price,
-      dine_in_price: request.body.dine_in_price,
-      take_away_price: request.body.take_away_price,
+      selling_price: request.body.selling_price,
       updated_by: request.body.updated_by,
       updated_at: date,
     };
@@ -137,8 +135,7 @@ export const updateProduct = async (request, response) => {
       ...result.rows[0],
       image: host + "assets/" + result.rows[0].image,
       starting_price: price_result.rows[0].starting_price,
-      dine_in_price: price_result.rows[0].dine_in_price,
-      take_away_price: price_result.rows[0].take_away_price,
+      selling_price: price_result.rows[0].selling_price,
     };
 
     standardResponse(response, 200, success_RC, SUCCESS, result);

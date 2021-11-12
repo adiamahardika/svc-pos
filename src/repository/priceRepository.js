@@ -2,12 +2,11 @@ import connection from "../configs/postgres.js";
 
 export const createPriceRepository = (request) => {
   const query = {
-    text: `INSERT INTO price(product_id, starting_price, dine_in_price, take_away_price, updated_by, updated_at, created_by, created_at) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+    text: `INSERT INTO price(product_id, starting_price, selling_price, updated_by, updated_at, created_by, created_at) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
     values: [
       request.product_id,
       request.starting_price,
-      request.dine_in_price,
-      request.take_away_price,
+      request.selling_price,
       request.updated_by,
       request.updated_at,
       request.created_by,
@@ -28,11 +27,10 @@ export const createPriceRepository = (request) => {
 
 export const updatePriceRepository = (request, id) => {
   const query = {
-    text: `UPDATE price SET starting_price = $1, dine_in_price = $2, take_away_price = $3, updated_by = $4, updated_at = $5 WHERE product_id = $6 RETURNING price.*`,
+    text: `UPDATE price SET starting_price = $1, selling_price = $2, updated_by = $4, updated_at = $5 WHERE product_id = $6 RETURNING price.*`,
     values: [
       request.starting_price,
-      request.dine_in_price,
-      request.take_away_price,
+      request.selling_price,
       request.updated_by,
       request.updated_at,
       id,
