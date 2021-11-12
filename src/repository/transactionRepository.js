@@ -3,10 +3,11 @@ import format from "pg-format";
 
 export const createTransactionHeaderRepository = (request) => {
   const query = {
-    text: `INSERT INTO transaction_header(transaction_id, trx_status, branch_id, customer_name, total_quantity, total_price, trx_type, updated_by, updated_at, created_by, created_at) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *`,
+    text: `INSERT INTO transaction_header(transaction_id, trx_status, branch_id, merchant_id, customer_name, total_quantity, total_price, trx_type, updated_by, updated_at, created_by, created_at) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *`,
     values: [
       request.transaction_id,
       request.trx_status,
+      request.merchant_id,
       request.branch_id,
       request.customer_name,
       request.total_quantity,
@@ -180,5 +181,21 @@ export const deleteTransactionDetailRepository = (transaction_id) => {
       if (error) reject(new Error(error), console.log(error));
       resolve(result);
     });
+  });
+};
+
+export const countTransactionByBranchAndDate = (request) => {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `SELECT count(*) as total_data FROM transaction_header WHERE transaction_header.branch_id LIKE '%${request.branch_id}%' AND transaction_header.created_at >= '${request.start}' AND transaction_header.created_at <= '${request.end}'`,
+      (error, result) => {
+        if (error) {
+          console.log(error);
+          reject(new Error(error));
+        } else {
+          resolve(result.rows[0].total_data);
+        }
+      }
+    );
   });
 };

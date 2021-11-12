@@ -7,6 +7,7 @@ import {
 import { standardResponse } from "../helpers/standardResponse.js";
 import {
   countTransaction,
+  countTransactionByBranchAndDate,
   createTransactionDetailRepository,
   createTransactionHeaderRepository,
   deleteTransactionDetailRepository,
@@ -17,18 +18,46 @@ import {
   updateTransactionHeaderRepository,
   updateTransactionStatusRepository,
 } from "../repository/transactionRepository.js";
-import { uid } from "uid";
 import { host } from "../configs/index.js";
+import { getDetailMerchantRepository } from "../repository/merchantRepository.js";
+import { getDetailBranch } from "../repository/branchRepository.js";
 
 export const createTransaction = async (request, response) => {
   try {
     const new_date = new Date();
     const date = new_date.toLocaleString();
-    const transaction_id = uid(16);
+    const today =
+      new_date.getFullYear() +
+      "-" +
+      (new_date.getMonth() + 1) +
+      "-" +
+      new_date.getDate();
+    const count_request = {
+      branch_id: request.body.header.branch_id,
+      start: today,
+      end: today + " 23:59:59",
+    };
+    const count_result = await countTransactionByBranchAndDate(count_request);
+    const detail_merchant = await getDetailMerchantRepository(
+      request.body.header.merchant_id
+    );
+    const detail_branch = await getDetailBranch(request.body.header.branch_id);
+    const transaction_id =
+      detail_merchant.rows[0].merchant_code +
+      "-" +
+      detail_branch.rows[0].branch_number +
+      "-" +
+      new_date.getFullYear().toString().substr(-2) +
+      (new_date.getMonth() + 1) +
+      new_date.getDate() +
+      "-" +
+      (parseInt(count_result, 10) + 1);
+
     const header_request = {
       transaction_id: transaction_id,
       trx_status: UNPAID,
       branch_id: request.body.header.branch_id,
+      merchant_id: request.body.header.merchant_id,
       customer_name: request.body.header.customer_name,
       total_quantity: request.body.header.total_quantity,
       total_price: request.body.header.total_price,

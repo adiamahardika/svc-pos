@@ -15,3 +15,35 @@ export const getUserHasBranch = (id) => {
     );
   });
 };
+
+export const getMaxBranchNumberByMerchant = (merchant_id) => {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `SELECT MAX(branch_number) FROM branch WHERE merchant_id = '${merchant_id}'`,
+      (error, result) => {
+        if (error) {
+          console.log(error);
+          reject(new Error(error));
+        } else {
+          resolve(result);
+        }
+      }
+    );
+  });
+};
+
+export const getDetailBranch = (branch_id) => {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `SELECT * FROM branch WHERE id = ${branch_id}`,
+      (error, result) => {
+        if (error) {
+          console.log(error);
+          reject(new Error(error));
+        } else {
+          resolve(result);
+        }
+      }
+    );
+  });
+};
