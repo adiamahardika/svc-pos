@@ -182,7 +182,7 @@ export const updateTransactionStatus = async (request, response) => {
 export const updateTransaction = async (request, response) => {
   try {
     const date = new Date();
-    const transaction_id = request.body.transaction_id;
+    const transaction_id = request.body.header.transaction_id;
     const header_request = {
       total_quantity: request.body.header.total_quantity,
       total_price: request.body.header.total_price,
