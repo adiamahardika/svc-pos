@@ -31,7 +31,8 @@ import { updateTransactionStatusRepository } from "../repository/transactionRepo
 export const createPayment = async (request, response) => {
   try {
     const new_date = new Date();
-    const local_date = new_date.toLocaleString();
+    const local_date =
+      parseFullDate(new_date) + " " + new_date.toLocaleTimeString();
     const count_request = {
       branch_id: request.body.branch_id,
       start: parseFullDate(new_date),
