@@ -26,7 +26,7 @@ import { parseFullDate, parseShortDate } from "../helpers/index.js";
 export const createTransaction = async (request, response) => {
   try {
     const new_date = new Date();
-    const date = new_date.toLocaleString();
+    const local_date = new_date.toLocaleString();
 
     const count_request = {
       branch_id: request.body.header.branch_id,
@@ -57,9 +57,9 @@ export const createTransaction = async (request, response) => {
       total_price: request.body.header.total_price,
       trx_type: request.body.header.trx_type,
       updated_by: request.body.header.created_by,
-      updated_at: date,
+      updated_at: new_date,
       created_by: request.body.header.created_by,
-      created_at: date,
+      created_at: new_date,
     };
     // Insert to transaction_hader
     const header_result = await createTransactionHeaderRepository(
@@ -74,9 +74,9 @@ export const createTransaction = async (request, response) => {
         value.quantity,
         value.price,
         request.body.header.created_by,
-        date,
+        local_date,
         request.body.header.created_by,
-        date,
+        local_date,
       ];
       detail_request.push(array);
     });

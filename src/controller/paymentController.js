@@ -31,7 +31,7 @@ import { updateTransactionStatusRepository } from "../repository/transactionRepo
 export const createPayment = async (request, response) => {
   try {
     const new_date = new Date();
-    const date = new_date.toLocaleString();
+    const local_date = new_date.toLocaleString();
     const count_request = {
       branch_id: request.body.branch_id,
       start: parseFullDate(new_date),
@@ -63,9 +63,9 @@ export const createPayment = async (request, response) => {
       branch_id: request.body.branch_id,
       merchant_id: request.body.merchant_id,
       updated_by: request.body.created_by,
-      updated_at: date,
+      updated_at: new_date,
       created_by: request.body.created_by,
-      created_at: date,
+      created_at: new_date,
     };
 
     if (
@@ -83,16 +83,16 @@ export const createPayment = async (request, response) => {
         transaction_id,
         invoice_number,
         request.body.created_by,
-        date,
+        local_date,
         request.body.created_by,
-        date,
+        local_date,
       ];
       trx_id_list.push(array);
 
       const update_trx_req = {
         trx_status: PAID,
         updated_by: request.body.created_by,
-        updated_at: date,
+        updated_at: new_date,
       };
       if (payment_request.response_code === success_RC) {
         await updateTransactionStatusRepository(update_trx_req, transaction_id);
@@ -111,9 +111,9 @@ export const createPayment = async (request, response) => {
         approval_code: request.body.edc.approval_code,
         bank_name: request.body.edc.bank_name,
         updated_by: request.body.created_by,
-        updated_at: date,
+        updated_at: new_date,
         created_by: request.body.created_by,
-        created_at: date,
+        created_at: new_date,
       };
 
       const edc_result = await createPaymentEdcRepository(edc_request);
@@ -125,9 +125,9 @@ export const createPayment = async (request, response) => {
         submit_amount: request.body.submit_amount,
         change: request.body.change,
         updated_by: request.body.created_by,
-        updated_at: date,
+        updated_at: new_date,
         created_by: request.body.created_by,
-        created_at: date,
+        created_at: new_date,
       };
 
       const cash_result = await createPaymentCashRepository(cash_request);
