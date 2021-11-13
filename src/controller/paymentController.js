@@ -9,6 +9,7 @@ import {
   SUCCESS,
   success_RC,
 } from "../helpers/generalConstant.js";
+import { parseFullDate, parseShortDate } from "../helpers/index.js";
 import { standardResponse } from "../helpers/standardResponse.js";
 import { getDetailBranch } from "../repository/branchRepository.js";
 import { getDetailMerchantRepository } from "../repository/merchantRepository.js";
@@ -31,16 +32,10 @@ export const createPayment = async (request, response) => {
   try {
     const new_date = new Date();
     const date = new_date.toLocaleString();
-    const today =
-      new_date.getFullYear() +
-      "-" +
-      (new_date.getMonth() + 1) +
-      "-" +
-      new_date.getDate();
     const count_request = {
       branch_id: request.body.branch_id,
-      start: today,
-      end: today + " 23:59:59",
+      start: parseFullDate(new_date),
+      end: parseFullDate(new_date) + " 23:59:59",
     };
     const count_result = await countPaymentByBranchAndDate(count_request);
     const detail_merchant = await getDetailMerchantRepository(
@@ -53,9 +48,7 @@ export const createPayment = async (request, response) => {
       "/" +
       detail_branch.rows[0].branch_number +
       "/" +
-      new_date.getFullYear().toString().substr(-2) +
-      (new_date.getMonth() + 1) +
-      new_date.getDate() +
+      parseShortDate(new_date) +
       "/" +
       (parseInt(count_result, 10) + 1);
 
