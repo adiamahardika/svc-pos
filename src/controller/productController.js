@@ -73,7 +73,6 @@ export const createProduct = async (request, response) => {
       product_id: result.rows[0].id,
       starting_price: request.body.starting_price,
       selling_price: request.body.selling_price,
-
       updated_by: request.body.created_by,
       updated_at: date,
       created_by: request.body.created_by,
