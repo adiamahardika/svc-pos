@@ -1,6 +1,11 @@
 import express from "express";
-import { getMerchant } from "../../controller/merchantController.js";
+import {
+  createMerchant,
+  getMerchant,
+} from "../../controller/merchantController.js";
 
 export const merchantRouter = express.Router();
 
-merchantRouter.post("/get-merchant", getMerchant);
+merchantRouter
+  .post("/get-merchant", getMerchant)
+  .post("/create-merchant", createMerchant);

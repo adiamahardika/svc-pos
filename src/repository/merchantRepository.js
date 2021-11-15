@@ -35,7 +35,53 @@ export const countMerchant = (request) => {
 export const getMerchantRepository = (request) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT * FROM merchant WHERE name LIKE '%${request.search}%' ORDER BY name LIMIT ${request.limit} OFFSET ${request.start_index}`,
+      `SELECT * FROM merchant WHERE name LIKE '%${
+        request.search
+      }%' OR merchant_code LIKE '%${request.search.toUppercase()}%' ORDER BY name LIMIT ${
+        request.limit
+      } OFFSET ${request.start_index}`,
+      (error, result) => {
+        if (error) {
+          console.log(error);
+          reject(new Error(error));
+        } else {
+          resolve(result);
+        }
+      }
+    );
+  });
+};
+
+export const createMerchantRepository = (request) => {
+  const query = {
+    text: `INSERT INTO merchant(name, owner, merchant_code, is_active, updated_by, updated_at, created_by, created_at) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+    values: [
+      request.name,
+      request.owner,
+      request.merchant_code,
+      request.is_active,
+      request.updated_by,
+      request.updated_at,
+      request.created_by,
+      request.created_at,
+    ],
+  };
+  return new Promise((resolve, reject) => {
+    connection.query(query, (error, result) => {
+      if (error) {
+        console.log(error);
+        reject(new Error(error));
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
+
+export const checkMerchantCode = (merchant_code) => {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `SELECT * FROM merchant WHERE merchant_code LIKE '%${merchant_code}%'`,
       (error, result) => {
         if (error) {
           console.log(error);
