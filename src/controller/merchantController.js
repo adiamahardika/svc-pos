@@ -76,6 +76,7 @@ export const updateMerchant = async (request, response) => {
     const merchant_id = request.body.merchant_id;
     const request_data = {
       name: request.body.name,
+      is_active: request.body.is_active || "true",
       updated_by: request.body.updated_by,
       updated_at: date,
     };
