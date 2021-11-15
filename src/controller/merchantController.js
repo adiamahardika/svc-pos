@@ -5,6 +5,7 @@ import {
   countMerchant,
   createMerchantRepository,
   getMerchantRepository,
+  updateMerchantRepository,
 } from "../repository/merchantRepository.js";
 
 export const getMerchant = async (request, response) => {
@@ -63,6 +64,23 @@ export const createMerchant = async (request, response) => {
         "Another merchant already use that merchant_code!"
       );
     }
+  } catch (error) {
+    console.log(error);
+    standardResponse(response, 400, error_RC, error.toString());
+  }
+};
+
+export const updateMerchant = async (request, response) => {
+  try {
+    const date = new Date();
+    const merchant_id = request.body.merchant_id;
+    const request_data = {
+      name: request.body.name,
+      updated_by: request.body.updated_by,
+      updated_at: date,
+    };
+    const result = await updateMerchantRepository(request_data, merchant_id);
+    standardResponse(response, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
     standardResponse(response, 400, error_RC, error.toString());

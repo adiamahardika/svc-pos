@@ -93,3 +93,20 @@ export const checkMerchantCode = (merchant_code) => {
     );
   });
 };
+
+export const updateMerchantRepository = async (request, id) => {
+  const query = {
+    text: `UPDATE merchant SET name = $1, updated_by = $2, updated_at = $3 WHERE id = $4 RETURNING merchant.*`,
+    values: [request.name, request.updated_by, request.updated_at, id],
+  };
+  return new Promise((resolve, reject) => {
+    connection.query(query, (error, result) => {
+      if (error) {
+        console.log(error);
+        reject(new Error(error));
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
