@@ -27,7 +27,7 @@ export const createPriceRepository = (request) => {
 
 export const updatePriceRepository = (request, id) => {
   const query = {
-    text: `UPDATE price SET starting_price = $1, selling_price = $2, updated_by = $4, updated_at = $5 WHERE product_id = $6 RETURNING price.*`,
+    text: `UPDATE price SET starting_price = $1, selling_price = $2, updated_by = $3, updated_at = $4 WHERE product_id = $5 RETURNING price.*`,
     values: [
       request.starting_price,
       request.selling_price,
