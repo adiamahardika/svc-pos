@@ -1,6 +1,6 @@
 import express from "express";
-import { getRole } from "../../controller/roleController.js";
+import { createRole, getRole } from "../../controller/roleController.js";
 
 export const roleRouter = express.Router();
 
-roleRouter.post("/get-role", getRole);
+roleRouter.post("/get-role", getRole).post("/create-role", createRole);
