@@ -56,3 +56,20 @@ export const updateRoleRepository = (request, id) => {
     });
   });
 };
+
+export const deleteRoleRepository = (request, id) => {
+  const query = {
+    text: `UPDATE role SET is_active = $1 WHERE id = $2`,
+    values: [request.is_active, id],
+  };
+  return new Promise((resolve, reject) => {
+    connection.query(query, (error, result) => {
+      if (error) {
+        console.log(error);
+        reject(new Error(error));
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};

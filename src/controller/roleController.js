@@ -2,6 +2,7 @@ import { error_RC, SUCCESS, success_RC } from "../helpers/generalConstant.js";
 import { standardResponse } from "../helpers/standardResponse.js";
 import {
   createRoleRepository,
+  deleteRoleRepository,
   getRoleRepository,
   updateRoleRepository,
 } from "../repository/roleRepository.js";
@@ -50,6 +51,20 @@ export const updateRole = async (request, response) => {
       updated_at: date,
     };
     const result = await updateRoleRepository(request_data, role_id);
+    standardResponse(response, 200, success_RC, SUCCESS, result);
+  } catch (error) {
+    console.log(error);
+    standardResponse(response, 400, error_RC, error.toString());
+  }
+};
+
+export const deleteRole = async (request, response) => {
+  try {
+    const role_id = request.params.role_id;
+    const request_data = {
+      is_active: "false",
+    };
+    const result = await deleteRoleRepository(request_data, role_id);
     standardResponse(response, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
