@@ -35,9 +35,9 @@ export const countMerchant = (request) => {
 export const getMerchantRepository = (request) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT * FROM merchant WHERE name LIKE '%${
+      `SELECT merchant.*, users.name as owner_name FROM merchant LEFT OUTER JOIN users ON (merchant.owner = CAST(users.id AS varchar(10))) WHERE merchant.name LIKE '%${
         request.search
-      }%' OR merchant_code LIKE '%${request.search.toUppercase()}%' ORDER BY name LIMIT ${
+      }%' OR merchant.merchant_code LIKE '%${request.search.toUpperCase()}%' ORDER BY name LIMIT ${
         request.limit
       } OFFSET ${request.start_index}`,
       (error, result) => {
