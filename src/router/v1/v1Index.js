@@ -7,6 +7,7 @@ import { image_location } from "../../configs/index.js";
 import { authRouter } from "./authRoutes.js";
 import { roleRouter } from "./roleRoutes.js";
 import { merchantRouter } from "./merchantRoutes.js";
+import { userRouter } from "./userRoutes.js";
 
 export const v1Router = express.Router();
 
@@ -18,4 +19,5 @@ v1Router
   .use("/auth", authRouter)
   .use("/role", roleRouter)
   .use("/merchant", merchantRouter)
+  .use("/user", userRouter)
   .use("/assets", express.static(image_location));
