@@ -47,3 +47,19 @@ export const getDetailBranch = (branch_id) => {
     );
   });
 };
+
+export const getBranchByMerchantId = (merchant_id) => {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `SELECT branch.name as branch_name, branch.address, branch.branch_number, branch.updated_at, branch.updated_by, branch.created_at, branch.created_by FROM branch WHERE merchant_id LIKE '%${merchant_id}%'`,
+      (error, result) => {
+        if (error) {
+          console.log(error);
+          reject(new Error(error));
+        } else {
+          resolve(result);
+        }
+      }
+    );
+  });
+};

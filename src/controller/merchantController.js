@@ -1,9 +1,11 @@
 import { error_RC, SUCCESS, success_RC } from "../helpers/generalConstant.js";
 import { standardResponse } from "../helpers/standardResponse.js";
+import { getBranchByMerchantId } from "../repository/branchRepository.js";
 import {
   checkMerchantCode,
   countMerchant,
   createMerchantRepository,
+  getDetailMerchantRepository,
   getMerchantRepository,
   updateMerchantRepository,
 } from "../repository/merchantRepository.js";
@@ -81,6 +83,24 @@ export const updateMerchant = async (request, response) => {
       updated_at: date,
     };
     const result = await updateMerchantRepository(request_data, merchant_id);
+    standardResponse(response, 200, success_RC, SUCCESS, result);
+  } catch (error) {
+    console.log(error);
+    standardResponse(response, 400, error_RC, error.toString());
+  }
+};
+
+export const getDetailMerchant = async (request, response) => {
+  try {
+    const merchant_id = request.params.merchant_id;
+    const result = await getDetailMerchantRepository(merchant_id);
+    const branch_result = await getBranchByMerchantId(merchant_id);
+
+    result.rows[0] = {
+      ...result.rows[0],
+      branch_list: branch_result.rows,
+    };
+
     standardResponse(response, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
