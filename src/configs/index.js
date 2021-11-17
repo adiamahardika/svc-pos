@@ -12,4 +12,4 @@ export const database = {
 export const port = parseInt(process.env.PORT);
 export const image_location = process.env.IMAGE_LOCATION;
 export const host = process.env.HOST;
-export const jwt_secret_key = process.env.jwt_secret_key;
+export const jwt_secret_key = process.env.JWT_SECRET_KEY;
