@@ -30,117 +30,125 @@ import { updateTransactionStatusRepository } from "../repository/transactionRepo
 
 export const createPayment = async (request, response) => {
   try {
-    const new_date = new Date();
-    const local_date =
-      parseFullDate(new_date) + " " + new_date.toLocaleTimeString();
-    const count_request = {
-      branch_id: request.body.branch_id,
-      start: parseFullDate(new_date),
-      end: parseFullDate(new_date) + " 23:59:59",
-    };
-    const count_result = await countPaymentByBranchAndDate(count_request);
-    const detail_merchant = await getDetailMerchantRepository(
-      request.body.merchant_id
-    );
-    const detail_branch = await getDetailBranchRepository(
-      request.body.branch_id
-    );
-    const invoice_number =
-      "INV/" +
-      detail_merchant.rows[0].merchant_code +
-      "/" +
-      detail_branch.rows[0].branch_number +
-      "/" +
-      parseShortDate(new_date) +
-      "/" +
-      (parseInt(count_result, 10) + 1);
-
-    const payment_request = {
-      invoice_number: invoice_number,
-      payment_method: request.body.payment_method.toUpperCase(),
-      amount: request.body.amount,
-      submit_amount: request.body.submit_amount,
-      submit_amount: request.body.submit_amount,
-      status: PAID,
-      response_code: success_RC,
-      branch_id: request.body.branch_id,
-      merchant_id: request.body.merchant_id,
-      updated_by: request.body.created_by,
-      updated_at: new_date,
-      created_by: request.body.created_by,
-      created_at: new_date,
-    };
-
     if (
-      parseFloat(request.body.amount) > parseFloat(request.body.submit_amount)
+      parseFloat(request.body.submit_amount) >= parseFloat(request.body.amount)
     ) {
-      payment_request.response_code = cancel_RC;
-      payment_request.status = CANCEL;
-    }
-    // Insert to lg_payment
-    const payment_result = await createPaymentRepository(payment_request);
+      const new_date = new Date();
+      const local_date =
+        parseFullDate(new_date) + " " + new_date.toLocaleTimeString();
+      const count_request = {
+        branch_id: request.body.branch_id,
+        start: parseFullDate(new_date),
+        end: parseFullDate(new_date) + " 23:59:59",
+      };
+      const count_result = await countPaymentByBranchAndDate(count_request);
+      const detail_merchant = await getDetailMerchantRepository(
+        request.body.merchant_id
+      );
+      const detail_branch = await getDetailBranchRepository(
+        request.body.branch_id
+      );
+      const invoice_number =
+        "INV/" +
+        detail_merchant.rows[0].merchant_code +
+        "/" +
+        detail_branch.rows[0].branch_number +
+        "/" +
+        parseShortDate(new_date) +
+        "/" +
+        (parseInt(count_result, 10) + 1);
 
-    let trx_id_list = [];
-    await request.body.transaction_id.map(async (transaction_id) => {
-      let array = [
-        transaction_id,
-        invoice_number,
-        request.body.created_by,
-        local_date,
-        request.body.created_by,
-        local_date,
-      ];
-      trx_id_list.push(array);
-
-      const update_trx_req = {
-        trx_status: PAID,
+      const payment_request = {
+        invoice_number: invoice_number,
+        payment_method: request.body.payment_method.toUpperCase(),
+        amount: request.body.amount,
+        submit_amount: request.body.submit_amount,
+        submit_amount: request.body.submit_amount,
+        status: PAID,
+        response_code: success_RC,
+        branch_id: request.body.branch_id,
+        merchant_id: request.body.merchant_id,
         updated_by: request.body.created_by,
         updated_at: new_date,
+        created_by: request.body.created_by,
+        created_at: new_date,
       };
-      if (payment_request.response_code === success_RC) {
-        await updateTransactionStatusRepository(update_trx_req, transaction_id);
+
+      // Insert to lg_payment
+      const payment_result = await createPaymentRepository(payment_request);
+
+      let trx_id_list = [];
+      await request.body.transaction_id.map(async (transaction_id) => {
+        let array = [
+          transaction_id,
+          invoice_number,
+          request.body.created_by,
+          local_date,
+          request.body.created_by,
+          local_date,
+        ];
+        trx_id_list.push(array);
+
+        const update_trx_req = {
+          trx_status: PAID,
+          updated_by: request.body.created_by,
+          updated_at: new_date,
+        };
+        if (payment_request.response_code === success_RC) {
+          await updateTransactionStatusRepository(
+            update_trx_req,
+            transaction_id
+          );
+        }
+      });
+      await createInvoiceHasTrxId(trx_id_list);
+
+      if (
+        request.body.payment_method.toUpperCase() === PAYMENT_CC ||
+        request.body.payment_method.toUpperCase() === PAYMENT_DEBIT
+      ) {
+        const edc_request = {
+          invoice_number: invoice_number,
+          amount: request.body.amount,
+          submit_amount: request.body.submit_amount,
+          approval_code: request.body.edc.approval_code,
+          bank_name: request.body.edc.bank_name,
+          updated_by: request.body.created_by,
+          updated_at: new_date,
+          created_by: request.body.created_by,
+          created_at: new_date,
+        };
+
+        const edc_result = await createPaymentEdcRepository(edc_request);
+        payment_result.rows[0].detail = edc_result.rows[0];
+      } else if (request.body.payment_method.toUpperCase() === PAYMENT_CASH) {
+        const cash_request = {
+          invoice_number: invoice_number,
+          amount: request.body.amount,
+          submit_amount: request.body.submit_amount,
+          change: request.body.change,
+          updated_by: request.body.created_by,
+          updated_at: new_date,
+          created_by: request.body.created_by,
+          created_at: new_date,
+        };
+
+        const cash_result = await createPaymentCashRepository(cash_request);
+        payment_result.rows[0].detail = cash_result.rows[0];
       }
-    });
-    await createInvoiceHasTrxId(trx_id_list);
 
-    if (
-      request.body.payment_method.toUpperCase() === PAYMENT_CC ||
-      request.body.payment_method.toUpperCase() === PAYMENT_DEBIT
-    ) {
-      const edc_request = {
-        invoice_number: invoice_number,
-        amount: request.body.amount,
-        submit_amount: request.body.submit_amount,
-        approval_code: request.body.edc.approval_code,
-        bank_name: request.body.edc.bank_name,
-        updated_by: request.body.created_by,
-        updated_at: new_date,
-        created_by: request.body.created_by,
-        created_at: new_date,
-      };
-
-      const edc_result = await createPaymentEdcRepository(edc_request);
-      payment_result.rows[0].detail = edc_result.rows[0];
-    } else if (request.body.payment_method.toUpperCase() === PAYMENT_CASH) {
-      const cash_request = {
-        invoice_number: invoice_number,
-        amount: request.body.amount,
-        submit_amount: request.body.submit_amount,
-        change: request.body.change,
-        updated_by: request.body.created_by,
-        updated_at: new_date,
-        created_by: request.body.created_by,
-        created_at: new_date,
-      };
-
-      const cash_result = await createPaymentCashRepository(cash_request);
-      payment_result.rows[0].detail = cash_result.rows[0];
+      standardResponse(response, 200, success_RC, SUCCESS, payment_result);
+    } else {
+      standardResponse(
+        response,
+        200,
+        error_RC,
+        "Your submit amount is not enough!"
+      );
     }
-
-    standardResponse(response, 200, success_RC, SUCCESS, payment_result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString(), []);
+    standardResponse(response, 400, error_RC, error.toString());
   }
 };
 
