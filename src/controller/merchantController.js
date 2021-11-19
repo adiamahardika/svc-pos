@@ -1,6 +1,11 @@
+import { uid } from "uid";
 import { error_RC, SUCCESS, success_RC } from "../helpers/generalConstant.js";
 import { standardResponse } from "../helpers/standardResponse.js";
-import { getBranchByMerchantId } from "../repository/branchRepository.js";
+import { createBankAccountRepository } from "../repository/bankAccountRepository.js";
+import {
+  createBranchRepository,
+  getBranchByMerchantId,
+} from "../repository/branchRepository.js";
 import {
   checkMerchantCode,
   countMerchant,
@@ -42,21 +47,63 @@ export const getMerchant = async (request, response) => {
 export const createMerchant = async (request, response) => {
   try {
     const date = new Date();
-    const request_data = {
-      name: request.body.name,
-      owner: request.body.user_id,
-      merchant_code: request.body.merchant_code.toUpperCase(),
-      is_active: "true",
-      updated_by: request.body.created_by,
-      updated_at: date,
-      created_by: request.body.created_by,
-      created_at: date,
-    };
-    const check_merchant_code = await checkMerchantCode(
-      request.body.merchant_code
-    );
+    const merchant_code = request.body.merchant.merchant_code.toUpperCase();
+    const check_merchant_code = await checkMerchantCode(merchant_code);
     if (check_merchant_code.rows.length === 0) {
+      const bank_account_req = {
+        bank_name: request.body.bank_account.bank_name,
+        nasabah: request.body.bank_account.nasabah,
+        no_rekening: request.body.bank_account.no_rekening,
+        updated_by: request.body.merchant.created_by,
+        updated_at: date,
+        created_by: request.body.merchant.created_by,
+        created_at: date,
+      };
+      const ba_result = await createBankAccountRepository(bank_account_req);
+
+      const request_data = {
+        name: request.body.merchant.name,
+        owner: request.body.merchant.user_id,
+        npwp: request.body.merchant.npwp,
+        mc_id: request.body.merchant.mc_id,
+        ba_id: ba_result.rows[0].id,
+        merchant_code: merchant_code,
+        secret_key: merchant_code + "-" + uid(8),
+        is_active: "true",
+        updated_by: request.body.merchant.created_by,
+        updated_at: date,
+        created_by: request.body.merchant.created_by,
+        created_at: date,
+      };
       const result = await createMerchantRepository(request_data);
+
+      const branch_request = {
+        location: request.body.branch.location,
+        merchant_id: result.rows[0].id,
+        branch_address: request.body.branch.branch_address,
+        branch_number: 1,
+        provinsi: request.body.branch.provinsi,
+        kota: request.body.branch.kota,
+        kecamatan: request.body.branch.kota,
+        kelurahan: request.body.branch.kelurahan,
+        kode_pos: request.body.branch.kode_pos,
+        email: request.body.branch.email,
+        phone: request.body.branch.phone,
+        fax: request.body.branch.fax,
+        is_active: "true",
+        updated_by: request.body.merchant.created_by,
+        updated_at: date,
+        created_by: request.body.merchant.created_by,
+        created_at: date,
+      };
+      const branch_result = await createBranchRepository(branch_request);
+
+      result.rows[0] = {
+        merchant: result.rows[0],
+        branch: branch_result.rows[0],
+        bank_account: ba_result.rows[0],
+      };
+
       standardResponse(response, 200, success_RC, SUCCESS, result);
     } else {
       standardResponse(

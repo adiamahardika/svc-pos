@@ -54,11 +54,15 @@ export const getMerchantRepository = (request) => {
 
 export const createMerchantRepository = (request) => {
   const query = {
-    text: `INSERT INTO merchant(name, owner, merchant_code, is_active, updated_by, updated_at, created_by, created_at) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+    text: `INSERT INTO merchant(name, owner,npwp, mc_id, ba_id, merchant_code, secret_key, is_active, updated_by, updated_at, created_by, created_at) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *`,
     values: [
       request.name,
       request.owner,
+      request.npwp,
+      request.mc_id,
+      request.ba_id,
       request.merchant_code,
+      request.secret_key,
       request.is_active,
       request.updated_by,
       request.updated_at,

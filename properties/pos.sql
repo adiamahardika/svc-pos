@@ -21,19 +21,67 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
+-- Name: bank_account; Type: TABLE; Schema: production; Owner: postgres
+--
+
+CREATE TABLE production.bank_account (
+    id bigint NOT NULL,
+    bank_name character varying(255),
+    nasabah character varying(255),
+    no_rekening character varying(255),
+    updated_by character varying(255),
+    updated_at timestamp without time zone DEFAULT now() NOT NULL,
+    created_by character varying(255),
+    created_at timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE production.bank_account OWNER TO postgres;
+
+--
+-- Name: bank_account_id_seq; Type: SEQUENCE; Schema: production; Owner: postgres
+--
+
+CREATE SEQUENCE production.bank_account_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE production.bank_account_id_seq OWNER TO postgres;
+
+--
+-- Name: bank_account_id_seq; Type: SEQUENCE OWNED BY; Schema: production; Owner: postgres
+--
+
+ALTER SEQUENCE production.bank_account_id_seq OWNED BY production.bank_account.id;
+
+
+--
 -- Name: branch; Type: TABLE; Schema: production; Owner: postgres
 --
 
 CREATE TABLE production.branch (
     id bigint NOT NULL,
-    name character varying(255),
+    location character varying(255),
     merchant_id character varying(255),
-    address character varying(255),
+    branch_address character varying(255),
     updated_by character varying(255),
     updated_at timestamp without time zone DEFAULT now() NOT NULL,
     created_by character varying(255),
     created_at timestamp without time zone DEFAULT now() NOT NULL,
-    branch_number integer
+    branch_number integer,
+    provinsi character varying(255),
+    kota character varying(255),
+    kecamatan character varying(255),
+    kode_pos character varying(255),
+    email character varying(255),
+    phone character varying(255),
+    fax character varying(255),
+    is_active character varying(225),
+    kelurahan character varying(255)
 );
 
 
@@ -275,11 +323,53 @@ CREATE TABLE production.merchant (
     updated_at timestamp without time zone DEFAULT now() NOT NULL,
     created_by character varying(255),
     created_at timestamp without time zone DEFAULT now() NOT NULL,
-    merchant_code character varying(255)
+    merchant_code character varying(255),
+    is_active character varying(255),
+    npwp character varying(255),
+    mc_id character varying(255),
+    ba_id character varying(255),
+    secret_key character varying(255)
 );
 
 
 ALTER TABLE production.merchant OWNER TO postgres;
+
+--
+-- Name: merchant_category; Type: TABLE; Schema: production; Owner: postgres
+--
+
+CREATE TABLE production.merchant_category (
+    id bigint NOT NULL,
+    name character varying(255),
+    updated_by character varying(255),
+    updated_at timestamp without time zone DEFAULT now() NOT NULL,
+    created_by character varying(255),
+    created_at timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE production.merchant_category OWNER TO postgres;
+
+--
+-- Name: merchant_category_id_seq; Type: SEQUENCE; Schema: production; Owner: postgres
+--
+
+CREATE SEQUENCE production.merchant_category_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE production.merchant_category_id_seq OWNER TO postgres;
+
+--
+-- Name: merchant_category_id_seq; Type: SEQUENCE OWNED BY; Schema: production; Owner: postgres
+--
+
+ALTER SEQUENCE production.merchant_category_id_seq OWNED BY production.merchant_category.id;
+
 
 --
 -- Name: merchant_id_seq; Type: SEQUENCE; Schema: production; Owner: postgres
@@ -392,7 +482,8 @@ CREATE TABLE production.role (
     updated_by character varying(255),
     updated_at timestamp without time zone DEFAULT now() NOT NULL,
     created_by character varying(255),
-    created_at timestamp without time zone DEFAULT now() NOT NULL
+    created_at timestamp without time zone DEFAULT now() NOT NULL,
+    is_active character varying(255)
 );
 
 
@@ -543,6 +634,47 @@ ALTER SEQUENCE production.transaction_header_id_seq OWNED BY production.transact
 
 
 --
+-- Name: user_branch; Type: TABLE; Schema: production; Owner: postgres
+--
+
+CREATE TABLE production.user_branch (
+    id bigint NOT NULL,
+    user_code character varying(255),
+    hash_password character varying(255),
+    branch_id character varying(255),
+    role_id character varying(255),
+    is_active character varying(255),
+    updated_by character varying(255),
+    updated_at timestamp without time zone DEFAULT now() NOT NULL,
+    created_by character varying(255),
+    created_at timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE production.user_branch OWNER TO postgres;
+
+--
+-- Name: user_branch_id_seq; Type: SEQUENCE; Schema: production; Owner: postgres
+--
+
+CREATE SEQUENCE production.user_branch_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE production.user_branch_id_seq OWNER TO postgres;
+
+--
+-- Name: user_branch_id_seq; Type: SEQUENCE OWNED BY; Schema: production; Owner: postgres
+--
+
+ALTER SEQUENCE production.user_branch_id_seq OWNED BY production.user_branch.id;
+
+
+--
 -- Name: user_has_branch; Type: TABLE; Schema: production; Owner: postgres
 --
 
@@ -586,7 +718,6 @@ ALTER SEQUENCE production.user_has_branch_id_seq OWNED BY production.user_has_br
 
 CREATE TABLE production.users (
     id bigint NOT NULL,
-    username character varying(255),
     name character varying(255),
     email character varying(255),
     role_id character varying(255),
@@ -595,7 +726,11 @@ CREATE TABLE production.users (
     updated_by character varying(255),
     updated_at timestamp without time zone DEFAULT now() NOT NULL,
     created_by character varying(255),
-    created_at timestamp without time zone DEFAULT now() NOT NULL
+    created_at timestamp without time zone DEFAULT now() NOT NULL,
+    ktp character varying(255),
+    no_hp character varying(255),
+    is_otp_validate character varying(255),
+    is_email_validate character varying(255)
 );
 
 
@@ -620,6 +755,13 @@ ALTER TABLE production.users_id_seq OWNER TO postgres;
 --
 
 ALTER SEQUENCE production.users_id_seq OWNED BY production.users.id;
+
+
+--
+-- Name: bank_account id; Type: DEFAULT; Schema: production; Owner: postgres
+--
+
+ALTER TABLE ONLY production.bank_account ALTER COLUMN id SET DEFAULT nextval('production.bank_account_id_seq'::regclass);
 
 
 --
@@ -672,6 +814,13 @@ ALTER TABLE ONLY production.merchant ALTER COLUMN id SET DEFAULT nextval('produc
 
 
 --
+-- Name: merchant_category id; Type: DEFAULT; Schema: production; Owner: postgres
+--
+
+ALTER TABLE ONLY production.merchant_category ALTER COLUMN id SET DEFAULT nextval('production.merchant_category_id_seq'::regclass);
+
+
+--
 -- Name: price id; Type: DEFAULT; Schema: production; Owner: postgres
 --
 
@@ -714,6 +863,13 @@ ALTER TABLE ONLY production.transaction_header ALTER COLUMN id SET DEFAULT nextv
 
 
 --
+-- Name: user_branch id; Type: DEFAULT; Schema: production; Owner: postgres
+--
+
+ALTER TABLE ONLY production.user_branch ALTER COLUMN id SET DEFAULT nextval('production.user_branch_id_seq'::regclass);
+
+
+--
 -- Name: user_has_branch id; Type: DEFAULT; Schema: production; Owner: postgres
 --
 
@@ -728,12 +884,21 @@ ALTER TABLE ONLY production.users ALTER COLUMN id SET DEFAULT nextval('productio
 
 
 --
+-- Data for Name: bank_account; Type: TABLE DATA; Schema: production; Owner: postgres
+--
+
+INSERT INTO production.bank_account VALUES
+	(5, 'BCA', 'Adia', '808090', 'Adia', '2021-11-19 10:43:32.424', 'Adia', '2021-11-19 10:43:32.424');
+
+
+--
 -- Data for Name: branch; Type: TABLE DATA; Schema: production; Owner: postgres
 --
 
 INSERT INTO production.branch VALUES
-	(1, 'PIM 1', '1', 'Pondok Indah Mall 1 Lantai 1', 'Adia', '2021-10-27 11:14:35.695598', 'Adia', '2021-10-27 11:14:35.695598', 1),
-	(2, 'PIM 2', '1', 'Pondok Indah Mall 2 Lantai 2', 'Adia', '2021-11-08 13:32:44.470859', 'Adia', '2021-11-08 13:32:44.470859', 2);
+	(1, 'PIM 1', '1', 'Pondok Indah Mall 1 Lantai 1', 'Adia', '2021-10-27 11:14:35.695598', 'Adia', '2021-10-27 11:14:35.695598', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+	(2, 'PIM 2', '1', 'Pondok Indah Mall 2 Lantai 2', 'Adia', '2021-11-08 13:32:44.470859', 'Adia', '2021-11-08 13:32:44.470859', 2, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+	(4, 'Tebet', '7', 'Jl. Tebet Timur dalam', 'Adia', '2021-11-19 10:43:32.424', 'Adia', '2021-11-19 10:43:32.424', 1, 'DKI Jakarta', 'Jakarta Selatan', 'Jakarta Selatan', '1234', 'miewaw.tebet@mail.com', '789123', '789123', 'true', 'Tebet timur');
 
 
 --
@@ -754,7 +919,12 @@ INSERT INTO production.invoice_has_trx VALUES
 	(8, 'NAH-1-211112-3', 'INV/NAH/1/211112/1', 'Adia', '2021-11-12 15:28:57', 'Adia', '2021-11-12 15:28:57'),
 	(9, 'NAH-1-211112-3', 'INV/NAH/1/211112/1', 'Adia', '2021-11-12 15:32:39', 'Adia', '2021-11-12 15:32:39'),
 	(10, 'NAH-1-211112-3', 'INV/NAH/1/211112/2', 'Adia', '2021-11-12 15:32:53', 'Adia', '2021-11-12 15:32:53'),
-	(11, 'NAH-1-211112-3', 'INV/NAH/1/211113/1', 'Adia', '2021-11-13 10:43:25', 'Adia', '2021-11-13 10:43:25');
+	(11, 'NAH-1-211112-3', 'INV/NAH/1/211113/1', 'Adia', '2021-11-13 10:43:25', 'Adia', '2021-11-13 10:43:25'),
+	(12, 'NAH-1-211112-3', 'INV/NAH/1/211013/1', 'Adia', '2021-11-13 10:51:24', 'Adia', '2021-11-13 10:51:24'),
+	(13, 'NAH-1-211112-3', 'INV/NAH/1/211113/3', 'Adia', '2021-11-13 11:13:36', 'Adia', '2021-11-13 11:13:36'),
+	(14, 'NAH-1-211112-3', 'INV/NAH/1/211113/4', 'Adia', '2021-11-13 11:14:26', 'Adia', '2021-11-13 11:14:26'),
+	(15, 'NAH-1-211112-3', 'INV/NAH/1/211113/5', 'Adia', '2021-11-13 04:33:57.748', 'Adia', '2021-11-13 04:33:57.748'),
+	(16, 'NAH-1-211112-3', 'INV/NAH/1/211113/7', 'Adia', '2021-11-13 11:36:00', 'Adia', '2021-11-13 11:36:00');
 
 
 --
@@ -764,7 +934,13 @@ INSERT INTO production.invoice_has_trx VALUES
 INSERT INTO production.lg_payment VALUES
 	(28, 'INV/NAH/1/211112/1', 'CC', '50000', '50000', 'PAID', '00', 'Adia', '2021-11-12 15:32:39', 'Adia', '2021-11-12 15:32:39', '1', '1'),
 	(29, 'INV/NAH/1/211112/2', 'CC', '50000', '50000', 'PAID', '00', 'Adia', '2021-11-12 15:32:53', 'Adia', '2021-11-12 15:32:53', '1', '1'),
-	(30, 'INV/NAH/1/211113/1', 'CC', '50000', '50000', 'PAID', '00', 'Adia', '2021-11-13 10:43:25', 'Adia', '2021-11-13 10:43:25', '1', '1');
+	(30, 'INV/NAH/1/211113/1', 'CC', '50000', '50000', 'PAID', '00', 'Adia', '2021-11-13 10:43:25', 'Adia', '2021-11-13 10:43:25', '1', '1'),
+	(31, 'INV/NAH/1/211013/1', 'CC', '50000', '50000', 'PAID', '00', 'Adia', '2021-11-13 10:51:24', 'Adia', '2021-11-13 10:51:24', '1', '1'),
+	(32, 'INV/NAH/1/211113/3', 'CC', '50000', '50000', 'PAID', '00', 'Adia', '2021-11-13 11:13:36.488', 'Adia', '2021-11-13 11:13:36.488', '1', '1'),
+	(33, 'INV/NAH/1/211113/4', 'CC', '50000', '50000', 'PAID', '00', 'Adia', '2021-11-13 11:14:26.892', 'Adia', '2021-11-13 11:14:26.892', '1', '1'),
+	(34, 'INV/NAH/1/211113/5', 'CC', '50000', '50000', 'PAID', '00', 'Adia', '2021-11-13 11:33:57.748', 'Adia', '2021-11-13 11:33:57.748', '1', '1'),
+	(35, 'INV/NAH/1/211113/6', 'CC', '50000', '50000', 'PAID', '00', 'Adia', '2021-11-13 11:35:38.412', 'Adia', '2021-11-13 11:35:38.412', '1', '1'),
+	(36, 'INV/NAH/1/211113/7', 'CC', '50000', '50000', 'PAID', '00', 'Adia', '2021-11-13 11:36:00.442', 'Adia', '2021-11-13 11:36:00.442', '1', '1');
 
 
 --
@@ -782,7 +958,11 @@ INSERT INTO production.lg_payment_cash VALUES
 INSERT INTO production.lg_payment_edc VALUES
 	(3, '123', 'Mandiri', '50000', '50000', 'Adia', '2021-11-12 15:32:53', 'Adia', '2021-11-12 15:32:53', 'INV/NAH/1/211112/2'),
 	(2, '123', 'BCA', '50000', '50000', 'Adia', '2021-11-12 15:28:57', 'Adia', '2021-11-12 15:28:57', 'INV/NAH/1/211112/1'),
-	(4, '123', 'Mandiri', '50000', '50000', 'Adia', '2021-11-13 10:43:25', 'Adia', '2021-11-13 10:43:25', 'INV/NAH/1/211113/1');
+	(4, '123', 'Mandiri', '50000', '50000', 'Adia', '2021-11-13 10:43:25', 'Adia', '2021-11-13 10:43:25', 'INV/NAH/1/211113/1'),
+	(5, '123', 'Mandiri', '50000', '50000', 'Adia', '2021-11-13 10:51:24', 'Adia', '2021-11-13 10:51:24', 'INV/NAH/1/211013/1'),
+	(6, '123', 'Mandiri', '50000', '50000', 'Adia', '2021-11-13 11:14:26.892', 'Adia', '2021-11-13 11:14:26.892', 'INV/NAH/1/211113/4'),
+	(7, '123', 'Mandiri', '50000', '50000', 'Adia', '2021-11-13 11:33:57.748', 'Adia', '2021-11-13 11:33:57.748', 'INV/NAH/1/211113/5'),
+	(8, '123', 'Mandiri', '50000', '50000', 'Adia', '2021-11-13 11:36:00.442', 'Adia', '2021-11-13 11:36:00.442', 'INV/NAH/1/211113/7');
 
 
 --
@@ -790,7 +970,18 @@ INSERT INTO production.lg_payment_edc VALUES
 --
 
 INSERT INTO production.merchant VALUES
-	(1, 'Nasgor Ahay', '1', 'Adia', '2021-10-27 11:11:42.91665', 'Adia', '2021-10-27 11:11:42.91665', 'NAH');
+	(1, 'Nasgor Ahay', '1', 'Adia', '2021-10-27 11:11:42.91665', 'Adia', '2021-10-27 11:11:42.91665', 'NAH', 'true', NULL, NULL, NULL, NULL),
+	(2, 'Geprek Cihuy', '2', 'Adia', '2021-11-15 13:45:16.062696', 'Adia', '2021-11-15 13:45:16.062696', 'GPC', 'true', NULL, NULL, NULL, NULL),
+	(3, 'Mie Goks', '3', 'Adia', '2021-11-15 15:41:10.962', 'Adia', '2021-11-15 14:36:58.795', 'MWK', 'true', NULL, NULL, NULL, NULL),
+	(7, 'Mie Wawawaw', '1', 'Adia', '2021-11-19 10:43:32.424', 'Adia', '2021-11-19 10:43:32.424', 'MWW', 'true', '123', '1', '5', 'MWW-c3af11a1');
+
+
+--
+-- Data for Name: merchant_category; Type: TABLE DATA; Schema: production; Owner: postgres
+--
+
+INSERT INTO production.merchant_category VALUES
+	(1, 'FnB', 'Adia', '2021-11-19 09:56:46.827893', 'Adia', '2021-11-19 09:56:46.827893');
 
 
 --
@@ -800,8 +991,18 @@ INSERT INTO production.merchant VALUES
 INSERT INTO production.price VALUES
 	(1, '1', '10000', '12000', 'Adia', '2021-11-09 11:40:24.140405', 'Adia', '2021-11-09 11:40:24.140405'),
 	(2, '13', '5000', '10000', 'Adia', '2021-11-09 13:23:11.279', 'Adia', '2021-11-09 13:23:11.279'),
-	(3, '2', '10000', '15000', 'Adia', '2021-11-09 13:35:31.488', 'Adia', '2021-11-09 13:34:44.886602'),
-	(4, '14', '5000', '10000', 'Adia', '2021-11-11 14:57:30.621', 'Adia', '2021-11-11 14:57:30.621');
+	(4, '14', '5000', '10000', 'Adia', '2021-11-11 14:57:30.621', 'Adia', '2021-11-11 14:57:30.621'),
+	(5, '15', '5000', NULL, 'Adia', '2021-11-15 15:48:34.863', 'Adia', '2021-11-15 15:48:34.863'),
+	(6, '16', '5000', '10000', 'Adia', '2021-11-15 15:50:11.753', 'Adia', '2021-11-15 15:50:11.753'),
+	(7, '17', '5000', '7500', 'Adia', '2021-11-15 15:50:52.496', 'Adia', '2021-11-15 15:50:52.496'),
+	(3, '2', '10000', NULL, 'Adia', '2021-11-15 16:10:20.473', 'Adia', '2021-11-09 13:34:44.886602'),
+	(8, '18', '5000', '7500', 'Adia', '2021-11-15 16:24:21.01', 'Adia', '2021-11-15 16:24:21.01'),
+	(9, '19', '5000', '750000', 'Adia', '2021-11-15 16:24:41.404', 'Adia', '2021-11-15 16:24:41.404'),
+	(10, '20', '5000', '750000', 'Adia', '2021-11-19 09:36:06.274', 'Adia', '2021-11-19 09:36:06.274'),
+	(11, '21', '5000', '750000', 'Adia', '2021-11-19 09:37:45.468', 'Adia', '2021-11-19 09:37:45.468'),
+	(12, '22', '5000', '750000', 'Adia', '2021-11-19 09:39:10.257', 'Adia', '2021-11-19 09:39:10.257'),
+	(13, '23', '5000', '750000', 'Adia', '2021-11-19 09:39:28.332', 'Adia', '2021-11-19 09:39:28.332'),
+	(14, '24', '5000', '750000', 'Adia', '2021-11-19 09:39:38.091', 'Adia', '2021-11-19 09:39:38.091');
 
 
 --
@@ -814,8 +1015,18 @@ INSERT INTO production.product VALUES
 	(12, 'Nasi Uduk', '1', '1', 'Adia', '2021-11-08 15:48:58.063', 'Adia', '2021-11-08 15:48:58.063', '16363613379244d298355dc38.jpg', 'true'),
 	(1, 'Nasi Goreng Pedas', '1', '1', 'Adia', '2021-11-05 10:32:20.28', 'Adia', '2021-10-25 16:16:13.955639', '1636082867093125fd10b923f.jpeg', 'true'),
 	(13, 'Nasi Uduk', '1', '1', 'Adia', '2021-11-09 13:23:11.279', 'Adia', '2021-11-09 13:23:11.279', '16364389888853bb505f43a2c.jpg', 'true'),
-	(2, 'Soto Banjar', '1', '1', 'Adia', '2021-11-09 13:35:31.488', 'Adia', '2021-10-27 14:34:24.7', '1636095481269f06cd2658b3f.jpeg', 'true'),
-	(14, 'Nasi Uduk', '1', '1', 'Adia', '2021-11-11 14:57:30.621', 'Adia', '2021-11-11 14:57:30.621', '16366174506019020f05962ac.jpg', 'true');
+	(14, 'Nasi Uduk', '1', '1', 'Adia', '2021-11-11 14:57:30.621', 'Adia', '2021-11-11 14:57:30.621', '16366174506019020f05962ac.jpg', 'true'),
+	(15, 'Nasi Uduk', '1', '1', 'Adia', '2021-11-15 15:48:34.863', 'Adia', '2021-11-15 15:48:34.863', '1636966112215574da03aa9ee.jpg', 'true'),
+	(16, 'Nasi Uduk', '1', '1', 'Adia', '2021-11-15 15:50:11.753', 'Adia', '2021-11-15 15:50:11.753', '1636966211731b8d60ae5ecc5.jpg', 'true'),
+	(17, 'Nasi Uduk', '1', '1', 'Adia', '2021-11-15 15:50:52.496', 'Adia', '2021-11-15 15:50:52.496', '16369662524790d322b5f1b28.jpg', 'true'),
+	(2, 'Soto Banjar', '1', '1', 'Adia', '2021-11-15 16:10:20.473', 'Adia', '2021-10-27 14:34:24.7', '1636095481269f06cd2658b3f.jpeg', 'true'),
+	(18, 'Nasi Uduk', '1', '1', 'Adia', '2021-11-15 16:24:21.01', 'Adia', '2021-11-15 16:24:21.01', '16369682609909aa1851fb86d.jpg', 'true'),
+	(19, 'Nasi Uduk', '1', '1', 'Adia', '2021-11-15 16:24:41.404', 'Adia', '2021-11-15 16:24:41.404', '16369682813896cafe1945cd8.jpg', 'true'),
+	(20, 'Nasi Uduk', '1', '1', 'Adia', '2021-11-19 09:36:06.274', 'Adia', '2021-11-19 09:36:06.274', '16372893662278127660d1e08.png', 'true'),
+	(21, 'Nasi Uduk', '1', '1', 'Adia', '2021-11-19 09:37:45.468', 'Adia', '2021-11-19 09:37:45.468', '16372894654259c7ed186a030.png', 'true'),
+	(22, 'Nasi Uduk', '1', '1', 'Adia', '2021-11-19 09:39:10.257', 'Adia', '2021-11-19 09:39:10.257', 'Nasi_Uduk-31239056.png', 'true'),
+	(23, 'Nasi Uduk', '1', '1', 'Adia', '2021-11-19 09:39:28.332', 'Adia', '2021-11-19 09:39:28.332', 'nasi_uduk-3509fdfc.png', 'true'),
+	(24, 'Nasi Uduk', '1', '1', 'Adia', '2021-11-19 09:39:38.091', 'Adia', '2021-11-19 09:39:38.091', 'nasi_uduk_7113eefb.png', 'true');
 
 
 --
@@ -823,7 +1034,8 @@ INSERT INTO production.product VALUES
 --
 
 INSERT INTO production.role VALUES
-	(1, 'Superadmin', 'Adia', '2021-11-08 13:09:02.883839', 'Adia', '2021-11-08 13:09:02.883839');
+	(2, 'Admin', 'Adia', '2021-11-15 13:12:20.179', 'Adia', '2021-11-15 11:37:47.124', 'true'),
+	(1, 'Superadmin', 'Adia', '2021-11-08 13:09:02.883839', 'Adia', '2021-11-08 13:09:02.883839', 'true');
 
 
 --
@@ -839,12 +1051,16 @@ INSERT INTO production.stock VALUES
 --
 
 INSERT INTO production.transaction_detail VALUES
-	(34, 'NAH-1-211110-41', '1', '2', 'Adia', '2021-11-12 04:17:59.374', 'Adia', '2021-11-12 04:17:59.374', '10000'),
-	(35, 'NAH-1-211110-41', '2', '3', 'Adia', '2021-11-12 04:17:59.374', 'Adia', '2021-11-12 04:17:59.374', '25000'),
 	(36, 'NAH-1-211112-11', '1', '5', 'Adia', '2021-11-12 11:20:09', 'Adia', '2021-11-12 11:20:09', '25000'),
 	(37, 'NAH-1-211112-11', '2', '5', 'Adia', '2021-11-12 11:20:09', 'Adia', '2021-11-12 11:20:09', '25000'),
 	(38, 'NAH-1-211112-3', '1', '5', 'Adia', '2021-11-12 11:21:18', 'Adia', '2021-11-12 11:21:18', '25000'),
-	(39, 'NAH-1-211112-3', '2', '5', 'Adia', '2021-11-12 11:21:18', 'Adia', '2021-11-12 11:21:18', '25000');
+	(39, 'NAH-1-211112-3', '2', '5', 'Adia', '2021-11-12 11:21:18', 'Adia', '2021-11-12 11:21:18', '25000'),
+	(40, 'NAH-1-211113-1', '1', '5', 'Adia', '2021-11-13 11:06:09', 'Adia', '2021-11-13 11:06:09', '25000'),
+	(41, 'NAH-1-211113-1', '2', '5', 'Adia', '2021-11-13 11:06:09', 'Adia', '2021-11-13 11:06:09', '25000'),
+	(42, 'NAH-1-211113-2', '1', '5', 'Adia', '2021-11-13 11:14:31', 'Adia', '2021-11-13 11:14:31', '25000'),
+	(43, 'NAH-1-211113-2', '2', '5', 'Adia', '2021-11-13 11:14:31', 'Adia', '2021-11-13 11:14:31', '25000'),
+	(44, 'NAH-1-211110-41', '1', '2', 'Adia', '2021-11-13 06:26:28.292', 'Adia', '2021-11-13 06:26:28.292', '10000'),
+	(45, 'NAH-1-211110-41', '2', '3', 'Adia', '2021-11-13 06:26:28.292', 'Adia', '2021-11-13 06:26:28.292', '25000');
 
 
 --
@@ -852,9 +1068,17 @@ INSERT INTO production.transaction_detail VALUES
 --
 
 INSERT INTO production.transaction_header VALUES
-	(25, 'NAH-1-211110-41', '1', 'Adia', '4', 'Adia', '2021-11-12 11:17:59.374', 'Adia', '2021-11-12 11:14:30', 'UNPAID', '35000', 'Dine In', '1'),
 	(26, 'NAH-1-211112-11', '1', 'Adia', '10', 'Adia', '2021-11-12 11:20:09', 'Adia', '2021-11-12 11:20:09', 'UNPAID', '50000', 'Dine In', '1'),
-	(27, 'NAH-1-211112-3', '1', 'Adia', '10', 'Adia', '2021-11-13 10:43:25', 'Adia', '2021-11-12 11:21:18', 'PAID', '50000', 'Dine In', '1');
+	(28, 'NAH-1-211113-1', '1', 'Adia', '10', 'Adia', '2021-11-13 11:06:09', 'Adia', '2021-11-13 11:06:09', 'UNPAID', '50000', 'Dine In', '1'),
+	(29, 'NAH-1-211113-2', '1', 'Adia', '10', 'Adia', '2021-11-13 11:14:31.366', 'Adia', '2021-11-13 11:14:31.366', 'UNPAID', '50000', 'Dine In', '1'),
+	(27, 'NAH-1-211112-3', '1', 'Adia', '10', 'Adia', '2021-11-13 11:36:00.442', 'Adia', '2021-11-12 11:21:18', 'PAID', '50000', 'Dine In', '1'),
+	(25, 'NAH-1-211110-41', '1', 'Adia', '4', 'Adia', '2021-11-13 13:26:28.292', 'Adia', '2021-11-12 11:14:30', 'UNPAID', '35000', 'Dine In', '1');
+
+
+--
+-- Data for Name: user_branch; Type: TABLE DATA; Schema: production; Owner: postgres
+--
+
 
 
 --
@@ -871,28 +1095,37 @@ INSERT INTO production.user_has_branch VALUES
 --
 
 INSERT INTO production.users VALUES
-	(1, 'adia', 'Adia', 'adia@mail.com', '1', '$2b$10$ukjUuMlfSutf/VLwDn1OnuttdVOVkMTF0hneZ1AVc/vwI4WNjKuQm', 'true', 'Adia', '2021-11-08 11:59:02.815', 'Adia', '2021-11-08 11:59:02.815');
+	(1, 'Adia', 'adia@mail.com', '1', '$2b$10$ukjUuMlfSutf/VLwDn1OnuttdVOVkMTF0hneZ1AVc/vwI4WNjKuQm', 'true', 'Adia', '2021-11-08 11:59:02.815', 'Adia', '2021-11-08 11:59:02.815', NULL, NULL, NULL, NULL),
+	(17, 'Dev', 'dev@mail.com', '1', '$2b$10$1tB4qpickXMS6yeNzmFsHu1YM0XILD9HAKCpmuclNfIGIhTG8B1Zq', 'true', 'Dev', '2021-11-15 16:22:46.887', 'Dev', '2021-11-15 16:22:46.887', NULL, NULL, NULL, NULL),
+	(24, 'Nana Mulyana', 'nana@mail.com', '2', '$2b$10$DeTLKQzZehmrmCc.chifeeVKU3eU9lsO4MW5TPlQRhzn31picnTNe', 'true', 'Nana', '2021-11-19 09:40:15.062', 'Nana', '2021-11-19 09:40:15.062', 'nana_mulyana_9e4bb85d.png', '08123123', 'false', 'false');
+
+
+--
+-- Name: bank_account_id_seq; Type: SEQUENCE SET; Schema: production; Owner: postgres
+--
+
+SELECT pg_catalog.setval('production.bank_account_id_seq', 5, true);
 
 
 --
 -- Name: branch_id_seq; Type: SEQUENCE SET; Schema: production; Owner: postgres
 --
 
-SELECT pg_catalog.setval('production.branch_id_seq', 2, true);
+SELECT pg_catalog.setval('production.branch_id_seq', 4, true);
 
 
 --
 -- Name: category_id_seq; Type: SEQUENCE SET; Schema: production; Owner: postgres
 --
 
-SELECT pg_catalog.setval('production.category_id_seq', 4, true);
+SELECT pg_catalog.setval('production.category_id_seq', 5, true);
 
 
 --
 -- Name: invoice_has_trx_id_seq; Type: SEQUENCE SET; Schema: production; Owner: postgres
 --
 
-SELECT pg_catalog.setval('production.invoice_has_trx_id_seq', 11, true);
+SELECT pg_catalog.setval('production.invoice_has_trx_id_seq', 16, true);
 
 
 --
@@ -906,42 +1139,49 @@ SELECT pg_catalog.setval('production.lg_payment_cash_id_seq', 17, true);
 -- Name: lg_payment_edc_id_seq; Type: SEQUENCE SET; Schema: production; Owner: postgres
 --
 
-SELECT pg_catalog.setval('production.lg_payment_edc_id_seq', 4, true);
+SELECT pg_catalog.setval('production.lg_payment_edc_id_seq', 8, true);
 
 
 --
 -- Name: lg_payment_id_seq; Type: SEQUENCE SET; Schema: production; Owner: postgres
 --
 
-SELECT pg_catalog.setval('production.lg_payment_id_seq', 30, true);
+SELECT pg_catalog.setval('production.lg_payment_id_seq', 36, true);
+
+
+--
+-- Name: merchant_category_id_seq; Type: SEQUENCE SET; Schema: production; Owner: postgres
+--
+
+SELECT pg_catalog.setval('production.merchant_category_id_seq', 1, true);
 
 
 --
 -- Name: merchant_id_seq; Type: SEQUENCE SET; Schema: production; Owner: postgres
 --
 
-SELECT pg_catalog.setval('production.merchant_id_seq', 1, true);
+SELECT pg_catalog.setval('production.merchant_id_seq', 7, true);
 
 
 --
 -- Name: price_id_seq; Type: SEQUENCE SET; Schema: production; Owner: postgres
 --
 
-SELECT pg_catalog.setval('production.price_id_seq', 4, true);
+SELECT pg_catalog.setval('production.price_id_seq', 14, true);
 
 
 --
 -- Name: product_id_seq; Type: SEQUENCE SET; Schema: production; Owner: postgres
 --
 
-SELECT pg_catalog.setval('production.product_id_seq', 14, true);
+SELECT pg_catalog.setval('production.product_id_seq', 24, true);
 
 
 --
 -- Name: role_id_seq; Type: SEQUENCE SET; Schema: production; Owner: postgres
 --
 
-SELECT pg_catalog.setval('production.role_id_seq', 1, true);
+SELECT pg_catalog.setval('production.role_id_seq', 2, true);
 
 
 --
@@ -955,14 +1195,21 @@ SELECT pg_catalog.setval('production.stock_id_seq', 1, true);
 -- Name: transaction_detail_id_seq; Type: SEQUENCE SET; Schema: production; Owner: postgres
 --
 
-SELECT pg_catalog.setval('production.transaction_detail_id_seq', 39, true);
+SELECT pg_catalog.setval('production.transaction_detail_id_seq', 45, true);
 
 
 --
 -- Name: transaction_header_id_seq; Type: SEQUENCE SET; Schema: production; Owner: postgres
 --
 
-SELECT pg_catalog.setval('production.transaction_header_id_seq', 27, true);
+SELECT pg_catalog.setval('production.transaction_header_id_seq', 29, true);
+
+
+--
+-- Name: user_branch_id_seq; Type: SEQUENCE SET; Schema: production; Owner: postgres
+--
+
+SELECT pg_catalog.setval('production.user_branch_id_seq', 1, false);
 
 
 --
@@ -976,7 +1223,15 @@ SELECT pg_catalog.setval('production.user_has_branch_id_seq', 2, true);
 -- Name: users_id_seq; Type: SEQUENCE SET; Schema: production; Owner: postgres
 --
 
-SELECT pg_catalog.setval('production.users_id_seq', 16, true);
+SELECT pg_catalog.setval('production.users_id_seq', 24, true);
+
+
+--
+-- Name: bank_account bank_account_pkey; Type: CONSTRAINT; Schema: production; Owner: postgres
+--
+
+ALTER TABLE ONLY production.bank_account
+    ADD CONSTRAINT bank_account_pkey PRIMARY KEY (id);
 
 
 --
@@ -1025,6 +1280,14 @@ ALTER TABLE ONLY production.lg_payment_edc
 
 ALTER TABLE ONLY production.lg_payment
     ADD CONSTRAINT lg_payment_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: merchant_category merchant_category_pkey; Type: CONSTRAINT; Schema: production; Owner: postgres
+--
+
+ALTER TABLE ONLY production.merchant_category
+    ADD CONSTRAINT merchant_category_pkey PRIMARY KEY (id);
 
 
 --
@@ -1081,6 +1344,14 @@ ALTER TABLE ONLY production.transaction_detail
 
 ALTER TABLE ONLY production.transaction_header
     ADD CONSTRAINT transaction_header_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: user_branch user_branch_pkey; Type: CONSTRAINT; Schema: production; Owner: postgres
+--
+
+ALTER TABLE ONLY production.user_branch
+    ADD CONSTRAINT user_branch_pkey PRIMARY KEY (id);
 
 
 --
