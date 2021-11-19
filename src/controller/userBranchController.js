@@ -7,6 +7,7 @@ import {
   countUserBranchByBranch,
   createUserBranchRepository,
   getUserBranchRepository,
+  updateUserBranchRepository,
 } from "../repository/userBranchRepository.js";
 
 export const createUserBranch = async (request, response) => {
@@ -61,6 +62,27 @@ export const getUserBranch = async (request, response) => {
       is_active: request.body.is_active || "",
     };
     const result = await getUserBranchRepository(request_data);
+    standardResponse(response, 200, success_RC, SUCCESS, result);
+  } catch (error) {
+    console.log(error);
+    standardResponse(response, 400, error_RC, error.toString());
+  }
+};
+
+export const updateUserBranch = async (request, response) => {
+  try {
+    const date = new Date();
+    const user_branch_id = request.body.user_branch_id;
+    const request_data = {
+      role_id: request.body.role_id,
+      is_active: request.body.is_active,
+      updated_by: request.body.updated_by,
+      updated_at: date,
+    };
+    const result = await updateUserBranchRepository(
+      request_data,
+      user_branch_id
+    );
     standardResponse(response, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);

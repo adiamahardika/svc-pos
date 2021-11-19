@@ -59,3 +59,26 @@ export const getUserBranchRepository = (request) => {
     );
   });
 };
+
+export const updateUserBranchRepository = (request, id) => {
+  const query = {
+    text: `UPDATE user_branch SET role_id = $1, is_active = $2, updated_by = $3, updated_at = $4 WHERE id = $5 RETURNING user_branch.*`,
+    values: [
+      request.role_id,
+      request.is_active,
+      request.updated_by,
+      request.updated_at,
+      id,
+    ],
+  };
+  return new Promise((resolve, reject) => {
+    connection.query(query, (error, result) => {
+      if (error) {
+        console.log(error);
+        reject(new Error(error));
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
