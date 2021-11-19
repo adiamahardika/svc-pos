@@ -26,6 +26,7 @@ export const createRole = async (request, response) => {
     const date = new Date();
     const request_data = {
       name: request.body.name,
+      level: request.body.level,
       is_active: "true",
       updated_by: request.body.created_by,
       updated_at: date,
