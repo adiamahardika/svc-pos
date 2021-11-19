@@ -82,3 +82,20 @@ export const updateUserBranchRepository = (request, id) => {
     });
   });
 };
+
+export const deleteUserBranchRepository = (request, id) => {
+  const query = {
+    text: `UPDATE user_branch SET is_active = $1 WHERE id = $2`,
+    values: [request.is_active, id],
+  };
+  return new Promise((resolve, reject) => {
+    connection.query(query, (error, result) => {
+      if (error) {
+        console.log(error);
+        reject(new Error(error));
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
