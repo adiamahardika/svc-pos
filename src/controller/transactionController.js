@@ -20,7 +20,7 @@ import {
 } from "../repository/transactionRepository.js";
 import { host } from "../configs/index.js";
 import { getDetailMerchantRepository } from "../repository/merchantRepository.js";
-import { getDetailBranch } from "../repository/branchRepository.js";
+import { getDetailBranchRepository } from "../repository/branchRepository.js";
 import { parseFullDate, parseShortDate } from "../helpers/index.js";
 
 export const createTransaction = async (request, response) => {
@@ -38,7 +38,9 @@ export const createTransaction = async (request, response) => {
     const detail_merchant = await getDetailMerchantRepository(
       request.body.header.merchant_id
     );
-    const detail_branch = await getDetailBranch(request.body.header.branch_id);
+    const detail_branch = await getDetailBranchRepository(
+      request.body.header.branch_id
+    );
     const transaction_id =
       detail_merchant.rows[0].merchant_code +
       "-" +

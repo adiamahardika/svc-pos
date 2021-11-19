@@ -11,7 +11,7 @@ import {
 } from "../helpers/generalConstant.js";
 import { parseFullDate, parseShortDate } from "../helpers/index.js";
 import { standardResponse } from "../helpers/standardResponse.js";
-import { getDetailBranch } from "../repository/branchRepository.js";
+import { getDetailBranchRepository } from "../repository/branchRepository.js";
 import { getDetailMerchantRepository } from "../repository/merchantRepository.js";
 import {
   createPaymentEdcRepository,
@@ -42,7 +42,9 @@ export const createPayment = async (request, response) => {
     const detail_merchant = await getDetailMerchantRepository(
       request.body.merchant_id
     );
-    const detail_branch = await getDetailBranch(request.body.branch_id);
+    const detail_branch = await getDetailBranchRepository(
+      request.body.branch_id
+    );
     const invoice_number =
       "INV/" +
       detail_merchant.rows[0].merchant_code +

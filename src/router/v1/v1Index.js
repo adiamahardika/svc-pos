@@ -9,6 +9,7 @@ import { roleRouter } from "./roleRoutes.js";
 import { merchantRouter } from "./merchantRoutes.js";
 import { userRouter } from "./userRoutes.js";
 import { merchantCategoryRouter } from "./merchantCategoryRoutes.js";
+import { userBranchRouter } from "./userBranchRoutes.js";
 
 export const v1Router = express.Router();
 
@@ -22,5 +23,6 @@ v1Router
   .use("/merchant", merchantRouter)
   .use("/user", userRouter)
   .use("/merchant-category", merchantCategoryRouter)
+  .use("/user-branch", userBranchRouter)
   .use("/assets", express.static(image_location))
   .use("/ktp", express.static(ktp_location));
