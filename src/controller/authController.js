@@ -4,26 +4,30 @@ import { standardResponse } from "../helpers/standardResponse.js";
 import {
   emailCheckRepository,
   registerRepository,
-  usernameCheckRepository,
 } from "../repository/authRepository.js";
-import jwt, { decode } from "jsonwebtoken";
-import { jwt_secret_key } from "../configs/index.js";
+import jwt from "jsonwebtoken";
+import { host, jwt_secret_key } from "../configs/index.js";
 import { getUserHasBranch } from "../repository/branchRepository.js";
+import { compress } from "../helpers/uploadFiles.js";
 
 export const register = async (request, response) => {
   try {
+    await compress(request.file.path);
     const date = new Date();
     const salt_rounds = 10;
 
     const hash = bcrypt.hashSync(request.body.password, salt_rounds);
 
     const request_data = {
-      username: request.body.username,
       name: request.body.name,
       email: request.body.email,
       role_id: request.body.role_id,
+      ktp: request.file.filename,
+      no_hp: request.body.no_hp,
       hash_password: hash,
       is_active: "true",
+      is_otp_validate: "false",
+      is_email_validate: "false",
       updated_by: request.body.created_by,
       updated_at: date,
       created_by: request.body.created_by,
@@ -31,18 +35,15 @@ export const register = async (request, response) => {
     };
 
     const email_check = await emailCheckRepository(request_data);
-    const username_check = await usernameCheckRepository(request_data);
 
-    if (email_check.rows.length === 0 && username_check.rows.length === 0) {
+    if (email_check.rows.length === 0) {
       const result = await registerRepository(request_data);
+
+      result.rows[0] = {
+        ...result.rows[0],
+        ktp: host + "ktp/" + result.rows[0].ktp,
+      };
       standardResponse(response, 200, success_RC, SUCCESS, result);
-    } else if (username_check.rows.length > 0) {
-      standardResponse(
-        response,
-        200,
-        error_RC,
-        "Username has already registered!"
-      );
     } else {
       standardResponse(
         response,
