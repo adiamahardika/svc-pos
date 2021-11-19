@@ -24,3 +24,27 @@ export const createBankAccountRepository = (request) => {
     });
   });
 };
+
+export const updateBankAccountRepository = async (request, id) => {
+  const query = {
+    text: `UPDATE bank_account SET bank_name = $1, nasabah = $2, no_rekening = $3, updated_by = $4, updated_at = $5 WHERE id = $6 RETURNING bank_account.*`,
+    values: [
+      request.bank_name,
+      request.nasabah,
+      request.no_rekening,
+      request.updated_by,
+      request.updated_at,
+      id,
+    ],
+  };
+  return new Promise((resolve, reject) => {
+    connection.query(query, (error, result) => {
+      if (error) {
+        console.log(error);
+        reject(new Error(error));
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};

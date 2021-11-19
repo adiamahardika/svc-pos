@@ -100,12 +100,13 @@ export const checkMerchantCode = (merchant_code) => {
 
 export const updateMerchantRepository = async (request, id) => {
   const query = {
-    text: `UPDATE merchant SET name = $1, is_active = $2, updated_by = $3, updated_at = $4 WHERE id = $5 RETURNING merchant.*`,
+    text: `UPDATE merchant SET name = $1, is_active = $2, updated_by = $3, updated_at = $4, npwp = $5 WHERE id = $6 RETURNING merchant.*`,
     values: [
       request.name,
       request.is_active,
       request.updated_by,
       request.updated_at,
+      request.npwp,
       id,
     ],
   };
