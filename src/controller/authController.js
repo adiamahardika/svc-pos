@@ -1,4 +1,5 @@
 import bcrypt from "bcrypt";
+import crypto_js from "crypto-js";
 import { error_RC, SUCCESS, success_RC } from "../helpers/generalConstant.js";
 import { standardResponse } from "../helpers/standardResponse.js";
 import {
@@ -13,6 +14,7 @@ import {
   getBranchByMerchantId,
   getDetailBranchRepository,
 } from "../repository/branchRepository.js";
+import { getDetailMerchantRepository } from "../repository/merchantRepository.js";
 
 export const register = async (request, response) => {
   try {
@@ -93,8 +95,11 @@ export const login = async (request, response) => {
       );
       if (match) {
         let user_data = user_check.rows[0];
+        const signature_key = crypto_js
+          .MD5(user_data.merchant_id + user_data.secret_key)
+          .toString();
         const token = jwt.sign(
-          { email: user_data.email, password: user_data.hash_password },
+          { merchant_id: user_data.merchant_id, signature_key: signature_key },
           jwt_secret_key,
           {
             expiresIn: "16h",
@@ -108,6 +113,7 @@ export const login = async (request, response) => {
           branch_list: branch_list.rows,
         };
 
+        delete user_data.secret_key;
         delete user_data.is_active;
         delete user_data.hash_password;
         delete user_data.created_at;
@@ -149,5 +155,36 @@ export const authentication = (request, response, next) => {
         next();
       }
     });
+  }
+};
+
+export const authorization = async (request, response, next) => {
+  const signature_key = request.headers.signature_key;
+  const header_token = request.headers.token;
+  if (!signature_key) {
+    standardResponse(
+      response,
+      200,
+      error_RC,
+      "Please provide your signature_key!"
+    );
+  } else {
+    const decode = jwt.decode(header_token);
+    const merchant_id = await getDetailMerchantRepository(decode.merchant_id);
+
+    const generate_signature_key = crypto_js
+      .MD5(merchant_id.rows[0].id + merchant_id.rows[0].secret_key)
+      .toString();
+
+    if (signature_key !== generate_signature_key) {
+      standardResponse(
+        response,
+        200,
+        error_RC,
+        "Please signature_key is invalid!"
+      );
+    } else {
+      next();
+    }
   }
 };
