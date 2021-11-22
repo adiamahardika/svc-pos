@@ -144,6 +144,7 @@ export const getDetailMerchant = async (request, response) => {
     const merchant_id = request.params.merchant_id;
     const result = await getDetailMerchantRepository(merchant_id);
 
+    delete result.rows[0].secret_key;
     standardResponse(response, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
