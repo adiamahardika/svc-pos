@@ -145,3 +145,20 @@ export const getBranchRepository = (request) => {
     );
   });
 };
+
+export const deleteBranchRepository = (request, branch_id) => {
+  const query = {
+    text: `UPDATE branch SET is_active = $1 WHERE id = $2`,
+    values: [request.is_active, branch_id],
+  };
+  return new Promise((resolve, reject) => {
+    connection.query(query, (error, result) => {
+      if (error) {
+        console.log(error);
+        reject(new Error(error));
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};

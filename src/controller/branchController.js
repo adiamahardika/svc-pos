@@ -3,6 +3,7 @@ import { standardResponse } from "../helpers/standardResponse.js";
 import {
   countBranch,
   createBranchRepository,
+  deleteBranchRepository,
   getBranchRepository,
   getMaxBranchNumberByMerchant,
   updateBranchRepository,
@@ -97,6 +98,21 @@ export const getBranch = async (request, response) => {
       active_page,
       total_pages
     );
+  } catch (error) {
+    console.log(error);
+    standardResponse(response, 400, error_RC, error.toString());
+  }
+};
+
+export const deleteBranch = async (request, response) => {
+  try {
+    const branch_id = request.params.branch_id;
+    const request_data = {
+      is_active: "false",
+    };
+
+    const result = await deleteBranchRepository(request_data, branch_id);
+    standardResponse(response, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
     standardResponse(response, 400, error_RC, error.toString());
