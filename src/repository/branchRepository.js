@@ -113,3 +113,35 @@ export const updateBranchRepository = (request, branch_id) => {
     });
   });
 };
+
+export const countBranch = (request) => {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `SELECT count(*) as total_data FROM (SELECT * FROM branch WHERE merchant_id LIKE '%${request.merchant_id}%') AS tbl WHERE tbl.location LIKE '%${request.search}%' OR tbl.branch_address LIKE '%${request.search}%'`,
+      (error, result) => {
+        if (error) {
+          console.log(error);
+          reject(new Error(error));
+        } else {
+          resolve(result.rows[0].total_data);
+        }
+      }
+    );
+  });
+};
+
+export const getBranchRepository = (request) => {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `SELECT * FROM (SELECT merchant.name AS merchant_name, branch.* FROM branch LEFT OUTER JOIN merchant ON (branch.merchant_id = CAST(merchant.id AS varchar(10))) WHERE branch.merchant_id LIKE '%${request.merchant_id}%' AND branch.is_active LIKE '%${request.is_active}%' ORDER BY ${request.order_by} ${request.sort_by} LIMIT ${request.limit} OFFSET ${request.start_index}) AS tbl WHERE tbl.location LIKE '%${request.search}%' OR tbl.branch_address LIKE '%${request.search}%'`,
+      (error, result) => {
+        if (error) {
+          console.log(error);
+          reject(new Error(error));
+        } else {
+          resolve(result);
+        }
+      }
+    );
+  });
+};
