@@ -182,7 +182,8 @@ export const getPayment = async (request, response) => {
       SUCCESS,
       result,
       active_page,
-      total_pages
+      total_pages,
+      total_data
     );
   } catch (error) {
     console.log(error);

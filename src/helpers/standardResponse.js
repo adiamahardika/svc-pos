@@ -6,7 +6,8 @@ export const standardResponse = (
   description,
   data,
   active_page,
-  total_pages
+  total_pages,
+  total_data
 ) => {
   const result = {};
 
@@ -15,6 +16,7 @@ export const standardResponse = (
   result.description = description || SUCCESS;
   result.active_page = active_page || 0;
   result.total_pages = total_pages || 1;
+  result.total_data = parseInt(total_data) || "-";
   result.result = data ? data.rows : [];
 
   return response.status(result.https_status).json(result);
