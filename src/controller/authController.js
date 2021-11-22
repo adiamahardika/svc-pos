@@ -95,7 +95,7 @@ export const login = async (request, response) => {
           { merchant_id: user_data.merchant_id, signature_key: signature_key },
           jwt_secret_key,
           {
-            expiresIn: "16h",
+            expiresIn: "1h",
           }
         );
 
@@ -178,5 +178,53 @@ export const authorization = async (request, response, next) => {
     } else {
       next();
     }
+  }
+};
+
+export const refreshToken = async (request, response) => {
+  try {
+    const signature_key = request.headers.signature_key;
+    const header_token = request.headers.token;
+
+    if (!header_token) {
+      standardResponse(response, 200, error_RC, "Please provide your token!");
+    } else if (!signature_key) {
+      standardResponse(
+        response,
+        200,
+        error_RC,
+        "Please provide your signature_key!"
+      );
+    } else {
+      jwt.verify(header_token, jwt_secret_key, async (error, decoded) => {
+        if (error && error.name === "JsonWebTokenError") {
+          standardResponse(response, 200, error_RC, "Your token is invalid!");
+        } else {
+          const decode = jwt.decode(header_token);
+          const merchant_id = await getDetailMerchantRepository(
+            decode.merchant_id
+          );
+          const token = jwt.sign(
+            { merchant_id: merchant_id.id, signature_key: signature_key },
+            jwt_secret_key,
+            {
+              expiresIn: "1h",
+            }
+          );
+
+          const result = {
+            rows: [
+              {
+                token: token,
+              },
+            ],
+          };
+          standardResponse(response, 200, success_RC, SUCCESS, result);
+        }
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    standardResponse(response, 400, error_RC, error.toString());
   }
 };
