@@ -7,7 +7,6 @@ import {
 } from "../repository/authRepository.js";
 import jwt from "jsonwebtoken";
 import { host, jwt_secret_key } from "../configs/index.js";
-import { getUserHasBranch } from "../repository/branchRepository.js";
 import { compress } from "../helpers/uploadFiles.js";
 
 export const register = async (request, response) => {
@@ -80,10 +79,9 @@ export const login = async (request, response) => {
             expiresIn: "16h",
           }
         );
-        const branch = await getUserHasBranch(user_data.id);
 
         user_data.token = token;
-        user_data.branch = branch.rows;
+        user_data.ktp = host + "ktp/" + user_data.ktp;
 
         delete user_data.is_active;
         delete user_data.hash_password;

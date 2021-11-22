@@ -483,7 +483,8 @@ CREATE TABLE production.role (
     updated_at timestamp without time zone DEFAULT now() NOT NULL,
     created_by character varying(255),
     created_at timestamp without time zone DEFAULT now() NOT NULL,
-    is_active character varying(255)
+    is_active character varying(255),
+    level character varying(255)
 );
 
 
@@ -647,7 +648,8 @@ CREATE TABLE production.user_branch (
     updated_by character varying(255),
     updated_at timestamp without time zone DEFAULT now() NOT NULL,
     created_by character varying(255),
-    created_at timestamp without time zone DEFAULT now() NOT NULL
+    created_at timestamp without time zone DEFAULT now() NOT NULL,
+    merchant_id character varying(255)
 );
 
 
@@ -672,44 +674,6 @@ ALTER TABLE production.user_branch_id_seq OWNER TO postgres;
 --
 
 ALTER SEQUENCE production.user_branch_id_seq OWNED BY production.user_branch.id;
-
-
---
--- Name: user_has_branch; Type: TABLE; Schema: production; Owner: postgres
---
-
-CREATE TABLE production.user_has_branch (
-    id bigint NOT NULL,
-    user_id character varying(255),
-    branch_id character varying(255),
-    updated_by character varying(255),
-    updated_at timestamp without time zone DEFAULT now() NOT NULL,
-    created_by character varying(255),
-    created_at timestamp without time zone DEFAULT now() NOT NULL
-);
-
-
-ALTER TABLE production.user_has_branch OWNER TO postgres;
-
---
--- Name: user_has_branch_id_seq; Type: SEQUENCE; Schema: production; Owner: postgres
---
-
-CREATE SEQUENCE production.user_has_branch_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE production.user_has_branch_id_seq OWNER TO postgres;
-
---
--- Name: user_has_branch_id_seq; Type: SEQUENCE OWNED BY; Schema: production; Owner: postgres
---
-
-ALTER SEQUENCE production.user_has_branch_id_seq OWNED BY production.user_has_branch.id;
 
 
 --
@@ -870,13 +834,6 @@ ALTER TABLE ONLY production.user_branch ALTER COLUMN id SET DEFAULT nextval('pro
 
 
 --
--- Name: user_has_branch id; Type: DEFAULT; Schema: production; Owner: postgres
---
-
-ALTER TABLE ONLY production.user_has_branch ALTER COLUMN id SET DEFAULT nextval('production.user_has_branch_id_seq'::regclass);
-
-
---
 -- Name: users id; Type: DEFAULT; Schema: production; Owner: postgres
 --
 
@@ -888,7 +845,8 @@ ALTER TABLE ONLY production.users ALTER COLUMN id SET DEFAULT nextval('productio
 --
 
 INSERT INTO production.bank_account VALUES
-	(5, 'BCA', 'Adia', '808090', 'Adia', '2021-11-19 10:43:32.424', 'Adia', '2021-11-19 10:43:32.424');
+	(5, 'BCA', 'Adia', '808090', 'Adia', '2021-11-19 10:43:32.424', 'Adia', '2021-11-19 10:43:32.424'),
+	(1, 'Mandiri', 'Guntur', '789', 'Guntur', '2021-11-19 15:50:48.082', 'Guntur', '2021-11-19 15:48:31.495317');
 
 
 --
@@ -970,10 +928,10 @@ INSERT INTO production.lg_payment_edc VALUES
 --
 
 INSERT INTO production.merchant VALUES
-	(1, 'Nasgor Ahay', '1', 'Adia', '2021-10-27 11:11:42.91665', 'Adia', '2021-10-27 11:11:42.91665', 'NAH', 'true', NULL, NULL, NULL, NULL),
 	(2, 'Geprek Cihuy', '2', 'Adia', '2021-11-15 13:45:16.062696', 'Adia', '2021-11-15 13:45:16.062696', 'GPC', 'true', NULL, NULL, NULL, NULL),
 	(3, 'Mie Goks', '3', 'Adia', '2021-11-15 15:41:10.962', 'Adia', '2021-11-15 14:36:58.795', 'MWK', 'true', NULL, NULL, NULL, NULL),
-	(7, 'Mie Wawawaw', '1', 'Adia', '2021-11-19 10:43:32.424', 'Adia', '2021-11-19 10:43:32.424', 'MWW', 'true', '123', '1', '5', 'MWW-c3af11a1');
+	(1, 'Nasgor Ahay', '1', 'Adia', '2021-10-27 11:11:42.91665', 'Adia', '2021-10-27 11:11:42.91665', 'NAH', 'true', '6789', '1', '1', 'NAH-as31k90o'),
+	(7, 'Mie Wawawaw', '24', 'Adia', '2021-11-19 10:43:32.424', 'Adia', '2021-11-19 10:43:32.424', 'MWW', 'true', '123', '1', '5', 'MWW-c3af11a1');
 
 
 --
@@ -1034,8 +992,8 @@ INSERT INTO production.product VALUES
 --
 
 INSERT INTO production.role VALUES
-	(2, 'Admin', 'Adia', '2021-11-15 13:12:20.179', 'Adia', '2021-11-15 11:37:47.124', 'true'),
-	(1, 'Superadmin', 'Adia', '2021-11-08 13:09:02.883839', 'Adia', '2021-11-08 13:09:02.883839', 'true');
+	(2, 'Admin', 'Adia', '2021-11-15 13:12:20.179', 'Adia', '2021-11-15 11:37:47.124', 'true', '2'),
+	(1, 'Superadmin', 'Adia', '2021-11-08 13:09:02.883839', 'Adia', '2021-11-08 13:09:02.883839', 'true', '1');
 
 
 --
@@ -1079,15 +1037,8 @@ INSERT INTO production.transaction_header VALUES
 -- Data for Name: user_branch; Type: TABLE DATA; Schema: production; Owner: postgres
 --
 
-
-
---
--- Data for Name: user_has_branch; Type: TABLE DATA; Schema: production; Owner: postgres
---
-
-INSERT INTO production.user_has_branch VALUES
-	(1, '1', '1', 'Adia', '2021-11-08 13:24:43.531934', 'Adia', '2021-11-08 13:24:43.531934'),
-	(2, '1', '2', 'Adia', '2021-11-08 13:34:12.070199', 'Adia', '2021-11-08 13:34:12.070199');
+INSERT INTO production.user_branch VALUES
+	(2, 'NAH.1.1', '$2b$10$YmUYATisRcdaikSAAJ1nY.WxbR3MXc8J9yzKKL0P0aLW7V2t71fnS', '1', '2', 'true', 'Guntur', '2021-11-19 15:02:19.057', 'Adia', '2021-11-19 11:30:06.476', '1');
 
 
 --
@@ -1209,14 +1160,7 @@ SELECT pg_catalog.setval('production.transaction_header_id_seq', 29, true);
 -- Name: user_branch_id_seq; Type: SEQUENCE SET; Schema: production; Owner: postgres
 --
 
-SELECT pg_catalog.setval('production.user_branch_id_seq', 1, false);
-
-
---
--- Name: user_has_branch_id_seq; Type: SEQUENCE SET; Schema: production; Owner: postgres
---
-
-SELECT pg_catalog.setval('production.user_has_branch_id_seq', 2, true);
+SELECT pg_catalog.setval('production.user_branch_id_seq', 2, true);
 
 
 --
@@ -1352,14 +1296,6 @@ ALTER TABLE ONLY production.transaction_header
 
 ALTER TABLE ONLY production.user_branch
     ADD CONSTRAINT user_branch_pkey PRIMARY KEY (id);
-
-
---
--- Name: user_has_branch user_has_branch_pkey; Type: CONSTRAINT; Schema: production; Owner: postgres
---
-
-ALTER TABLE ONLY production.user_has_branch
-    ADD CONSTRAINT user_has_branch_pkey PRIMARY KEY (id);
 
 
 --
