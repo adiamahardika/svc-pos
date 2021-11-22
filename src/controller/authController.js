@@ -4,10 +4,15 @@ import { standardResponse } from "../helpers/standardResponse.js";
 import {
   emailCheckRepository,
   registerRepository,
+  userCodeCheckRepository,
 } from "../repository/authRepository.js";
 import jwt from "jsonwebtoken";
 import { host, jwt_secret_key } from "../configs/index.js";
 import { compress } from "../helpers/uploadFiles.js";
+import {
+  getBranchByMerchantId,
+  getDetailBranchRepository,
+} from "../repository/branchRepository.js";
 
 export const register = async (request, response) => {
   try {
@@ -64,14 +69,30 @@ export const login = async (request, response) => {
       password: request.body.password,
     };
 
+    let user_check = null;
+    let branch_list = null;
     const email_check = await emailCheckRepository(request_data);
+    const user_code_check = await userCodeCheckRepository(request_data);
+
     if (email_check.rows.length > 0) {
+      user_check = email_check;
+      branch_list = await getBranchByMerchantId(
+        email_check.rows[0].merchant_id
+      );
+    } else if (user_code_check.rows.length > 0) {
+      user_check = user_code_check;
+      branch_list = await getDetailBranchRepository(
+        user_code_check.rows[0].branch_id
+      );
+    }
+
+    if (user_check && user_check !== null) {
       const match = await bcrypt.compare(
         request_data.password,
-        email_check.rows[0].hash_password
+        user_check.rows[0].hash_password
       );
       if (match) {
-        const user_data = email_check.rows[0];
+        let user_data = user_check.rows[0];
         const token = jwt.sign(
           { email: user_data.email, password: user_data.hash_password },
           jwt_secret_key,
@@ -80,8 +101,12 @@ export const login = async (request, response) => {
           }
         );
 
-        user_data.token = token;
-        user_data.ktp = host + "ktp/" + user_data.ktp;
+        user_data = {
+          ...user_data,
+          token: token,
+          ktp: user_data.ktp ? host + "ktp/" + user_data.ktp : null,
+          branch_list: branch_list.rows,
+        };
 
         delete user_data.is_active;
         delete user_data.hash_password;
@@ -90,12 +115,19 @@ export const login = async (request, response) => {
         delete user_data.updated_at;
         delete user_data.updated_by;
 
-        standardResponse(response, 200, success_RC, SUCCESS, email_check);
+        user_check.rows[0] = user_data;
+
+        standardResponse(response, 200, success_RC, SUCCESS, user_check);
       } else {
         standardResponse(response, 200, error_RC, "Your password is invalid!");
       }
     } else {
-      standardResponse(response, 200, error_RC, "Your email is invalid!");
+      standardResponse(
+        response,
+        200,
+        error_RC,
+        "Your email or user code is invalid!"
+      );
     }
   } catch (error) {
     console.log(error);

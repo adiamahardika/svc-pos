@@ -62,3 +62,19 @@ export const usernameCheckRepository = (request) => {
     );
   });
 };
+
+export const userCodeCheckRepository = (request) => {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `SELECT user_branch.*, merchant.name AS merchant_name, role.name as role_name FROM user_branch LEFT OUTER JOIN merchant ON (user_branch.merchant_id = CAST(merchant.id AS varchar(10))) LEFT OUTER JOIN role ON (user_branch.role_id = CAST(role.id AS varchar(10))) WHERE user_code LIKE '%${request.email}%'`,
+      (error, result) => {
+        if (error) {
+          console.log(error);
+          reject(new Error(error));
+        } else {
+          resolve(result);
+        }
+      }
+    );
+  });
+};

@@ -35,7 +35,7 @@ export const getDetailBranchRepository = (branch_id) => {
 export const getBranchByMerchantId = (merchant_id) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT branch.* FROM branch WHERE merchant_id LIKE '%${merchant_id}%'`,
+      `SELECT branch.* FROM branch WHERE merchant_id LIKE '%${merchant_id}%' ORDER BY location ASC`,
       (error, result) => {
         if (error) {
           console.log(error);
