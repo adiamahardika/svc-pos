@@ -171,9 +171,9 @@ export const authorization = async (request, response, next) => {
     if (signature_key !== generate_signature_key) {
       standardResponse(
         response,
-        200,
+        401,
         error_RC,
-        "Please signature_key is invalid!"
+        "Your signature_key is invalid!"
       );
     } else {
       next();
@@ -186,14 +186,12 @@ export const refreshToken = async (request, response) => {
     const signature_key = request.headers.signature_key;
     const header_token = request.headers.token;
 
-    if (!header_token) {
-      standardResponse(response, 200, error_RC, "Please provide your token!");
-    } else if (!signature_key) {
+    if (!header_token || !signature_key) {
       standardResponse(
         response,
         200,
         error_RC,
-        "Please provide your signature_key!"
+        "Please provide your token and signature_key!"
       );
     } else {
       jwt.verify(header_token, jwt_secret_key, async (error, decoded) => {
@@ -204,22 +202,35 @@ export const refreshToken = async (request, response) => {
           const merchant_id = await getDetailMerchantRepository(
             decode.merchant_id
           );
-          const token = jwt.sign(
-            { merchant_id: merchant_id.id, signature_key: signature_key },
-            jwt_secret_key,
-            {
-              expiresIn: "1h",
-            }
-          );
+          const generate_signature_key = crypto_js
+            .MD5(merchant_id.rows[0].id + merchant_id.rows[0].secret_key)
+            .toString();
 
-          const result = {
-            rows: [
+          if (signature_key !== generate_signature_key) {
+            standardResponse(
+              response,
+              401,
+              error_RC,
+              "Your signature_key is invalid!"
+            );
+          } else {
+            const token = jwt.sign(
+              { merchant_id: merchant_id.id, signature_key: signature_key },
+              jwt_secret_key,
               {
-                token: token,
-              },
-            ],
-          };
-          standardResponse(response, 200, success_RC, SUCCESS, result);
+                expiresIn: "1h",
+              }
+            );
+
+            const result = {
+              rows: [
+                {
+                  token: token,
+                },
+              ],
+            };
+            standardResponse(response, 200, success_RC, SUCCESS, result);
+          }
         }
       });
     }
