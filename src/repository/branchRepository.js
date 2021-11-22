@@ -3,13 +3,13 @@ import connection from "../configs/postgres.js";
 export const getMaxBranchNumberByMerchant = (merchant_id) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT MAX(branch_number) FROM branch WHERE merchant_id = '${merchant_id}'`,
+      `SELECT MAX(branch_number) as max FROM branch WHERE merchant_id = '${merchant_id}'`,
       (error, result) => {
         if (error) {
           console.log(error);
           reject(new Error(error));
         } else {
-          resolve(result);
+          resolve(result.rows[0].max);
         }
       }
     );
