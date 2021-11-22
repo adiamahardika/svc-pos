@@ -72,20 +72,13 @@ export const login = async (request, response) => {
     };
 
     let user_check = null;
-    let branch_list = null;
     const email_check = await emailCheckRepository(request_data);
     const user_code_check = await userCodeCheckRepository(request_data);
 
     if (email_check.rows.length > 0) {
       user_check = email_check;
-      branch_list = await getBranchByMerchantId(
-        email_check.rows[0].merchant_id
-      );
     } else if (user_code_check.rows.length > 0) {
       user_check = user_code_check;
-      branch_list = await getDetailBranchRepository(
-        user_code_check.rows[0].branch_id
-      );
     }
 
     if (user_check && user_check !== null) {
@@ -110,7 +103,6 @@ export const login = async (request, response) => {
           ...user_data,
           token: token,
           ktp: user_data.ktp ? host + "ktp/" + user_data.ktp : null,
-          branch_list: branch_list.rows,
         };
 
         delete user_data.secret_key;

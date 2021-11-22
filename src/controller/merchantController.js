@@ -143,12 +143,6 @@ export const getDetailMerchant = async (request, response) => {
   try {
     const merchant_id = request.params.merchant_id;
     const result = await getDetailMerchantRepository(merchant_id);
-    const branch_result = await getBranchByMerchantId(merchant_id);
-
-    result.rows[0] = {
-      ...result.rows[0],
-      branch_list: branch_result.rows,
-    };
 
     standardResponse(response, 200, success_RC, SUCCESS, result);
   } catch (error) {
