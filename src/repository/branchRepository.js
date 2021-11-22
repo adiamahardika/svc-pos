@@ -82,3 +82,34 @@ export const createBranchRepository = (request) => {
     });
   });
 };
+
+export const updateBranchRepository = (request, branch_id) => {
+  const query = {
+    text: `UPDATE branch SET location = $1, branch_address = $2, provinsi = $3, kota = $4, kecamatan = $5, kelurahan = $6, kode_pos = $7, email = $8, phone = $9, fax = $10, updated_by = $11, updated_at = $12 WHERE id = $13 RETURNING branch.*`,
+    values: [
+      request.location,
+      request.branch_address,
+      request.provinsi,
+      request.kota,
+      request.kecamatan,
+      request.kelurahan,
+      request.kode_pos,
+      request.email,
+      request.phone,
+      request.fax,
+      request.updated_by,
+      request.updated_at,
+      branch_id,
+    ],
+  };
+  return new Promise((resolve, reject) => {
+    connection.query(query, (error, result) => {
+      if (error) {
+        console.log(error);
+        reject(new Error(error));
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};

@@ -2,10 +2,7 @@ import { host } from "../configs/index.js";
 import { error_RC, SUCCESS, success_RC } from "../helpers/generalConstant.js";
 import { standardResponse } from "../helpers/standardResponse.js";
 import { compress } from "../helpers/uploadFiles.js";
-import {
-  createPriceRepository,
-  updatePriceRepository,
-} from "../repository/priceRepository.js";
+import { createPriceRepository } from "../repository/priceRepository.js";
 import {
   countProduct,
   createProductRepository,

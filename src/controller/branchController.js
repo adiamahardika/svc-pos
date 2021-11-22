@@ -3,6 +3,7 @@ import { standardResponse } from "../helpers/standardResponse.js";
 import {
   createBranchRepository,
   getMaxBranchNumberByMerchant,
+  updateBranchRepository,
 } from "../repository/branchRepository.js";
 
 export const createBranch = async (request, response) => {
@@ -33,6 +34,33 @@ export const createBranch = async (request, response) => {
     };
 
     const result = await createBranchRepository(request_data);
+    standardResponse(response, 200, success_RC, SUCCESS, result);
+  } catch (error) {
+    console.log(error);
+    standardResponse(response, 400, error_RC, error.toString());
+  }
+};
+
+export const updateBranch = async (request, response) => {
+  try {
+    const date = new Date();
+    const branch_id = request.body.branch_id;
+    const request_data = {
+      location: request.body.location,
+      branch_address: request.body.branch_address,
+      provinsi: request.body.provinsi,
+      kota: request.body.kota,
+      kecamatan: request.body.kecamatan,
+      kelurahan: request.body.kelurahan,
+      kode_pos: request.body.kode_pos,
+      email: request.body.email,
+      phone: request.body.phone,
+      fax: request.body.fax || "-",
+      updated_by: request.body.updated_by,
+      updated_at: date,
+    };
+
+    const result = await updateBranchRepository(request_data, branch_id);
     standardResponse(response, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
