@@ -123,12 +123,15 @@ export const updateProduct = async (request, response) => {
     }
 
     const price_request = {
+      product_id: request.params.product_id,
       starting_price: request.body.starting_price,
       selling_price: request.body.selling_price,
       updated_by: request.body.updated_by,
       updated_at: date,
+      created_by: request.body.updated_by,
+      created_at: date,
     };
-    const price_result = await updatePriceRepository(price_request, product_id);
+    const price_result = await createPriceRepository(price_request);
 
     result.rows[0] = {
       ...result.rows[0],
