@@ -14,3 +14,5 @@ export const image_location = process.env.IMAGE_LOCATION;
 export const ktp_location = process.env.KTP_LOCATION;
 export const host = process.env.HOST;
 export const jwt_secret_key = process.env.JWT_SECRET_KEY;
+export const email_smtp = process.env.EMAIL_SMTP;
+export const pass_smtp = process.env.PASS_SMTP;

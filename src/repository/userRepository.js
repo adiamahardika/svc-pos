@@ -31,3 +31,19 @@ export const countUser = (request) => {
     );
   });
 };
+
+export const getDetailUserRepository = (user_id) => {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `SELECT users.*, role.name AS role_name, merchant.name as merchant_name FROM users LEFT OUTER JOIN role ON (users.role_id = CAST(role.id AS varchar(10))) LEFT OUTER JOIN merchant ON (merchant.owner = CAST(users.id AS varchar(10))) WHERE users.id = ${user_id}`,
+      (error, result) => {
+        if (error) {
+          console.log(error);
+          reject(new Error(error));
+        } else {
+          resolve(result);
+        }
+      }
+    );
+  });
+};

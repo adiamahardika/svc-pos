@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import crypto_js from "crypto-js";
+import nodemailer from "nodemailer";
 import { error_RC, SUCCESS, success_RC } from "../helpers/generalConstant.js";
 import { standardResponse } from "../helpers/standardResponse.js";
 import {
@@ -8,13 +9,15 @@ import {
   userCodeCheckRepository,
 } from "../repository/authRepository.js";
 import jwt from "jsonwebtoken";
-import { host, jwt_secret_key } from "../configs/index.js";
-import { compress } from "../helpers/uploadFiles.js";
 import {
-  getBranchByMerchantId,
-  getDetailBranchRepository,
-} from "../repository/branchRepository.js";
+  email_smtp,
+  host,
+  jwt_secret_key,
+  pass_smtp,
+} from "../configs/index.js";
+import { compress } from "../helpers/uploadFiles.js";
 import { getDetailMerchantRepository } from "../repository/merchantRepository.js";
+import { getDetailUserRepository } from "../repository/userRepository.js";
 
 export const register = async (request, response) => {
   try {
@@ -234,6 +237,54 @@ export const refreshToken = async (request, response) => {
         }
       });
     }
+  } catch (error) {
+    console.log(error);
+    standardResponse(response, 400, error_RC, error.toString());
+  }
+};
+
+export const verifyEmail = async (request, response) => {
+  try {
+    let transporter = nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false, // true for 465, false for other ports
+      requireTLS: true,
+      auth: {
+        user: email_smtp,
+        pass: pass_smtp,
+      },
+    });
+
+    const user_data = await getDetailUserRepository(request.body.user_id);
+    const token = jwt.sign({ id: user_data.id }, jwt_secret_key, {
+      expiresIn: "1h",
+    });
+    const url = `${host}confirmation/${token}`;
+    const mail_options = {
+      from: `"Dev Trilogi" <${email_smtp}>`, // sender address
+      to: request.body.email,
+      subject: "Verify Email",
+      html: `Please click this link to verify your email: <a href="${url}">${url}</a>`, // html body
+    };
+
+    // send mail with defined transport object
+    transporter.sendMail(mail_options, (error, info) => {
+      if (error) {
+        console.log(error);
+        standardResponse(response, 400, success_RC, error.toString());
+      } else {
+        console.log(info);
+        const result = {
+          rows: [
+            {
+              message: `Message sent: ${info.messageId}`,
+            },
+          ],
+        };
+        standardResponse(response, 200, success_RC, SUCCESS, result);
+      }
+    });
   } catch (error) {
     console.log(error);
     standardResponse(response, 400, error_RC, error.toString());
