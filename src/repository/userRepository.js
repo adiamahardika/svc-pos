@@ -47,3 +47,20 @@ export const getDetailUserRepository = (user_id) => {
     );
   });
 };
+
+export const updateVerifyEmail = (request, id) => {
+  const query = {
+    text: `UPDATE users SET is_email_validate = $1 WHERE id = $2`,
+    values: [request.is_email_validate, id],
+  };
+  return new Promise((resolve, reject) => {
+    connection.query(query, (error, result) => {
+      if (error) {
+        console.log(error);
+        reject(new Error(error));
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};

@@ -1,6 +1,7 @@
 import express from "express";
 import {
   authorization,
+  confirmEmail,
   login,
   refreshToken,
   register,
@@ -14,4 +15,5 @@ authRouter
   .post("/register", uploadKtp, register)
   .post("/login", login)
   .get("/refresh-token", refreshToken)
-  .post("/verifiy-email", verifyEmail);
+  .post("/verify-email", verifyEmail)
+  .get("/confirm-email/:token", confirmEmail);

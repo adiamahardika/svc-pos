@@ -17,7 +17,10 @@ import {
 } from "../configs/index.js";
 import { compress } from "../helpers/uploadFiles.js";
 import { getDetailMerchantRepository } from "../repository/merchantRepository.js";
-import { getDetailUserRepository } from "../repository/userRepository.js";
+import {
+  getDetailUserRepository,
+  updateVerifyEmail,
+} from "../repository/userRepository.js";
 
 export const register = async (request, response) => {
   try {
@@ -248,7 +251,7 @@ export const verifyEmail = async (request, response) => {
     let transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
       port: 587,
-      secure: false, // true for 465, false for other ports
+      secure: false,
       requireTLS: true,
       auth: {
         user: email_smtp,
@@ -257,10 +260,10 @@ export const verifyEmail = async (request, response) => {
     });
 
     const user_data = await getDetailUserRepository(request.body.user_id);
-    const token = jwt.sign({ id: user_data.id }, jwt_secret_key, {
+    const token = jwt.sign({ id: user_data.rows[0].id }, jwt_secret_key, {
       expiresIn: "1h",
     });
-    const url = `${host}confirmation/${token}`;
+    const url = `${host}auth/confirm-email/${token}`;
     const mail_options = {
       from: `"Dev Trilogi" <${email_smtp}>`, // sender address
       to: request.body.email,
@@ -268,23 +271,38 @@ export const verifyEmail = async (request, response) => {
       html: `Please click this link to verify your email: <a href="${url}">${url}</a>`, // html body
     };
 
-    // send mail with defined transport object
-    transporter.sendMail(mail_options, (error, info) => {
-      if (error) {
-        console.log(error);
-        standardResponse(response, 400, success_RC, error.toString());
+    let info = await transporter.sendMail(mail_options);
+    const result = {
+      rows: [
+        {
+          message: `Message sent: ${info.messageId}`,
+        },
+      ],
+    };
+    standardResponse(response, 200, success_RC, SUCCESS, result);
+  } catch (error) {
+    console.log(error);
+    standardResponse(response, 400, error_RC, error.toString());
+  }
+};
+
+export const confirmEmail = async (request, response) => {
+  try {
+    const token = request.params.token;
+
+    jwt.verify(token, jwt_secret_key, async (error, decoded) => {
+      if (error && error.name === "TokenExpiredError") {
+        standardResponse(response, 200, error_RC, "Your token has expired!");
+      } else if (error && error.name === "JsonWebTokenError") {
+        standardResponse(response, 200, error_RC, "Your token is invalid!");
       } else {
-        console.log(info);
-        const result = {
-          rows: [
-            {
-              message: `Message sent: ${info.messageId}`,
-            },
-          ],
+        const request_data = {
+          is_email_validate: "true",
         };
-        standardResponse(response, 200, success_RC, SUCCESS, result);
+        await updateVerifyEmail(request_data, decoded.id);
       }
     });
+    standardResponse(response, 200, success_RC, SUCCESS);
   } catch (error) {
     console.log(error);
     standardResponse(response, 400, error_RC, error.toString());
