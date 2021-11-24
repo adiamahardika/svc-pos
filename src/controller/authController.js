@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import crypto_js from "crypto-js";
 import nodemailer from "nodemailer";
+import SendOtp from "sendotp";
 import { error_RC, SUCCESS, success_RC } from "../helpers/generalConstant.js";
 import { standardResponse } from "../helpers/standardResponse.js";
 import {
@@ -301,6 +302,24 @@ export const confirmEmail = async (request, response) => {
         };
         await updateVerifyEmail(request_data, decoded.id);
       }
+    });
+    standardResponse(response, 200, success_RC, SUCCESS);
+  } catch (error) {
+    console.log(error);
+    standardResponse(response, 400, error_RC, error.toString());
+  }
+};
+
+export const verifyPhoneNumber = async (request, response) => {
+  try {
+    const otp = Math.floor(1000 + Math.random() * 9000);
+    const sendOtp = new SendOtp(
+      "AuthKey",
+      `Otp for your order is {{otp}}, please do not share it with anybody`
+    );
+    console.log(request.body.no_hp);
+    sendOtp.send(request.body.no_hp, "DEVTRLG", otp, (error, data) => {
+      console.log(data);
     });
     standardResponse(response, 200, success_RC, SUCCESS);
   } catch (error) {

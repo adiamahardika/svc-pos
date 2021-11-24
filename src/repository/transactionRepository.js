@@ -87,7 +87,7 @@ export const countTransaction = (request) => {
 export const getTransactionHeaderRepository = (request) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT * FROM (SELECT transaction_header.*, branch.location as branch_location FROM transaction_header LEFT OUTER JOIN branch ON (CAST(branch.id AS varchar(10)) = transaction_header.branch_id) WHERE branch_id LIKE '%${request.branch_id}%' AND transaction_header.merchant_id LIKE '%${request.merchant_id}%' AND trx_type LIKE '%${request.trx_type}%' AND trx_status LIKE '%${request.trx_status}%' AND transaction_header.created_at >= '${request.start_date}' AND transaction_header.created_at <= '${request.end_date}' ORDER BY ${request.order_by} ${request.sort_by} LIMIT ${request.limit} OFFSET ${request.start_index}) as trx WHERE trx.transaction_id LIKE '%${request.search}%' OR trx.customer_name LIKE '%${request.search}%'`,
+      `SELECT * FROM (SELECT transaction_header.*, branch.location as branch_location FROM transaction_header LEFT OUTER JOIN branch ON (CAST(branch.id AS varchar(10)) = transaction_header.branch_id) WHERE branch_id LIKE '%${request.branch_id}%' AND transaction_header.merchant_id LIKE '%${request.merchant_id}%' AND trx_type LIKE '%${request.trx_type}%' AND trx_status LIKE '${request.trx_status}%' AND transaction_header.created_at >= '${request.start_date}' AND transaction_header.created_at <= '${request.end_date}' ORDER BY ${request.order_by} ${request.sort_by} LIMIT ${request.limit} OFFSET ${request.start_index}) as trx WHERE trx.transaction_id LIKE '%${request.search}%' OR trx.customer_name LIKE '%${request.search}%'`,
       (error, result) => {
         if (error) {
           console.log(error);

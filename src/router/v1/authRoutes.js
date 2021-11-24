@@ -6,6 +6,7 @@ import {
   refreshToken,
   register,
   verifyEmail,
+  verifyPhoneNumber,
 } from "../../controller/authController.js";
 import { uploadKtp } from "../../helpers/uploadFiles.js";
 
@@ -16,4 +17,5 @@ authRouter
   .post("/login", login)
   .get("/refresh-token", refreshToken)
   .post("/verify-email", verifyEmail)
-  .get("/confirm-email/:token", confirmEmail);
+  .get("/confirm-email/:token", confirmEmail)
+  .post("/verify-phone-number", verifyPhoneNumber);
