@@ -149,7 +149,7 @@ export const login = async (request, response) => {
 };
 
 export const authentication = (request, response, next) => {
-  const header_token = request.headers.token;
+  const header_token = request.get("token");
   if (!header_token) {
     standardResponse(response, 200, error_RC, "Please provide your token!");
   } else {
@@ -170,8 +170,8 @@ export const authentication = (request, response, next) => {
 };
 
 export const authorization = async (request, response, next) => {
-  const signature_key = request.headers.signature_key;
-  const header_token = request.headers.token;
+  const signature_key = request.get("signature-key");
+  const header_token = request.get("token");
   if (!signature_key) {
     standardResponse(
       response,
@@ -202,8 +202,8 @@ export const authorization = async (request, response, next) => {
 
 export const refreshToken = async (request, response) => {
   try {
-    const signature_key = request.headers.signature_key;
-    const header_token = request.headers.token;
+    const signature_key = request.get("signature-key");
+    const header_token = request.get("token");
     const decode = jwt.decode(header_token);
     const merchant_id = await getDetailMerchantRepository(decode.merchant_id);
 
