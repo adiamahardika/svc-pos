@@ -1,7 +1,6 @@
 import bcrypt from "bcrypt";
 import crypto_js from "crypto-js";
 import nodemailer from "nodemailer";
-import SendOtp from "sendotp";
 import { error_RC, SUCCESS, success_RC } from "../helpers/generalConstant.js";
 import { standardResponse } from "../helpers/standardResponse.js";
 import {
@@ -11,10 +10,13 @@ import {
 } from "../repository/authRepository.js";
 import jwt from "jsonwebtoken";
 import {
+  account_sid_otp,
+  auth_token_otp,
   email_smtp,
   host,
   jwt_secret_key,
   pass_smtp,
+  service_id_otp,
 } from "../configs/index.js";
 import { compress } from "../helpers/uploadFiles.js";
 import { getDetailMerchantRepository } from "../repository/merchantRepository.js";
@@ -22,6 +24,8 @@ import {
   getDetailUserRepository,
   updateVerifyEmail,
 } from "../repository/userRepository.js";
+import twilio from "twilio";
+const client = new twilio(account_sid_otp, auth_token_otp);
 
 export const register = async (request, response) => {
   try {
@@ -312,16 +316,42 @@ export const confirmEmail = async (request, response) => {
 
 export const verifyPhoneNumber = async (request, response) => {
   try {
-    const otp = Math.floor(1000 + Math.random() * 9000);
-    const sendOtp = new SendOtp(
-      "AuthKey",
-      `Otp for your order is {{otp}}, please do not share it with anybody`
-    );
-    console.log(request.body.no_hp);
-    sendOtp.send(request.body.no_hp, "DEVTRLG", otp, (error, data) => {
-      console.log(data);
-    });
-    standardResponse(response, 200, success_RC, SUCCESS);
+    client.verify
+      .services(service_id_otp)
+      .verifications.create({
+        to: `+${request.body.no_hp}`,
+        channel: "sms",
+      })
+      .then((data) => {
+        const result = {
+          rows: [data],
+        };
+        standardResponse(response, 200, success_RC, SUCCESS, result);
+      });
+  } catch (error) {
+    console.log(error);
+    standardResponse(response, 400, error_RC, error.toString());
+  }
+};
+
+export const confirmPhoneNumber = async (request, response) => {
+  try {
+    await client.verify
+      .services(service_id_otp)
+      .verificationChecks.create({
+        to: `+${request.body.no_hp}`,
+        code: request.body.otp,
+      })
+      .then((data) => {
+        if (data.status === "approved") {
+          const result = {
+            rows: [data],
+          };
+          standardResponse(response, 200, success_RC, SUCCESS, result);
+        } else {
+          standardResponse(response, 200, error_RC, "Wrong otp number!");
+        }
+      });
   } catch (error) {
     console.log(error);
     standardResponse(response, 400, error_RC, error.toString());

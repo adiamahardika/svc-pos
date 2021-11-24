@@ -16,3 +16,6 @@ export const host = process.env.HOST;
 export const jwt_secret_key = process.env.JWT_SECRET_KEY;
 export const email_smtp = process.env.EMAIL_SMTP;
 export const pass_smtp = process.env.PASS_SMTP;
+export const account_sid_otp = process.env.ACCOUNT_SID_OTP;
+export const auth_token_otp = process.env.AUTH_TOKEN_OTP;
+export const service_id_otp = process.env.SERVICE_ID_OTP;
