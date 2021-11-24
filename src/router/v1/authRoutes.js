@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  authentication,
   authorization,
   confirmEmail,
   confirmPhoneNumber,
@@ -16,7 +17,7 @@ export const authRouter = express.Router();
 authRouter
   .post("/register", uploadKtp, register)
   .post("/login", login)
-  .get("/refresh-token", refreshToken)
+  .get("/refresh-token", authentication, authorization, refreshToken)
   .post("/verify-email", verifyEmail)
   .get("/confirm-email/:token", confirmEmail)
   .post("/verify-phone-number", verifyPhoneNumber)

@@ -15,7 +15,6 @@ export const ktp_location = process.env.KTP_LOCATION;
 export const host = process.env.HOST;
 export const jwt_secret_key = process.env.JWT_SECRET_KEY;
 export const email_smtp = process.env.EMAIL_SMTP;
-export const pass_smtp = process.env.PASS_SMTP;
 export const client_id = process.env.CLIENT_ID;
 export const client_secret = process.env.CLIENT_SECRET;
 export const redirect_uri = process.env.REDIRECT_URI;

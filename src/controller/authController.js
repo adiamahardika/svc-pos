@@ -18,7 +18,6 @@ import {
   email_smtp,
   host,
   jwt_secret_key,
-  pass_smtp,
   redirect_uri,
   refresh_token,
   service_id_otp,
@@ -155,7 +154,11 @@ export const authentication = (request, response, next) => {
     standardResponse(response, 200, error_RC, "Please provide your token!");
   } else {
     jwt.verify(header_token, jwt_secret_key, (error, decoded) => {
-      if (error && error.name === "TokenExpiredError") {
+      if (
+        error &&
+        error.name === "TokenExpiredError" &&
+        request.route.path !== "/refresh-token"
+      ) {
         standardResponse(response, 200, error_RC, "Your token has expired!");
       } else if (error && error.name === "JsonWebTokenError") {
         standardResponse(response, 200, error_RC, "Your token is invalid!");
@@ -201,55 +204,25 @@ export const refreshToken = async (request, response) => {
   try {
     const signature_key = request.headers.signature_key;
     const header_token = request.headers.token;
+    const decode = jwt.decode(header_token);
+    const merchant_id = await getDetailMerchantRepository(decode.merchant_id);
 
-    if (!header_token || !signature_key) {
-      standardResponse(
-        response,
-        200,
-        error_RC,
-        "Please provide your token and signature_key!"
-      );
-    } else {
-      jwt.verify(header_token, jwt_secret_key, async (error, decoded) => {
-        if (error && error.name === "JsonWebTokenError") {
-          standardResponse(response, 200, error_RC, "Your token is invalid!");
-        } else {
-          const decode = jwt.decode(header_token);
-          const merchant_id = await getDetailMerchantRepository(
-            decode.merchant_id
-          );
-          const generate_signature_key = crypto_js
-            .MD5(merchant_id.rows[0].id + merchant_id.rows[0].secret_key)
-            .toString();
+    const token = jwt.sign(
+      { merchant_id: merchant_id.id, signature_key: signature_key },
+      jwt_secret_key,
+      {
+        expiresIn: "1h",
+      }
+    );
 
-          if (signature_key !== generate_signature_key) {
-            standardResponse(
-              response,
-              401,
-              error_RC,
-              "Your signature_key is invalid!"
-            );
-          } else {
-            const token = jwt.sign(
-              { merchant_id: merchant_id.id, signature_key: signature_key },
-              jwt_secret_key,
-              {
-                expiresIn: "1h",
-              }
-            );
-
-            const result = {
-              rows: [
-                {
-                  token: token,
-                },
-              ],
-            };
-            standardResponse(response, 200, success_RC, SUCCESS, result);
-          }
-        }
-      });
-    }
+    const result = {
+      rows: [
+        {
+          token: token,
+        },
+      ],
+    };
+    standardResponse(response, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
     standardResponse(response, 400, error_RC, error.toString());
