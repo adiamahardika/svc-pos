@@ -127,6 +127,7 @@ export const updateMerchant = async (request, response) => {
     const request_data = {
       name: request.body.name,
       npwp: request.body.npwp,
+      mc_id: request.body.mc_id,
       is_active: request.body.is_active || "true",
       updated_by: request.body.updated_by,
       updated_at: date,
