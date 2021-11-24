@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import crypto_js from "crypto-js";
 import nodemailer from "nodemailer";
+import { google } from "googleapis";
 import { error_RC, SUCCESS, success_RC } from "../helpers/generalConstant.js";
 import { standardResponse } from "../helpers/standardResponse.js";
 import {
@@ -12,10 +13,14 @@ import jwt from "jsonwebtoken";
 import {
   account_sid_otp,
   auth_token_otp,
+  client_id,
+  client_secret,
   email_smtp,
   host,
   jwt_secret_key,
   pass_smtp,
+  redirect_uri,
+  refresh_token,
   service_id_otp,
 } from "../configs/index.js";
 import { compress } from "../helpers/uploadFiles.js";
@@ -253,14 +258,22 @@ export const refreshToken = async (request, response) => {
 
 export const verifyEmail = async (request, response) => {
   try {
-    let transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 587,
-      secure: false,
-      requireTLS: true,
+    const oAuth2Client = new google.auth.OAuth2(
+      client_id,
+      client_secret,
+      redirect_uri
+    );
+    oAuth2Client.setCredentials({ refresh_token: refresh_token });
+    const accessToken = await oAuth2Client.getAccessToken();
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
       auth: {
+        type: "OAuth2",
         user: email_smtp,
-        pass: pass_smtp,
+        clientId: client_id,
+        clientSecret: client_secret,
+        refreshToken: refresh_token,
+        accessToken: accessToken,
       },
     });
 
