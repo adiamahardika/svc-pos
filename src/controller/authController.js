@@ -110,7 +110,7 @@ export const login = async (request, response) => {
           { merchant_id: user_data.merchant_id, signature_key: signature_key },
           jwt_secret_key,
           {
-            expiresIn: "1h",
+            expiresIn: "1m",
           }
         );
 
@@ -162,6 +162,11 @@ export const authentication = (request, response, next) => {
         standardResponse(response, 200, error_RC, "Your token has expired!");
       } else if (error && error.name === "JsonWebTokenError") {
         standardResponse(response, 200, error_RC, "Your token is invalid!");
+      } else if (
+        (decoded && !decoded.merchant_id) ||
+        (decoded && !decoded.signature_key)
+      ) {
+        standardResponse(response, 200, error_RC, "Error to read your token!");
       } else {
         next();
       }
@@ -208,7 +213,7 @@ export const refreshToken = async (request, response) => {
     const merchant_id = await getDetailMerchantRepository(decode.merchant_id);
 
     const token = jwt.sign(
-      { merchant_id: merchant_id.id, signature_key: signature_key },
+      { merchant_id: merchant_id.rows[0].id, signature_key: signature_key },
       jwt_secret_key,
       {
         expiresIn: "1h",
