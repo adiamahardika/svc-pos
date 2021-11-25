@@ -110,7 +110,7 @@ export const login = async (request, response) => {
           { merchant_id: user_data.merchant_id, signature_key: signature_key },
           jwt_secret_key,
           {
-            expiresIn: "1m",
+            expiresIn: "1h",
           }
         );
 
