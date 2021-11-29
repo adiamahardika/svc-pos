@@ -96,7 +96,11 @@ export const login = async (request, response) => {
       user_check = user_code_check;
     }
 
-    if (user_check && user_check !== null) {
+    if (
+      user_check &&
+      user_check !== null &&
+      user_check.rows[0].is_active === "true"
+    ) {
       const match = await bcrypt.compare(
         request_data.password,
         user_check.rows[0].hash_password
@@ -134,6 +138,13 @@ export const login = async (request, response) => {
       } else {
         standardResponse(response, 200, error_RC, "Your password is invalid!");
       }
+    } else if (user_check.rows[0].is_active !== "true") {
+      standardResponse(
+        response,
+        401,
+        error_RC,
+        "This user is no longer active!"
+      );
     } else {
       standardResponse(
         response,

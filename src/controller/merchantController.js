@@ -2,10 +2,7 @@ import { uid } from "uid";
 import { error_RC, SUCCESS, success_RC } from "../helpers/generalConstant.js";
 import { standardResponse } from "../helpers/standardResponse.js";
 import { createBankAccountRepository } from "../repository/bankAccountRepository.js";
-import {
-  createBranchRepository,
-  getBranchByMerchantId,
-} from "../repository/branchRepository.js";
+import { createBranchRepository } from "../repository/branchRepository.js";
 import {
   checkMerchantCode,
   countMerchant,
