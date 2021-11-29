@@ -99,3 +99,41 @@ export const deleteUserBranchRepository = (request, id) => {
     });
   });
 };
+
+export const getDetailUserBranchRepository = (user_code) => {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `SELECT user_branch.*, branch.location as branch_location, role.name as role_name, merchant.name as merchant_name FROM user_branch LEFT OUTER JOIN branch ON (user_branch.branch_id = CAST(branch.id AS varchar(10))) LEFT OUTER JOIN role ON (user_branch.role_id = CAST(role.id AS varchar(10))) LEFT OUTER JOIN merchant ON (user_branch.merchant_id = CAST(merchant.id AS varchar(10))) WHERE user_branch.user_code LIKE '%${user_code}%'`,
+      (error, result) => {
+        if (error) {
+          console.log(error);
+          reject(new Error(error));
+        } else {
+          resolve(result);
+        }
+      }
+    );
+  });
+};
+
+export const changePasswordUserBranchRepository = (request, user_code) => {
+  const query = {
+    text: `UPDATE user_branch SET hash_password = $1, updated_by = $2, updated_at = $3 WHERE user_code = $4 RETURNING user_branch.*`,
+    values: [
+      request.hash_password,
+      request.updated_by,
+      request.updated_at,
+      user_code,
+    ],
+  };
+  return new Promise((resolve, reject) => {
+    connection.query(query, (error, result) => {
+      if (error) {
+        console.log(error);
+        reject(new Error(error));
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};

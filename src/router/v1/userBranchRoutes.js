@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  changePasswordUserBranch,
   createUserBranch,
   deleteUserBranch,
   getUserBranch,
@@ -12,4 +13,5 @@ userBranchRouter
   .post("/create-user-branch", createUserBranch)
   .post("/get-user-branch", getUserBranch)
   .put("/update-user-branch", updateUserBranch)
-  .delete("/delete-user-branch/:user_branch_id", deleteUserBranch);
+  .delete("/delete-user-branch/:user_branch_id", deleteUserBranch)
+  .put("/change-pass-user-branch", changePasswordUserBranch);

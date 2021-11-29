@@ -4,9 +4,11 @@ import { standardResponse } from "../helpers/standardResponse.js";
 import { getDetailBranchRepository } from "../repository/branchRepository.js";
 import { getDetailMerchantRepository } from "../repository/merchantRepository.js";
 import {
+  changePasswordUserBranchRepository,
   countUserBranchByBranch,
   createUserBranchRepository,
   deleteUserBranchRepository,
+  getDetailUserBranchRepository,
   getUserBranchRepository,
   updateUserBranchRepository,
 } from "../repository/userBranchRepository.js";
@@ -103,6 +105,47 @@ export const deleteUserBranch = async (request, response) => {
       user_branch_id
     );
     standardResponse(response, 200, success_RC, SUCCESS, result);
+  } catch (error) {
+    console.log(error);
+    standardResponse(response, 400, error_RC, error.toString());
+  }
+};
+
+export const changePasswordUserBranch = async (request, response) => {
+  try {
+    const date = new Date();
+    const user_code = request.body.user_code;
+    let request_data = {
+      new_password: request.body.new_password,
+      old_password: request.body.old_password,
+      updated_by: request.body.updated_by,
+      updated_at: date,
+    };
+    const user_check = await getDetailUserBranchRepository(user_code);
+    const match = await bcrypt.compare(
+      request_data.old_password,
+      user_check.rows[0].hash_password
+    );
+    if (match) {
+      const salt_rounds = 10;
+      const hash = bcrypt.hashSync(request_data.new_password, salt_rounds);
+      request_data = {
+        ...request_data,
+        hash_password: hash,
+      };
+      const result = await changePasswordUserBranchRepository(
+        request_data,
+        user_code
+      );
+      standardResponse(response, 200, success_RC, SUCCESS, result);
+    } else {
+      standardResponse(
+        response,
+        200,
+        error_RC,
+        "Your old password is invalid!"
+      );
+    }
   } catch (error) {
     console.log(error);
     standardResponse(response, 400, error_RC, error.toString());
