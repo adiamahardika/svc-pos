@@ -39,3 +39,20 @@ export const createMerchantCategoryRepository = (request) => {
     });
   });
 };
+
+export const updateMerchantCategoryRepository = (request, id) => {
+  const query = {
+    text: `UPDATE merchant_category SET name = $1, updated_by = $2, updated_at = $3 WHERE id = $4 RETURNING merchant_category.*`,
+    values: [request.name, request.updated_by, request.updated_at, id],
+  };
+  return new Promise((resolve, reject) => {
+    connection.query(query, (error, result) => {
+      if (error) {
+        console.log(error);
+        reject(new Error(error));
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};

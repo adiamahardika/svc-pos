@@ -3,6 +3,7 @@ import { standardResponse } from "../helpers/standardResponse.js";
 import {
   createMerchantCategoryRepository,
   getMerhcantCategoryRespository,
+  updateMerchantCategoryRepository,
 } from "../repository/merchantCategoryRepository.js";
 
 export const getMerhcantCategory = async (request, response) => {
@@ -29,7 +30,26 @@ export const createMerchantCategory = async (request, response) => {
       created_by: request.body.created_by,
       created_at: date,
     };
+
     const result = await createMerchantCategoryRepository(request_data);
+    standardResponse(response, 200, success_RC, SUCCESS, result);
+  } catch (error) {
+    console.log(error);
+    standardResponse(response, 400, error_RC, error.toString());
+  }
+};
+
+export const updateMerchantCategory = async (request, response) => {
+  try {
+    const date = new Date();
+    const mc_id = request.body.mc_id;
+    const request_data = {
+      name: request.body.name,
+      updated_by: request.body.updated_by,
+      updated_at: date,
+    };
+
+    const result = await updateMerchantCategoryRepository(request_data, mc_id);
     standardResponse(response, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
