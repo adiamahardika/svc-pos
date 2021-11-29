@@ -29,6 +29,8 @@ import {
   updateVerifyEmail,
 } from "../repository/userRepository.js";
 import twilio from "twilio";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
 const client = new twilio(account_sid_otp, auth_token_otp);
 
 export const register = async (request, response) => {
@@ -296,20 +298,28 @@ export const verifyEmail = async (request, response) => {
 export const confirmEmail = async (request, response) => {
   try {
     const token = request.params.token;
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = dirname(__filename);
 
     jwt.verify(token, jwt_secret_key, async (error, decoded) => {
       if (error && error.name === "TokenExpiredError") {
-        standardResponse(response, 200, error_RC, "Your token has expired!");
+        return response
+          .status(200)
+          .sendFile(join(__dirname + "/web/expiredEmail.html"));
       } else if (error && error.name === "JsonWebTokenError") {
-        standardResponse(response, 200, error_RC, "Your token is invalid!");
+        return response
+          .status(200)
+          .sendFile(join(__dirname + "/web/invalidEmail.html"));
       } else {
         const request_data = {
           is_email_validate: "true",
         };
         await updateVerifyEmail(request_data, decoded.id);
+        return response
+          .status(200)
+          .sendFile(join(__dirname + "/web/successEmail.html"));
       }
     });
-    standardResponse(response, 200, success_RC, SUCCESS);
   } catch (error) {
     console.log(error);
     standardResponse(response, 400, error_RC, error.toString());
