@@ -2,6 +2,7 @@ import { error_RC, SUCCESS, success_RC } from "../helpers/generalConstant.js";
 import { standardResponse } from "../helpers/standardResponse.js";
 import {
   createMerchantCategoryRepository,
+  deleteMerchantCategoryRepository,
   getMerhcantCategoryRespository,
   updateMerchantCategoryRepository,
 } from "../repository/merchantCategoryRepository.js";
@@ -50,6 +51,21 @@ export const updateMerchantCategory = async (request, response) => {
     };
 
     const result = await updateMerchantCategoryRepository(request_data, mc_id);
+    standardResponse(response, 200, success_RC, SUCCESS, result);
+  } catch (error) {
+    console.log(error);
+    standardResponse(response, 400, error_RC, error.toString());
+  }
+};
+
+export const deleteMerchantCategory = async (request, response) => {
+  try {
+    const mc_id = request.params.mc_id;
+    const request_data = {
+      is_active: "false",
+    };
+
+    const result = await deleteMerchantCategoryRepository(request_data, mc_id);
     standardResponse(response, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
