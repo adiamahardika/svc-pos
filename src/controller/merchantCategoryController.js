@@ -7,7 +7,10 @@ import {
 
 export const getMerhcantCategory = async (request, response) => {
   try {
-    const result = await getMerhcantCategoryRespository();
+    const request_data = {
+      is_active: "true",
+    };
+    const result = await getMerhcantCategoryRespository(request_data);
     standardResponse(response, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);

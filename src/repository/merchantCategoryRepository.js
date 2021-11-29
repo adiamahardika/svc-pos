@@ -1,9 +1,9 @@
 import connection from "../configs/postgres.js";
 
-export const getMerhcantCategoryRespository = () => {
+export const getMerhcantCategoryRespository = (request) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT * FROM merchant_category ORDER BY name ASC`,
+      `SELECT * FROM merchant_category WHERE is_active = '${request.is_active}' ORDER BY name ASC`,
       (error, result) => {
         if (error) {
           console.log(error);
