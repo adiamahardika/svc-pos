@@ -64,3 +64,25 @@ export const updateVerifyEmail = (request, id) => {
     });
   });
 };
+
+export const changePasswordUserRepository = (request, email) => {
+  const query = {
+    text: `UPDATE users SET hash_password = $1, updated_by = $2, updated_at = $3 WHERE email = $4 RETURNING users.*`,
+    values: [
+      request.hash_password,
+      request.updated_by,
+      request.updated_at,
+      email,
+    ],
+  };
+  return new Promise((resolve, reject) => {
+    connection.query(query, (error, result) => {
+      if (error) {
+        console.log(error);
+        reject(new Error(error));
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
