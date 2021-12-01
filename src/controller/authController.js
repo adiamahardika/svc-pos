@@ -27,6 +27,7 @@ import { getDetailMerchantRepository } from "../repository/merchantRepository.js
 import {
   getDetailUserRepository,
   updateVerifyEmail,
+  updateVerifyOtp,
 } from "../repository/userRepository.js";
 import twilio from "twilio";
 import { fileURLToPath } from "url";
@@ -356,9 +357,14 @@ export const confirmPhoneNumber = async (request, response) => {
       })
       .then((data) => {
         if (data.status === "approved") {
+          const user_id = request.body.user_id;
           const result = {
             rows: [data],
           };
+          const request_data = {
+            is_otp_validate: "true",
+          };
+          await updateVerifyOtp(request_data, user_id);
           standardResponse(response, 200, success_RC, SUCCESS, result);
         } else {
           standardResponse(response, 200, error_RC, "Wrong otp number!");

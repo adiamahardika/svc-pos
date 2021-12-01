@@ -86,3 +86,20 @@ export const changePasswordUserRepository = (request, email) => {
     });
   });
 };
+
+export const updateVerifyOtp = (request, id) => {
+  const query = {
+    text: `UPDATE users SET is_otp_validate = $1 WHERE id = $2`,
+    values: [request.is_otp_validate, id],
+  };
+  return new Promise((resolve, reject) => {
+    connection.query(query, (error, result) => {
+      if (error) {
+        console.log(error);
+        reject(new Error(error));
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};

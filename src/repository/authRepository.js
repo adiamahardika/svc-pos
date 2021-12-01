@@ -47,22 +47,6 @@ export const emailCheckRepository = (request) => {
   });
 };
 
-export const usernameCheckRepository = (request) => {
-  return new Promise((resolve, reject) => {
-    connection.query(
-      `SELECT users.* FROM users WHERE username LIKE '%${request.username}%'`,
-      (error, result) => {
-        if (error) {
-          console.log(error);
-          reject(new Error(error));
-        } else {
-          resolve(result);
-        }
-      }
-    );
-  });
-};
-
 export const userCodeCheckRepository = (request) => {
   return new Promise((resolve, reject) => {
     connection.query(
