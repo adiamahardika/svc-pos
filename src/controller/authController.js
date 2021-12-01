@@ -355,7 +355,7 @@ export const confirmPhoneNumber = async (request, response) => {
         to: `+${request.body.no_hp}`,
         code: request.body.otp,
       })
-      .then((data) => {
+      .then(async (data) => {
         if (data.status === "approved") {
           const user_id = request.body.user_id;
           const result = {
