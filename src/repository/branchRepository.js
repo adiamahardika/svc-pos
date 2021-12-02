@@ -117,7 +117,7 @@ export const updateBranchRepository = (request, branch_id) => {
 export const countBranch = (request) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT count(*) as total_data FROM (SELECT * FROM branch WHERE merchant_id LIKE '%${request.merchant_id}%') AS tbl WHERE tbl.location LIKE '%${request.search}%' OR tbl.branch_address LIKE '%${request.search}%'`,
+      `SELECT count(*) as total_data FROM (SELECT * FROM branch WHERE merchant_id = '${request.merchant_id}') AS tbl WHERE tbl.location LIKE '%${request.search}%' OR tbl.branch_address LIKE '%${request.search}%'`,
       (error, result) => {
         if (error) {
           console.log(error);
