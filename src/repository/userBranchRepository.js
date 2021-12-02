@@ -31,7 +31,7 @@ export const createUserBranchRepository = (request) => {
 export const countUserBranchByBranch = (branch_id) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT count(*) as total_data FROM user_branch WHERE branch_id LIKE '%${branch_id}%'`,
+      `SELECT count(*) as total_data FROM user_branch WHERE branch_id = '${branch_id}'`,
       (error, result) => {
         if (error) {
           console.log(error);

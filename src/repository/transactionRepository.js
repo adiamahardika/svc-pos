@@ -187,7 +187,7 @@ export const deleteTransactionDetailRepository = (transaction_id) => {
 export const countTransactionByBranchAndDate = (request) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT count(*) as total_data FROM transaction_header WHERE transaction_header.branch_id LIKE '%${request.branch_id}%' AND transaction_header.created_at >= '${request.start}' AND transaction_header.created_at <= '${request.end}'`,
+      `SELECT count(*) as total_data FROM transaction_header WHERE transaction_header.branch_id = '${request.branch_id}' AND transaction_header.created_at >= '${request.start}' AND transaction_header.created_at <= '${request.end}'`,
       (error, result) => {
         if (error) {
           console.log(error);

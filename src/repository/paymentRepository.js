@@ -203,7 +203,7 @@ export const getInvoiceHasTrx = (invoice_number) => {
 export const countPaymentByBranchAndDate = (request) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT count(*) as total_data FROM lg_payment WHERE branch_id LIKE '%${request.branch_id}%' AND created_at >= '${request.start}' AND created_at <= '${request.end}'`,
+      `SELECT count(*) as total_data FROM lg_payment WHERE branch_id = '${request.branch_id}' AND created_at >= '${request.start}' AND created_at <= '${request.end}'`,
       (error, result) => {
         if (error) {
           console.log(error);
