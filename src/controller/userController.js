@@ -1,12 +1,14 @@
 import bcrypt from "bcrypt";
+import { host } from "../configs/index.js";
 import { error_RC, SUCCESS, success_RC } from "../helpers/generalConstant.js";
 import { standardResponse } from "../helpers/standardResponse.js";
+import { compress } from "../helpers/uploadFiles.js";
 import { emailCheckRepository } from "../repository/authRepository.js";
-import { changePasswordUserBranchRepository } from "../repository/userBranchRepository.js";
 import {
   changePasswordUserRepository,
   countUser,
   getUserRepository,
+  updateUserRepository,
 } from "../repository/userRepository.js";
 
 export const getUser = async (request, response) => {
@@ -75,6 +77,46 @@ export const changePasswordUser = async (request, response) => {
         "Your old password is invalid!"
       );
     }
+  } catch (error) {
+    console.log(error);
+    standardResponse(response, 400, error_RC, error.toString());
+  }
+};
+
+export const updateUser = async (request, response) => {
+  try {
+    const date = new Date();
+    const user_id = request.body.user_id;
+    let result = null;
+    if (!request.file || Object.keys(request.file).length === 0) {
+      const request_data = {
+        name: request.body.name,
+        email: request.body.email,
+        no_hp: request.body.no_hp,
+        updated_by: request.body.updated_by,
+        updated_at: date,
+      };
+      result = await updateUserRepository(request_data, user_id);
+    } else {
+      await compress(request.file.path);
+      const request_data = {
+        name: request.body.name,
+        email: request.body.email,
+        no_hp: request.body.no_hp,
+        ktp: request.file.filename,
+        updated_by: request.body.updated_by,
+        updated_at: date,
+      };
+      result = await updateUserRepository(request_data, user_id);
+    }
+
+    delete result.rows[0].hash_password;
+    result.rows[0] = {
+      ...result.rows[0],
+      ktp: host + "ktp/" + result.rows[0].ktp,
+    };
+
+    standardResponse(response, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
     standardResponse(response, 400, error_RC, error.toString());

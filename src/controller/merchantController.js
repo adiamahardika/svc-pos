@@ -108,7 +108,7 @@ export const createMerchant = async (request, response) => {
         response,
         200,
         error_RC,
-        "Another merchant already use that merchant_code!"
+        "Another merchant already use that merchant code!"
       );
     }
   } catch (error) {

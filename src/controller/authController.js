@@ -141,7 +141,7 @@ export const login = async (request, response) => {
       } else {
         standardResponse(response, 200, error_RC, "Your password is invalid!");
       }
-    } else if (user_check.rows[0].is_active !== "true") {
+    } else if (user_check && user_check.rows[0].is_active !== "true") {
       standardResponse(
         response,
         401,

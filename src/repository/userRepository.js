@@ -103,3 +103,43 @@ export const updateVerifyOtp = (request, id) => {
     });
   });
 };
+
+export const updateUserRepository = (request, id) => {
+  let query = null;
+  if (request.image) {
+    query = {
+      text: `UPDATE users SET name = $1, email = $2, no_hp = $3, updated_by = $4, updated_at = $5, ktp = $6 WHERE id = $7 RETURNING users.*`,
+      values: [
+        request.name,
+        request.email,
+        request.no_hp,
+        request.updated_by,
+        request.updated_at,
+        request.ktp,
+        id,
+      ],
+    };
+  } else {
+    query = {
+      text: `UPDATE users SET name = $1, email = $2, no_hp = $3, updated_by = $4, updated_at = $5 WHERE id = $6 RETURNING users.*`,
+      values: [
+        request.name,
+        request.email,
+        request.no_hp,
+        request.updated_by,
+        request.updated_at,
+        id,
+      ],
+    };
+  }
+  return new Promise((resolve, reject) => {
+    connection.query(query, (error, result) => {
+      if (error) {
+        console.log(error);
+        reject(new Error(error));
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
