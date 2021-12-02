@@ -35,7 +35,7 @@ export const getDetailBranchRepository = (branch_id) => {
 export const getBranchByMerchantId = (merchant_id) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT branch.* FROM branch WHERE merchant_id LIKE '%${merchant_id}%' ORDER BY location ASC`,
+      `SELECT branch.* FROM branch WHERE merchant_id = '${merchant_id}' ORDER BY location ASC`,
       (error, result) => {
         if (error) {
           console.log(error);
@@ -133,7 +133,7 @@ export const countBranch = (request) => {
 export const getBranchRepository = (request) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT * FROM (SELECT merchant.name AS merchant_name, branch.* FROM branch LEFT OUTER JOIN merchant ON (branch.merchant_id = CAST(merchant.id AS varchar(10))) WHERE branch.merchant_id LIKE '%${request.merchant_id}%' AND branch.is_active LIKE '%${request.is_active}%' ORDER BY ${request.order_by} ${request.sort_by} LIMIT ${request.limit} OFFSET ${request.start_index}) AS tbl WHERE tbl.location LIKE '%${request.search}%' OR tbl.branch_address LIKE '%${request.search}%'`,
+      `SELECT * FROM (SELECT merchant.name AS merchant_name, branch.* FROM branch LEFT OUTER JOIN merchant ON (branch.merchant_id = CAST(merchant.id AS varchar(10))) WHERE branch.merchant_id = '${request.merchant_id}' AND branch.is_active LIKE '%${request.is_active}%' ORDER BY ${request.order_by} ${request.sort_by} LIMIT ${request.limit} OFFSET ${request.start_index}) AS tbl WHERE tbl.location LIKE '%${request.search}%' OR tbl.branch_address LIKE '%${request.search}%'`,
       (error, result) => {
         if (error) {
           console.log(error);
