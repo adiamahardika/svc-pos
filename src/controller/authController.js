@@ -165,7 +165,7 @@ export const login = async (request, response) => {
 export const authentication = (request, response, next) => {
   const header_token = request.get("token");
   if (!header_token) {
-    standardResponse(response, 200, error_RC, "Please provide your token!");
+    standardResponse(response, 401, error_RC, "Please provide your token!");
   } else {
     jwt.verify(header_token, jwt_secret_key, (error, decoded) => {
       if (
@@ -173,14 +173,14 @@ export const authentication = (request, response, next) => {
         error.name === "TokenExpiredError" &&
         request.route.path !== "/refresh-token"
       ) {
-        standardResponse(response, 200, error_RC, "Your token has expired!");
+        standardResponse(response, 401, error_RC, "Your token has expired!");
       } else if (error && error.name === "JsonWebTokenError") {
-        standardResponse(response, 200, error_RC, "Your token is invalid!");
+        standardResponse(response, 401, error_RC, "Your token is invalid!");
       } else if (
         (decoded && !decoded.merchant_id) ||
         (decoded && !decoded.signature_key)
       ) {
-        standardResponse(response, 200, error_RC, "Error to read your token!");
+        standardResponse(response, 401, error_RC, "Error to read your token!");
       } else {
         next();
       }
@@ -194,7 +194,7 @@ export const authorization = async (request, response, next) => {
   if (!signature_key) {
     standardResponse(
       response,
-      200,
+      401,
       error_RC,
       "Please provide your signature_key!"
     );

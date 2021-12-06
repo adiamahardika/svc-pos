@@ -47,7 +47,7 @@ export const countUserBranchByBranch = (branch_id) => {
 export const getUserBranchRepository = (request) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT * FROM (SELECT user_branch.*, branch.location as branch_location, role.name as role_name, merchant.name as merchant_name FROM user_branch LEFT OUTER JOIN branch ON (user_branch.branch_id = CAST(branch.id AS varchar(10))) LEFT OUTER JOIN role ON (user_branch.role_id = CAST(role.id AS varchar(10))) LEFT OUTER JOIN merchant ON (user_branch.merchant_id = CAST(merchant.id AS varchar(10))) WHERE user_branch.merchant_id = '${request.merchant_id}' AND user_branch.branch_id = '${request.branch_id}' AND user_branch.role_id = '${request.role_id}' AND user_branch.is_active LIKE '%${request.is_active}%' ORDER BY user_branch.user_code ASC) AS tbl WHERE tbl.user_code LIKE '%${request.search}%'`,
+      `SELECT * FROM (SELECT user_branch.*, branch.location as branch_location, role.name as role_name, merchant.name as merchant_name FROM user_branch LEFT OUTER JOIN branch ON (user_branch.branch_id = CAST(branch.id AS varchar(10))) LEFT OUTER JOIN role ON (user_branch.role_id = CAST(role.id AS varchar(10))) LEFT OUTER JOIN merchant ON (user_branch.merchant_id = CAST(merchant.id AS varchar(10))) WHERE user_branch.merchant_id = '${request.merchant_id}' AND user_branch.branch_id = '${request.branch_id}' AND user_branch.role_id LIKE '%${request.role_id}%' AND user_branch.is_active LIKE '%${request.is_active}%' ORDER BY user_branch.user_code ASC) AS tbl WHERE tbl.user_code LIKE '%${request.search}%'`,
       (error, result) => {
         if (error) {
           console.log(error);
