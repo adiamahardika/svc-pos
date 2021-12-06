@@ -69,48 +69,48 @@ export const createTransaction = async (request, response) => {
       parseShortDate(new_date) +
       "-" +
       count_transaction;
-    console.log(transaction_id);
-    // const header_request = {
-    //   transaction_id: transaction_id,
-    //   trx_status: UNPAID,
-    //   branch_id: request.body.header.branch_id,
-    //   merchant_id: request.body.header.merchant_id,
-    //   customer_name: request.body.header.customer_name,
-    //   total_quantity: request.body.header.total_quantity,
-    //   total_price: request.body.header.total_price,
-    //   trx_type: request.body.header.trx_type,
-    //   updated_by: request.body.header.created_by,
-    //   updated_at: new_date,
-    //   created_by: request.body.header.created_by,
-    //   created_at: new_date,
-    // };
-    // // Insert to transaction_hader
-    // const header_result = await createTransactionHeaderRepository(
-    //   header_request
-    // );
 
-    // let detail_request = [];
-    // await request.body.detail.map((value) => {
-    //   let array = [
-    //     transaction_id,
-    //     value.product_id,
-    //     value.quantity,
-    //     value.price,
-    //     request.body.header.created_by,
-    //     local_date,
-    //     request.body.header.created_by,
-    //     local_date,
-    //   ];
-    //   detail_request.push(array);
-    // });
-    // // Insert to transaction_detail
-    // const detail_result = await createTransactionDetailRepository(
-    //   detail_request
-    // );
+    const header_request = {
+      transaction_id: transaction_id,
+      trx_status: UNPAID,
+      branch_id: request.body.header.branch_id,
+      merchant_id: request.body.header.merchant_id,
+      customer_name: request.body.header.customer_name,
+      total_quantity: request.body.header.total_quantity,
+      total_price: request.body.header.total_price,
+      trx_type: request.body.header.trx_type,
+      updated_by: request.body.header.created_by,
+      updated_at: new_date,
+      created_by: request.body.header.created_by,
+      created_at: new_date,
+    };
+    // Insert to transaction_hader
+    const header_result = await createTransactionHeaderRepository(
+      header_request
+    );
 
-    // header_result.rows[0].detail = detail_result.rows;
+    let detail_request = [];
+    await request.body.detail.map((value) => {
+      let array = [
+        transaction_id,
+        value.product_id,
+        value.quantity,
+        value.price,
+        request.body.header.created_by,
+        local_date,
+        request.body.header.created_by,
+        local_date,
+      ];
+      detail_request.push(array);
+    });
+    // Insert to transaction_detail
+    const detail_result = await createTransactionDetailRepository(
+      detail_request
+    );
 
-    // standardResponse(response, 200, success_RC, SUCCESS, header_result);
+    header_result.rows[0].detail = detail_result.rows;
+
+    standardResponse(response, 200, success_RC, SUCCESS, header_result);
   } catch (error) {
     console.log(error);
     standardResponse(response, 400, error_RC, error.toString());

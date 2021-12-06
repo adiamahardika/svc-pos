@@ -41,22 +41,40 @@ export const createPayment = async (request, response) => {
         start: parseFullDate(new_date),
         end: parseFullDate(new_date) + " 23:59:59",
       };
-      const count_result = await countPaymentByBranchAndDate(count_request);
+      let count_payment = await countPaymentByBranchAndDate(count_request);
       const detail_merchant = await getDetailMerchantRepository(
         request.body.merchant_id
       );
       const detail_branch = await getDetailBranchRepository(
         request.body.branch_id
       );
+
+      let get_branch_number = detail_branch.rows[0].branch_number.toString();
+      if (get_branch_number.length === 1) {
+        get_branch_number = "000" + get_branch_number;
+      } else if (get_branch_number.length === 2) {
+        get_branch_number = "00" + get_branch_number;
+      } else if (get_branch_number.length === 3) {
+        get_branch_number = "0" + get_branch_number;
+      }
+
+      if (count_payment.length === 1) {
+        count_payment = "000" + (parseInt(count_payment) + 1);
+      } else if (count_payment.length === 2) {
+        count_payment = "00" + (parseInt(count_payment) + 1);
+      } else if (count_payment.length === 3) {
+        count_payment = "0" + (parseInt(count_payment) + 1);
+      }
+
       const invoice_number =
         "INV/" +
         detail_merchant.rows[0].merchant_code +
         "/" +
-        detail_branch.rows[0].branch_number +
+        get_branch_number +
         "/" +
         parseShortDate(new_date) +
         "/" +
-        (parseInt(count_result, 10) + 1);
+        count_payment;
 
       const payment_request = {
         invoice_number: invoice_number,
