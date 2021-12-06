@@ -1,6 +1,15 @@
 import express from "express";
-import { getCity, getProvince } from "../../controller/locationController.js";
+import {
+  getCity,
+  getDistrict,
+  getProvince,
+  getSubdistrict,
+} from "../../controller/locationController.js";
 
 export const locationRouter = express.Router();
 
-locationRouter.get("/get-province", getProvince).post("/get-city", getCity);
+locationRouter
+  .get("/get-province", getProvince)
+  .post("/get-city", getCity)
+  .post("/get-district", getDistrict)
+  .post("/get-subdistrict", getSubdistrict);
