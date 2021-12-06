@@ -25,15 +25,26 @@ export const createUserBranch = async (request, response) => {
     const detail_branch = await getDetailBranchRepository(
       request.body.branch_id
     );
-    const count_user_branch = await countUserBranchByBranch(
+    let count_user_branch = await countUserBranchByBranch(
       request.body.branch_id
     );
+
+    let get_branch_number = detail_branch.rows[0].branch_number.toString();
+    if (get_branch_number.length === 1) {
+      get_branch_number = "000" + get_branch_number;
+    } else if (get_branch_number.length === 2) {
+      get_branch_number = "00" + get_branch_number;
+    } else if (get_branch_number.length === 3) {
+      get_branch_number = "0" + get_branch_number;
+    }
+
+    if (count_user_branch.length === 1) {
+      count_user_branch = "0" + (parseInt(count_user_branch) + 1);
+    }
     const user_code =
       detail_merchant.rows[0].merchant_code +
-      "." +
-      detail_branch.rows[0].branch_number +
-      "." +
-      (parseInt(count_user_branch, 10) + 1);
+      get_branch_number +
+      count_user_branch;
 
     const request_data = {
       user_code: user_code,
