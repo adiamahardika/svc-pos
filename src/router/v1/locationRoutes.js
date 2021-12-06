@@ -1,6 +1,6 @@
 import express from "express";
-import { getProvince } from "../../controller/locationController.js";
+import { getCity, getProvince } from "../../controller/locationController.js";
 
 export const locationRouter = express.Router();
 
-locationRouter.get("/get-province", getProvince);
+locationRouter.get("/get-province", getProvince).post("/get-city", getCity);
