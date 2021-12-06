@@ -50,8 +50,9 @@ export const getBranchByMerchantId = (merchant_id) => {
 
 export const createBranchRepository = (request) => {
   const query = {
-    text: `INSERT INTO branch(location, merchant_id, branch_address, branch_number, provinsi, kota, kecamatan, kelurahan, kode_pos, email, phone, fax, is_active, updated_by, updated_at, created_by, created_at) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17) RETURNING *`,
+    text: `INSERT INTO branch(id, location, merchant_id, branch_address, branch_number, provinsi, kota, kecamatan, kelurahan, kode_pos, email, phone, fax, is_active, updated_by, updated_at, created_by, created_at) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18) RETURNING *`,
     values: [
+      request.id,
       request.location,
       request.merchant_id,
       request.branch_address,

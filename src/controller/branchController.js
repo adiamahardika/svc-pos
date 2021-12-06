@@ -1,3 +1,4 @@
+import { uid } from "uid";
 import { error_RC, SUCCESS, success_RC } from "../helpers/generalConstant.js";
 import { standardResponse } from "../helpers/standardResponse.js";
 import {
@@ -17,6 +18,7 @@ export const createBranch = async (request, response) => {
     );
 
     const request_data = {
+      id: uid(6),
       location: request.body.location,
       merchant_id: request.body.merchant_id,
       branch_address: request.body.branch_address,
