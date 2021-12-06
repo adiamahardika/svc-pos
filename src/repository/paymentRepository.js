@@ -107,7 +107,7 @@ export const createInvoiceHasTrxId = (request) => {
 export const countPayment = (request) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT count(*) as total_data FROM (SELECT * FROM lg_payment WHERE branch_id = '${request.branch_id}' AND merchant_id = '${request.merchant_id}' AND payment_method LIKE '%${request.payment_method}%' AND status LIKE '%${request.status}%' AND response_code LIKE '%${request.response_code}%') as payment WHERE invoice_number LIKE '%${request.search}%' OR amount LIKE '%${request.search}%' OR submit_amount LIKE '%${request.search}%'`,
+      `SELECT count(*) as total_data FROM (SELECT * FROM lg_payment WHERE branch_id = '${request.branch_id}' AND merchant_id LIKE '%${request.merchant_id}%' AND payment_method LIKE '%${request.payment_method}%' AND status LIKE '%${request.status}%' AND response_code LIKE '%${request.response_code}%') as payment WHERE invoice_number LIKE '%${request.search}%' OR amount LIKE '%${request.search}%' OR submit_amount LIKE '%${request.search}%'`,
       (error, result) => {
         if (error) {
           console.log(error);
@@ -123,7 +123,7 @@ export const countPayment = (request) => {
 export const getPaymentRepository = (request) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT * FROM (SELECT lg_payment.*, branch.location as branch_location FROM lg_payment LEFT OUTER JOIN branch ON (CAST(branch.id AS varchar(10)) = lg_payment.branch_id) WHERE branch_id = '${request.branch_id}' AND lg_payment.merchant_id = '${request.merchant_id}' AND payment_method LIKE '%${request.payment_method}%' AND status LIKE '%${request.status}%' AND response_code LIKE '%${request.response_code}%' AND lg_payment.created_at >= '${request.start_date}' AND lg_payment.created_at <= '${request.end_date}' ORDER BY ${request.order_by} ${request.sort_by} LIMIT ${request.limit} OFFSET ${request.start_index}) as payment WHERE invoice_number LIKE '%${request.search}%' OR amount LIKE '%${request.search}%' OR submit_amount LIKE '%${request.search}%'`,
+      `SELECT * FROM (SELECT lg_payment.*, branch.location as branch_location FROM lg_payment LEFT OUTER JOIN branch ON (CAST(branch.id AS varchar(10)) = lg_payment.branch_id) WHERE branch_id = '${request.branch_id}' AND lg_payment.merchant_id LIKE '%${request.merchant_id}%' AND payment_method LIKE '%${request.payment_method}%' AND status LIKE '%${request.status}%' AND response_code LIKE '%${request.response_code}%' AND lg_payment.created_at >= '${request.start_date}' AND lg_payment.created_at <= '${request.end_date}' ORDER BY ${request.order_by} ${request.sort_by} LIMIT ${request.limit} OFFSET ${request.start_index}) as payment WHERE invoice_number LIKE '%${request.search}%' OR amount LIKE '%${request.search}%' OR submit_amount LIKE '%${request.search}%'`,
       (error, result) => {
         if (error) {
           console.log(error);

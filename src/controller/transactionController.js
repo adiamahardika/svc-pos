@@ -44,7 +44,8 @@ export const createTransaction = async (request, response) => {
       request.body.header.branch_id
     );
 
-    let get_branch_number = detail_branch.rows[0].branch_number.toString();
+    let get_branch_number =
+      await detail_branch.rows[0].branch_number.toString();
     if (get_branch_number.length === 1) {
       get_branch_number = "000" + get_branch_number;
     } else if (get_branch_number.length === 2) {

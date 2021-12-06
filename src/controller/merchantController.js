@@ -46,13 +46,13 @@ export const createMerchant = async (request, response) => {
   try {
     const date = new Date();
     const merchant_name = request.body.merchant.name;
-    const remove_space = merchant_name.replace(/\s+/g, "").toUpperCase();
-    const last_three = remove_space.substring(
+    const remove_space = await merchant_name.replace(/\s+/g, "").toUpperCase();
+    const last_three = await remove_space.substring(
       remove_space.length - 3,
       remove_space.length
     );
     const check_merchant_code = await checkMerchantCode(last_three);
-    let get_number = (check_merchant_code.rows.length + 1).toString();
+    let get_number = await (check_merchant_code.rows.length + 1).toString();
     if (get_number.length == 1) {
       get_number = "00" + get_number;
     } else if (get_number.length == 2) {
@@ -72,6 +72,7 @@ export const createMerchant = async (request, response) => {
     const ba_result = await createBankAccountRepository(bank_account_req);
 
     const request_data = {
+      id: uid(6),
       name: merchant_name,
       owner: request.body.merchant.user_id,
       npwp: request.body.merchant.npwp,

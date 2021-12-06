@@ -3,7 +3,7 @@ import connection from "../configs/postgres.js";
 export const getCategoryRepository = (request) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT category.*, merchant.name as merchant FROM category LEFT OUTER JOIN merchant ON (category.merchant_id = CAST(merchant.id AS varchar(10))) WHERE category.merchant_id = '${request.merchant_id}' AND category.is_active = '${request.is_active}' ORDER BY name`,
+      `SELECT category.*, merchant.name as merchant FROM category LEFT OUTER JOIN merchant ON (category.merchant_id = CAST(merchant.id AS varchar(10))) WHERE category.merchant_id LIKE '%${request.merchant_id}%' AND category.is_active = '${request.is_active}' ORDER BY name`,
       (error, result) => {
         if (error) {
           console.log(error);
