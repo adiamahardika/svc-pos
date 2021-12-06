@@ -14,6 +14,7 @@ import { bankAccountRouter } from "./bankAccountRoutes.js";
 import { branchRouter } from "./branchRoutes.js";
 import { locationRouter } from "./locationRoutes.js";
 import { bankRouter } from "./bankRoutes.js";
+import { reportRouter } from "./reportRoutes.js";
 
 export const v1Router = express.Router();
 
@@ -32,5 +33,6 @@ v1Router
   .use("/branch", branchRouter)
   .use("/location", locationRouter)
   .use("/bank", bankRouter)
+  .use("/report", reportRouter)
   .use("/assets", express.static(image_location))
   .use("/ktp", express.static(ktp_location));
