@@ -5,7 +5,7 @@ import { getBankRepository } from "../repository/bankRepository.js";
 export const getBank = async (request, response) => {
   try {
     const request_data = {
-      search: request.body.search.toUpperCase(),
+      search: request.body.search.toUpperCase() || "",
     };
     const result = await getBankRepository(request_data);
     standardResponse(response, 200, success_RC, SUCCESS, result);

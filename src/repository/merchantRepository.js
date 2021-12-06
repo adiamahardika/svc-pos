@@ -3,7 +3,7 @@ import connection from "../configs/postgres.js";
 export const getDetailMerchantRepository = (merchant_id) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT merchant.*, users.name AS owner_name, merchant_category.name AS mc_name, bank_account.bank_name, bank_account.nasabah, bank_account.no_rekening FROM merchant LEFT OUTER JOIN users ON (CAST(users.id AS varchar(10)) = merchant.owner) LEFT OUTER JOIN merchant_category ON (CAST(merchant_category.id AS varchar(10)) = merchant.mc_id) LEFT OUTER JOIN bank_account ON (CAST(bank_account.id AS varchar(10)) = merchant.ba_id) WHERE merchant.id = '${merchant_id}'`,
+      `SELECT merchant.*, users.name AS owner_name, merchant_category.name AS mc_name, bank_account.bank_id, banks.bank_name, banks.code, bank_account.nasabah, bank_account.no_rekening FROM merchant LEFT OUTER JOIN users ON (CAST(users.id AS varchar(10)) = merchant.owner) LEFT OUTER JOIN merchant_category ON (CAST(merchant_category.id AS varchar(10)) = merchant.mc_id) LEFT OUTER JOIN bank_account ON (CAST(bank_account.id AS varchar(10)) = merchant.ba_id) LEFT OUTER JOIN banks ON (bank_account.bank_id = CAST(banks.id AS varchar(10))) WHERE merchant.id = '${merchant_id}'`,
       (error, result) => {
         if (error) {
           console.log(error);

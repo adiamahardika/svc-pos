@@ -61,7 +61,7 @@ export const createMerchant = async (request, response) => {
     const merchant_code = last_three + get_number;
 
     const bank_account_req = {
-      bank_name: request.body.bank_account.bank_name,
+      bank_id: request.body.bank_account.bank_id,
       nasabah: request.body.bank_account.nasabah,
       no_rekening: request.body.bank_account.no_rekening,
       updated_by: request.body.merchant.created_by,

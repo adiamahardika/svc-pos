@@ -7,7 +7,7 @@ export const updateBankAccount = async (request, response) => {
     const date = new Date();
     const ba_id = request.body.ba_id;
     const request_data = {
-      bank_name: request.body.bank_name,
+      bank_id: request.body.bank_id,
       nasabah: request.body.nasabah,
       no_rekening: request.body.no_rekening,
       updated_by: request.body.updated_by,
