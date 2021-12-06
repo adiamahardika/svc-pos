@@ -51,7 +51,7 @@ export const getDistrictRepository = (request) => {
 export const getSubdistrictRepository = (request) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT * FROM subdistricts WHERE dis_id = ${request.dis_id} ORDER BY subdis_name`,
+      `SELECT subdistricts.*, postalcode.postal_code FROM subdistricts LEFT OUTER JOIN postalcode ON (subdistricts.subdis_id = postalcode.subdis_id) WHERE subdistricts.dis_id = ${request.dis_id} ORDER BY subdis_name`,
       (error, result) => {
         if (error) {
           console.log(error);
