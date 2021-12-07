@@ -11,9 +11,11 @@ import {
   getGrossSalesRepository,
   getItemSalesSummaryRespository,
   getPaymentMethodSummaryRepository,
+  getSalesTypeSummaryRepository,
   getServedBySummaryRepository,
   getTotalCategorySalesSummaryRepository,
   getTotalItemSalesSummaryRespository,
+  getTotalSalesTypeSummaryRepository,
   getTotalServedBySummaryRepository,
 } from "../repository/reportRepository.js";
 
@@ -105,7 +107,7 @@ export const getItemSalesSummary = async (request, response) => {
     const total = await getTotalItemSalesSummaryRespository(request_data);
 
     result.rows = {
-      item_lists: result.rows,
+      lists: result.rows,
       total: total.rows[0],
     };
     standardResponse(response, 200, success_RC, SUCCESS, result);
@@ -129,7 +131,7 @@ export const getCategorySalesSummary = async (request, response) => {
     const total = await getTotalCategorySalesSummaryRepository(request_data);
 
     result.rows = {
-      category_lists: result.rows,
+      lists: result.rows,
       total: total.rows[0],
     };
     standardResponse(response, 200, success_RC, SUCCESS, result);
@@ -153,7 +155,31 @@ export const getServedBySummary = async (request, response) => {
     const total = await getTotalServedBySummaryRepository(request_data);
 
     result.rows = {
-      served_by_list: result.rows,
+      lists: result.rows,
+      total: total.rows[0],
+    };
+    standardResponse(response, 200, success_RC, SUCCESS, result);
+  } catch (error) {
+    console.log(error);
+    standardResponse(response, 400, error_RC, error.toString());
+  }
+};
+
+export const getSalesTypeSummary = async (request, response) => {
+  try {
+    const request_data = {
+      branch_id: request.body.branch_id || "",
+      merchant_id: request.body.merchant_id || "",
+      trx_status: request.body.trx_status || "PAID",
+      start_date: request.body.start_date || "",
+      end_date: request.body.end_date + " 23:59:59" || "",
+    };
+
+    const result = await getSalesTypeSummaryRepository(request_data);
+    const total = await getTotalSalesTypeSummaryRepository(request_data);
+
+    result.rows = {
+      lists: result.rows,
       total: total.rows[0],
     };
     standardResponse(response, 200, success_RC, SUCCESS, result);

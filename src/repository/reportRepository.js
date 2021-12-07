@@ -143,3 +143,35 @@ export const getTotalServedBySummaryRepository = (request) => {
     );
   });
 };
+
+export const getSalesTypeSummaryRepository = (request) => {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `SELECT transaction_header.trx_type, COUNT(*) as total_transaction, SUM(CAST(total_selling_price AS BIGINT)) AS total_collected FROM transaction_header WHERE merchant_id = '${request.merchant_id}' AND branch_id LIKE '%${request.branch_id}%' AND trx_status = '${request.trx_status}' AND created_at >= '${request.start_date}' AND created_at <= '${request.end_date}' GROUP BY trx_type`,
+      (error, result) => {
+        if (error) {
+          console.log(error);
+          reject(new Error(error));
+        } else {
+          resolve(result);
+        }
+      }
+    );
+  });
+};
+
+export const getTotalSalesTypeSummaryRepository = (request) => {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `SELECT COUNT(*) as total_transaction, SUM(CAST(total_selling_price AS BIGINT)) AS total_collected FROM transaction_header WHERE merchant_id = '${request.merchant_id}' AND branch_id LIKE '%${request.branch_id}%' AND trx_status = '${request.trx_status}' AND created_at >= '${request.start_date}' AND created_at <= '${request.end_date}'`,
+      (error, result) => {
+        if (error) {
+          console.log(error);
+          reject(new Error(error));
+        } else {
+          resolve(result);
+        }
+      }
+    );
+  });
+};

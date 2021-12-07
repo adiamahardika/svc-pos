@@ -4,6 +4,7 @@ import {
   getItemSalesSummary,
   getPaymentMethodSummary,
   getSalesSummary,
+  getSalesTypeSummary,
   getServedBySummary,
 } from "../../controller/reportController.js";
 
@@ -14,4 +15,5 @@ reportRouter
   .post("/get-payment-method-summary", getPaymentMethodSummary)
   .post("/get-item-sales-summary", getItemSalesSummary)
   .post("/get-category-sales-summary", getCategorySalesSummary)
-  .post("/get-served-by-summary", getServedBySummary);
+  .post("/get-served-by-summary", getServedBySummary)
+  .post("/get-sales-type-summary", getSalesTypeSummary);
