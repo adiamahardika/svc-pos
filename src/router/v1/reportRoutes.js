@@ -1,6 +1,11 @@
 import express from "express";
-import { getSalesSummary } from "../../controller/reportController.js";
+import {
+  getPaymentMethodSummary,
+  getSalesSummary,
+} from "../../controller/reportController.js";
 
 export const reportRouter = express.Router();
 
-reportRouter.post("/get-sales-summary", getSalesSummary);
+reportRouter
+  .post("/get-sales-summary", getSalesSummary)
+  .post("/get-payment-method-summary", getPaymentMethodSummary);
