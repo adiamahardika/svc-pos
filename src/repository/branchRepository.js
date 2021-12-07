@@ -19,7 +19,7 @@ export const getMaxBranchNumberByMerchant = (merchant_id) => {
 export const getDetailBranchRepository = (branch_id) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT * FROM branch WHERE id = ${branch_id}`,
+      `SELECT * FROM branch WHERE id = '${branch_id}'`,
       (error, result) => {
         if (error) {
           console.log(error);

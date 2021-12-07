@@ -3,7 +3,7 @@ import format from "pg-format";
 
 export const createTransactionHeaderRepository = (request) => {
   const query = {
-    text: `INSERT INTO transaction_header(transaction_id, trx_status, branch_id, merchant_id, customer_name, total_quantity, total_price, trx_type, updated_by, updated_at, created_by, created_at) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *`,
+    text: `INSERT INTO transaction_header(transaction_id, trx_status, branch_id, merchant_id, customer_name, total_quantity, total_starting_price, total_selling_price, trx_type, updated_by, updated_at, created_by, created_at) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *`,
     values: [
       request.transaction_id,
       request.trx_status,
@@ -11,7 +11,8 @@ export const createTransactionHeaderRepository = (request) => {
       request.merchant_id,
       request.customer_name,
       request.total_quantity,
-      request.total_price,
+      request.total_starting_price,
+      request.total_selling_price,
       request.trx_type,
       request.updated_by,
       request.updated_at,
@@ -35,7 +36,7 @@ export const createTransactionDetailRepository = (request) => {
   return new Promise((resolve, reject) => {
     connection.query(
       format(
-        `INSERT INTO transaction_detail(transaction_id, product_id, quantity, price, updated_by, updated_at, created_by, created_at) VALUES %L RETURNING *`,
+        `INSERT INTO transaction_detail(transaction_id, product_id, quantity, starting_price, selling_price, updated_by, updated_at, created_by, created_at) VALUES %L RETURNING *`,
         request
       ),
       [],
@@ -150,10 +151,11 @@ export const getTrxHasInvoice = (transaction_id) => {
 
 export const updateTransactionHeaderRepository = (request, transaction_id) => {
   const query = {
-    text: `UPDATE transaction_header SET total_quantity = $1, total_price = $2, updated_by = $3, updated_at = $4 WHERE transaction_id = $5 RETURNING transaction_header.*`,
+    text: `UPDATE transaction_header SET total_quantity = $1, total_starting_price = $2, total_selling_price = $3, updated_by = $4, updated_at = $5 WHERE transaction_id = $6 RETURNING transaction_header.*`,
     values: [
       request.total_quantity,
-      request.total_price,
+      request.total_starting_price,
+      request.total_selling_price,
       request.updated_by,
       request.updated_at,
       transaction_id,
