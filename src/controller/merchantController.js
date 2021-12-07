@@ -89,6 +89,7 @@ export const createMerchant = async (request, response) => {
     const result = await createMerchantRepository(request_data);
 
     const branch_request = {
+      id: uid(6),
       location: request.body.branch.location,
       merchant_id: result.rows[0].id,
       branch_address: request.body.branch.branch_address,
