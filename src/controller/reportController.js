@@ -12,6 +12,9 @@ import {
   getItemSalesSummaryRespository,
   getPaymentMethodSummaryRepository,
   getServedBySummaryRepository,
+  getTotalCategorySalesSummaryRepository,
+  getTotalItemSalesSummaryRespository,
+  getTotalServedBySummaryRepository,
 } from "../repository/reportRepository.js";
 
 export const getSalesSummary = async (request, response) => {
@@ -99,6 +102,12 @@ export const getItemSalesSummary = async (request, response) => {
     };
 
     const result = await getItemSalesSummaryRespository(request_data);
+    const total = await getTotalItemSalesSummaryRespository(request_data);
+
+    result.rows = {
+      item_lists: result.rows,
+      total: total.rows[0],
+    };
     standardResponse(response, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
@@ -117,6 +126,12 @@ export const getCategorySalesSummary = async (request, response) => {
     };
 
     const result = await getCategorySalesSummaryRepository(request_data);
+    const total = await getTotalCategorySalesSummaryRepository(request_data);
+
+    result.rows = {
+      category_lists: result.rows,
+      total: total.rows[0],
+    };
     standardResponse(response, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
@@ -135,6 +150,12 @@ export const getServedBySummary = async (request, response) => {
     };
 
     const result = await getServedBySummaryRepository(request_data);
+    const total = await getTotalServedBySummaryRepository(request_data);
+
+    result.rows = {
+      served_by_list: result.rows,
+      total: total.rows[0],
+    };
     standardResponse(response, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
