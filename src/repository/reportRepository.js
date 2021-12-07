@@ -79,3 +79,19 @@ export const getCategorySalesSummaryRepository = (request) => {
     );
   });
 };
+
+export const getServedBySummaryRepository = (request) => {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `SELECT lg_payment.created_by, COUNT(*) as total_transaction, SUM(CAST(amount AS BIGINT)) AS total_collected FROM lg_payment WHERE merchant_id = '${request.merchant_id}' AND branch_id LIKE '%${request.branch_id}%' AND status = '${request.trx_status}' AND created_at >= '${request.start_date}' AND created_at <= '${request.end_date}' GROUP BY created_by`,
+      (error, result) => {
+        if (error) {
+          console.log(error);
+          reject(new Error(error));
+        } else {
+          resolve(result);
+        }
+      }
+    );
+  });
+};
