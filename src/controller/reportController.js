@@ -24,6 +24,7 @@ export const getSalesSummary = async (request, response) => {
       discounts: "0",
       net_sales: result.rows[0].gross_sales,
       tax: "0",
+      total_collect: result.rows[0].gross_sales,
     };
     standardResponse(response, 200, success_RC, SUCCESS, result);
   } catch (error) {
