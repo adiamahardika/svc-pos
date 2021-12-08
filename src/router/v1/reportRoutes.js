@@ -1,6 +1,7 @@
 import express from "express";
 import {
   getCategorySalesSummary,
+  getGrossProfitSummary,
   getItemSalesSummary,
   getPaymentMethodSummary,
   getSalesSummary,
@@ -16,4 +17,5 @@ reportRouter
   .post("/get-item-sales-summary", getItemSalesSummary)
   .post("/get-category-sales-summary", getCategorySalesSummary)
   .post("/get-served-by-summary", getServedBySummary)
-  .post("/get-sales-type-summary", getSalesTypeSummary);
+  .post("/get-sales-type-summary", getSalesTypeSummary)
+  .post("/get-gross-profit", getGrossProfitSummary);

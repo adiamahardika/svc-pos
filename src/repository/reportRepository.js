@@ -67,7 +67,7 @@ export const getItemSalesSummaryRespository = (request) => {
 export const getTotalItemSalesSummaryRespository = (request) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT SUM(CAST(transaction_detail.quantity AS BIGINT)) AS item_sold, SUM(CAST(transaction_detail.quantity AS BIGINT) * CAST(transaction_detail.selling_price AS BIGINT)) AS gross_sales, SUM(CAST(transaction_detail.quantity AS BIGINT) * CAST(transaction_detail.starting_price AS BIGINT)) AS nett_sales FROM transaction_detail LEFT OUTER JOIN transaction_header ON transaction_detail.transaction_id = transaction_header.transaction_id LEFT OUTER JOIN product ON (transaction_detail.product_id = CAST(product.id AS varchar(10))) LEFT OUTER JOIN category ON (product.category_id = CAST(category.id AS varchar(10))) WHERE transaction_header.merchant_id = '${request.merchant_id}' AND transaction_header.branch_id LIKE '%${request.branch_id}%' AND transaction_header.trx_status = '${request.trx_status}' AND transaction_detail.created_at >= '${request.start_date}' AND transaction_detail.created_at <= '${request.end_date}'`,
+      `SELECT SUM(CAST(transaction_detail.quantity AS BIGINT)) AS item_sold, SUM(CAST(transaction_detail.quantity AS BIGINT) * CAST(transaction_detail.selling_price AS BIGINT)) AS gross_sales, SUM(CAST(transaction_detail.quantity AS BIGINT) * CAST(transaction_detail.starting_price AS BIGINT)) AS nett_sales FROM transaction_detail LEFT OUTER JOIN transaction_header ON transaction_detail.transaction_id = transaction_header.transaction_id WHERE transaction_header.merchant_id = '${request.merchant_id}' AND transaction_header.branch_id LIKE '%${request.branch_id}%' AND transaction_header.trx_status = '${request.trx_status}' AND transaction_detail.created_at >= '${request.start_date}' AND transaction_detail.created_at <= '${request.end_date}'`,
       (error, result) => {
         if (error) {
           console.log(error);
@@ -115,7 +115,7 @@ export const getTotalCategorySalesSummaryRepository = (request) => {
 export const getServedBySummaryRepository = (request) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT lg_payment.created_by, COUNT(*) as total_transaction, SUM(CAST(amount AS BIGINT)) AS total_collected FROM lg_payment WHERE merchant_id = '${request.merchant_id}' AND branch_id LIKE '%${request.branch_id}%' AND status = '${request.trx_status}' AND created_at >= '${request.start_date}' AND created_at <= '${request.end_date}' GROUP BY created_by`,
+      `SELECT lg_payment.created_by, COUNT(*) as total_transaction, SUM(CAST(amount AS BIGINT)) AS total_collected FROM lg_payment WHERE merchant_id = '${request.merchant_id}' AND branch_id LIKE '%${request.branch_id}%' AND status = '${request.trx_status}' AND created_at >= '${request.start_date}' AND created_at <= '${request.end_date}' GROUP BY lg_payment.created_by`,
       (error, result) => {
         if (error) {
           console.log(error);
@@ -164,6 +164,38 @@ export const getTotalSalesTypeSummaryRepository = (request) => {
   return new Promise((resolve, reject) => {
     connection.query(
       `SELECT COUNT(*) as total_transaction, SUM(CAST(total_selling_price AS BIGINT)) AS total_collected FROM transaction_header WHERE merchant_id = '${request.merchant_id}' AND branch_id LIKE '%${request.branch_id}%' AND trx_status = '${request.trx_status}' AND created_at >= '${request.start_date}' AND created_at <= '${request.end_date}'`,
+      (error, result) => {
+        if (error) {
+          console.log(error);
+          reject(new Error(error));
+        } else {
+          resolve(result);
+        }
+      }
+    );
+  });
+};
+
+export const getCOGSRepository = (request) => {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `SELECT transaction_detail.product_id, product.name, category.name AS category_name, SUM(CAST(transaction_detail.quantity AS BIGINT)) AS item_sold, SUM(CAST(transaction_detail.quantity AS BIGINT) * CAST(transaction_detail.selling_price AS BIGINT)) AS selling_price, SUM(CAST(transaction_detail.quantity AS BIGINT) * CAST(transaction_detail.starting_price AS BIGINT)) AS cogs FROM transaction_detail LEFT OUTER JOIN transaction_header ON transaction_detail.transaction_id = transaction_header.transaction_id LEFT OUTER JOIN product ON (transaction_detail.product_id = CAST(product.id AS varchar(10))) LEFT OUTER JOIN category ON (product.category_id = CAST(category.id AS varchar(10))) WHERE transaction_header.merchant_id = '${request.merchant_id}' AND transaction_header.branch_id LIKE '%${request.branch_id}%' AND transaction_header.trx_status = '${request.trx_status}' AND transaction_detail.created_at >= '${request.start_date}' AND transaction_detail.created_at <= '${request.end_date}' GROUP BY transaction_detail.product_id, product.name, category.name`,
+      (error, result) => {
+        if (error) {
+          console.log(error);
+          reject(new Error(error));
+        } else {
+          resolve(result);
+        }
+      }
+    );
+  });
+};
+
+export const getTotalCOGSRepository = (request) => {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `SELECT COUNT(*) as total_transaction, SUM(CAST(total_starting_price AS BIGINT)) AS total_cogs FROM transaction_header WHERE merchant_id = '${request.merchant_id}' AND branch_id LIKE '%${request.branch_id}%' AND trx_status = '${request.trx_status}' AND created_at >= '${request.start_date}' AND created_at <= '${request.end_date}'`,
       (error, result) => {
         if (error) {
           console.log(error);

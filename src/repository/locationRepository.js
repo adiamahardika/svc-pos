@@ -19,7 +19,7 @@ export const getProvinceRepository = (request) => {
 export const getCityRepository = (request) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT * FROM cities WHERE prov_id = ${request.prov_id} ORDER BY city_name`,
+      `SELECT cities.*, provinces.prov_name FROM cities LEFT OUTER JOIN provinces ON cities.prov_id = provinces.prov_id WHERE cities.prov_id = ${request.prov_id} OR provinces.prov_name = '${request.prov_name}' ORDER BY city_name`,
       (error, result) => {
         if (error) {
           console.log(error);
@@ -35,7 +35,7 @@ export const getCityRepository = (request) => {
 export const getDistrictRepository = (request) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT * FROM districts WHERE city_id = ${request.city_id} ORDER BY dis_name`,
+      `SELECT districts.*, cities.city_name FROM districts LEFT OUTER JOIN cities ON cities.city_id = districts.city_id WHERE districts.city_id = ${request.city_id} OR cities.city_name = '%${request.city_name}%' ORDER BY dis_name`,
       (error, result) => {
         if (error) {
           console.log(error);
@@ -51,7 +51,7 @@ export const getDistrictRepository = (request) => {
 export const getSubdistrictRepository = (request) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT subdistricts.*, postalcode.postal_code FROM subdistricts LEFT OUTER JOIN postalcode ON (subdistricts.subdis_id = postalcode.subdis_id) WHERE subdistricts.dis_id = ${request.dis_id} ORDER BY subdis_name`,
+      `SELECT subdistricts.*, postalcode.postal_code, districts.dis_name FROM subdistricts LEFT OUTER JOIN postalcode ON (subdistricts.subdis_id = postalcode.subdis_id) LEFT OUTER JOIN districts ON districts.dis_id = subdistricts.dis_id WHERE subdistricts.dis_id = ${request.dis_id} OR districts.dis_name = '%${request.dis_name}%' ORDER BY subdis_name`,
       (error, result) => {
         if (error) {
           console.log(error);
