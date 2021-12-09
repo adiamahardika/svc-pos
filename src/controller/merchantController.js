@@ -7,6 +7,7 @@ import {
   checkMerchantCode,
   countMerchant,
   createMerchantRepository,
+  getDetailMerchantByOwnerRepository,
   getDetailMerchantRepository,
   getMerchantRepository,
   updateMerchantRepository,
@@ -44,79 +45,93 @@ export const getMerchant = async (request, response) => {
 
 export const createMerchant = async (request, response) => {
   try {
-    const date = new Date();
-    const merchant_name = request.body.merchant.name;
-    const remove_space = await merchant_name.replace(/\s+/g, "").toUpperCase();
-    const last_three = await remove_space.substring(
-      remove_space.length - 3,
-      remove_space.length
+    const check_merchant_by_owner = await getDetailMerchantByOwnerRepository(
+      request.body.merchant.user_id
     );
-    const check_merchant_code = await checkMerchantCode(last_three);
-    let get_number = await (check_merchant_code.rows.length + 1).toString();
-    if (get_number.length == 1) {
-      get_number = "00" + get_number;
-    } else if (get_number.length == 2) {
-      get_number = "0" + get_number;
+    if (check_merchant_by_owner.rows.length < 1) {
+      const date = new Date();
+      const merchant_name = request.body.merchant.name;
+      const remove_space = await merchant_name
+        .replace(/\s+/g, "")
+        .toUpperCase();
+      const last_three = await remove_space.substring(
+        remove_space.length - 3,
+        remove_space.length
+      );
+      const check_merchant_code = await checkMerchantCode(last_three);
+      let get_number = await (check_merchant_code.rows.length + 1).toString();
+      if (get_number.length == 1) {
+        get_number = "00" + get_number;
+      } else if (get_number.length == 2) {
+        get_number = "0" + get_number;
+      }
+      const merchant_code = last_three + get_number;
+
+      const bank_account_req = {
+        bank_id: request.body.bank_account.bank_id,
+        nasabah: request.body.bank_account.nasabah,
+        no_rekening: request.body.bank_account.no_rekening,
+        updated_by: request.body.merchant.created_by,
+        updated_at: date,
+        created_by: request.body.merchant.created_by,
+        created_at: date,
+      };
+      const ba_result = await createBankAccountRepository(bank_account_req);
+
+      const request_data = {
+        id: uid(6),
+        name: merchant_name,
+        owner: request.body.merchant.user_id,
+        npwp: request.body.merchant.npwp,
+        mc_id: request.body.merchant.mc_id,
+        ba_id: ba_result.rows[0].id,
+        merchant_code: merchant_code,
+        secret_key: merchant_code + "-" + uid(8),
+        is_active: "true",
+        updated_by: request.body.merchant.created_by,
+        updated_at: date,
+        created_by: request.body.merchant.created_by,
+        created_at: date,
+      };
+      const result = await createMerchantRepository(request_data);
+
+      const branch_request = {
+        id: uid(6),
+        location: request.body.branch.location,
+        merchant_id: result.rows[0].id,
+        branch_address: request.body.branch.branch_address,
+        branch_number: 1,
+        provinsi: request.body.branch.provinsi,
+        kota: request.body.branch.kota,
+        kecamatan: request.body.branch.kota,
+        kelurahan: request.body.branch.kelurahan,
+        kode_pos: request.body.branch.kode_pos,
+        email: request.body.branch.email,
+        phone: request.body.branch.phone,
+        fax: request.body.branch.fax,
+        is_active: "true",
+        updated_by: request.body.merchant.created_by,
+        updated_at: date,
+        created_by: request.body.merchant.created_by,
+        created_at: date,
+      };
+      const branch_result = await createBranchRepository(branch_request);
+
+      result.rows[0] = {
+        merchant: result.rows[0],
+        branch: branch_result.rows[0],
+        bank_account: ba_result.rows[0],
+      };
+
+      standardResponse(response, 200, success_RC, SUCCESS, result);
+    } else {
+      standardResponse(
+        response,
+        400,
+        error_RC,
+        "This user already has merchant!"
+      );
     }
-    const merchant_code = last_three + get_number;
-
-    const bank_account_req = {
-      bank_id: request.body.bank_account.bank_id,
-      nasabah: request.body.bank_account.nasabah,
-      no_rekening: request.body.bank_account.no_rekening,
-      updated_by: request.body.merchant.created_by,
-      updated_at: date,
-      created_by: request.body.merchant.created_by,
-      created_at: date,
-    };
-    const ba_result = await createBankAccountRepository(bank_account_req);
-
-    const request_data = {
-      id: uid(6),
-      name: merchant_name,
-      owner: request.body.merchant.user_id,
-      npwp: request.body.merchant.npwp,
-      mc_id: request.body.merchant.mc_id,
-      ba_id: ba_result.rows[0].id,
-      merchant_code: merchant_code,
-      secret_key: merchant_code + "-" + uid(8),
-      is_active: "true",
-      updated_by: request.body.merchant.created_by,
-      updated_at: date,
-      created_by: request.body.merchant.created_by,
-      created_at: date,
-    };
-    const result = await createMerchantRepository(request_data);
-
-    const branch_request = {
-      id: uid(6),
-      location: request.body.branch.location,
-      merchant_id: result.rows[0].id,
-      branch_address: request.body.branch.branch_address,
-      branch_number: 1,
-      provinsi: request.body.branch.provinsi,
-      kota: request.body.branch.kota,
-      kecamatan: request.body.branch.kota,
-      kelurahan: request.body.branch.kelurahan,
-      kode_pos: request.body.branch.kode_pos,
-      email: request.body.branch.email,
-      phone: request.body.branch.phone,
-      fax: request.body.branch.fax,
-      is_active: "true",
-      updated_by: request.body.merchant.created_by,
-      updated_at: date,
-      created_by: request.body.merchant.created_by,
-      created_at: date,
-    };
-    const branch_result = await createBranchRepository(branch_request);
-
-    result.rows[0] = {
-      merchant: result.rows[0],
-      branch: branch_result.rows[0],
-      bank_account: ba_result.rows[0],
-    };
-
-    standardResponse(response, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
     standardResponse(response, 400, error_RC, error.toString());
