@@ -52,13 +52,19 @@ export const getProduct = async (request, response) => {
 
 export const createProduct = async (request, response) => {
   try {
-    await compress(request.file.path);
     const date = new Date();
+    let file_name = null;
+    if (!request.file || Object.keys(request.file).length === 0) {
+      file_name = "default_product.jpg";
+    } else {
+      await compress(request.file.path);
+      file_name = request.file.filename;
+    }
     const request_data = {
       name: request.body.name,
       merchant_id: request.body.merchant_id,
       category_id: request.body.category_id,
-      image: request.file.filename,
+      image: file_name,
       is_active: "true",
       updated_by: request.body.created_by,
       updated_at: date,
