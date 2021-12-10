@@ -12,6 +12,8 @@ import {
   getGrossSalesRepository,
   getItemSalesSummaryRespository,
   getPaymentMethodSummaryRepository,
+  getSalesByDateRepository,
+  getSalesByMonthRepository,
   getSalesTypeSummaryRepository,
   getServedBySummaryRepository,
   getTotalCategorySalesSummaryRepository,
@@ -31,15 +33,13 @@ export const getSalesSummary = async (request, response) => {
       end_date: request.body.end_date + " 23:59:59" || "",
     };
 
-    const result = await getGrossSalesRepository(request_data);
+    let result = null;
+    if (request.body.group_by === "YEAR") {
+      result = await getSalesByMonthRepository(request_data);
+    } else {
+      result = await getSalesByDateRepository(request_data);
+    }
 
-    result.rows[0] = {
-      ...result.rows[0],
-      discounts: "0",
-      net_sales: result.rows[0].gross_sales,
-      tax: "0",
-      total_collect: result.rows[0].gross_sales,
-    };
     standardResponse(response, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
