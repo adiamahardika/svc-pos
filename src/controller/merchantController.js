@@ -1,6 +1,10 @@
+import crypto_js from "crypto-js";
+import jwt from "jsonwebtoken";
 import { uid } from "uid";
+import { jwt_secret_key } from "../configs/index.js";
 import { error_RC, SUCCESS, success_RC } from "../helpers/generalConstant.js";
 import { standardResponse } from "../helpers/standardResponse.js";
+import { emailCheckRepository } from "../repository/authRepository.js";
 import { createBankAccountRepository } from "../repository/bankAccountRepository.js";
 import { createBranchRepository } from "../repository/branchRepository.js";
 import {
@@ -117,10 +121,38 @@ export const createMerchant = async (request, response) => {
       };
       const branch_result = await createBranchRepository(branch_request);
 
+      const user_request = {
+        email: request.body.user.email,
+      };
+      const email_check = await emailCheckRepository(user_request);
+      let user_data = email_check.rows[0];
+      const signature_key = crypto_js
+        .MD5(user_data.merchant_id + user_data.secret_key)
+        .toString();
+      const token = jwt.sign(
+        { merchant_id: user_data.merchant_id, signature_key: signature_key },
+        jwt_secret_key,
+        {
+          expiresIn: "1h",
+        }
+      );
+
+      delete user_data.secret_key;
+      delete user_data.is_active;
+      delete user_data.hash_password;
+      delete user_data.created_at;
+      delete user_data.created_by;
+      delete user_data.updated_at;
+      delete user_data.updated_by;
+
       result.rows[0] = {
         merchant: result.rows[0],
         branch: branch_result.rows[0],
         bank_account: ba_result.rows[0],
+        user: {
+          ...user_data,
+          token: token,
+        },
       };
 
       standardResponse(response, 200, success_RC, SUCCESS, result);
