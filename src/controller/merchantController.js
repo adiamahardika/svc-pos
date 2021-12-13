@@ -112,7 +112,7 @@ export const createMerchant = async (request, response) => {
         kode_pos: request.body.branch.kode_pos,
         email: request.body.branch.email,
         phone: request.body.branch.phone,
-        fax: request.body.branch.fax,
+        telephone: request.body.branch.telephone,
         is_active: "true",
         updated_by: request.body.merchant.created_by,
         updated_at: date,

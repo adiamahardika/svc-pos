@@ -30,7 +30,7 @@ export const createBranch = async (request, response) => {
       kode_pos: request.body.kode_pos,
       email: request.body.email,
       phone: request.body.phone,
-      fax: request.body.fax || "-",
+      telephone: request.body.telephone || "-",
       is_active: "true",
       updated_by: request.body.created_by,
       updated_at: date,
@@ -60,7 +60,7 @@ export const updateBranch = async (request, response) => {
       kode_pos: request.body.kode_pos,
       email: request.body.email,
       phone: request.body.phone,
-      fax: request.body.fax || "-",
+      telephone: request.body.telephone || "-",
       updated_by: request.body.updated_by,
       updated_at: date,
     };
