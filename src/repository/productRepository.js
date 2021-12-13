@@ -46,7 +46,7 @@ export const createProductRepository = (request) => {
 export const countProduct = (request) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT count(*) as total_data FROM product WHERE product.merchant_id LIKE '%${request.merchant_id}%' AND product.name LIKE '%${request.search}%' AND product.category_id LIKE '%${request.category_id}%'`,
+      `SELECT count(*) as total_data FROM product WHERE product.merchant_id LIKE '%${request.merchant_id}%' AND product.name LIKE '%${request.search}%' AND product.category_id LIKE '%${request.category_id}%' AND product.is_active = '${request.is_active}'`,
       (error, result) => {
         if (error) {
           console.log(error);
