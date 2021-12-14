@@ -1,6 +1,4 @@
 import {
-  CANCEL,
-  cancel_RC,
   error_RC,
   PAID,
   PAYMENT_CASH,

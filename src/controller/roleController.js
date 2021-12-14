@@ -1,3 +1,4 @@
+import { uid } from "uid";
 import { error_RC, SUCCESS, success_RC } from "../helpers/generalConstant.js";
 import { standardResponse } from "../helpers/standardResponse.js";
 import {
@@ -25,6 +26,7 @@ export const createRole = async (request, response) => {
   try {
     const date = new Date();
     const request_data = {
+      id: uid(6),
       name: request.body.name,
       level: request.body.level,
       is_active: "true",

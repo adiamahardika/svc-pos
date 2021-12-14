@@ -2,8 +2,9 @@ import connection from "../configs/postgres.js";
 
 export const registerRepository = (request) => {
   const query = {
-    text: `INSERT INTO users(name, email, role_id, ktp, hash_password, is_active, no_hp, is_otp_validate, is_email_validate, updated_by, updated_at, created_by, created_at) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *`,
+    text: `INSERT INTO users(id, name, email, role_id, ktp, hash_password, is_active, no_hp, is_otp_validate, is_email_validate, updated_by, updated_at, created_by, created_at) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING *`,
     values: [
+      request.id,
       request.name,
       request.email,
       request.role_id,

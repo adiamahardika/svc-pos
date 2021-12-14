@@ -18,8 +18,9 @@ export const getCategoryRepository = (request) => {
 
 export const createCategoryRepository = (request) => {
   const query = {
-    text: `INSERT INTO category(name, merchant_id, icon, is_active, updated_by, updated_at, created_by, created_at) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+    text: `INSERT INTO category(id, name, merchant_id, icon, is_active, updated_by, updated_at, created_by, created_at) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
     values: [
+      request.id,
       request.name,
       request.merchant_id,
       request.icon,

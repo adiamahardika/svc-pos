@@ -1,4 +1,5 @@
 import bcrypt from "bcrypt";
+import { uid } from "uid";
 import { error_RC, SUCCESS, success_RC } from "../helpers/generalConstant.js";
 import { standardResponse } from "../helpers/standardResponse.js";
 import { getDetailBranchRepository } from "../repository/branchRepository.js";
@@ -47,6 +48,7 @@ export const createUserBranch = async (request, response) => {
       count_user_branch;
 
     const request_data = {
+      id: uid(6),
       user_code: user_code,
       hash_password: hash,
       branch_id: request.body.branch_id,

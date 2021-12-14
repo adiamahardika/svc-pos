@@ -18,8 +18,9 @@ export const getRoleRepository = (request) => {
 
 export const createRoleRepository = (request) => {
   const query = {
-    text: `INSERT INTO role(name, level, is_active, updated_by, updated_at, created_by, created_at) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
+    text: `INSERT INTO role(id, name, level, is_active, updated_by, updated_at, created_by, created_at) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
     values: [
+      request.id,
       request.name,
       request.level,
       request.is_active,

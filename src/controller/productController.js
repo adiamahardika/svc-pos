@@ -1,3 +1,4 @@
+import { uid } from "uid";
 import { host } from "../configs/index.js";
 import { error_RC, SUCCESS, success_RC } from "../helpers/generalConstant.js";
 import { standardResponse } from "../helpers/standardResponse.js";
@@ -61,6 +62,7 @@ export const createProduct = async (request, response) => {
       file_name = request.file.filename;
     }
     const request_data = {
+      id: uid(6),
       name: request.body.name,
       merchant_id: request.body.merchant_id,
       category_id: request.body.category_id,

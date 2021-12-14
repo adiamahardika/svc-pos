@@ -1,3 +1,4 @@
+import { uid } from "uid";
 import bcrypt from "bcrypt";
 import crypto_js from "crypto-js";
 import nodemailer from "nodemailer";
@@ -43,6 +44,7 @@ export const register = async (request, response) => {
     const hash = bcrypt.hashSync(request.body.password, salt_rounds);
 
     const request_data = {
+      id: uid(6),
       name: request.body.name,
       email: request.body.email,
       role_id: request.body.role_id,
