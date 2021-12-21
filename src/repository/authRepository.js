@@ -51,7 +51,7 @@ export const emailCheckRepository = (request) => {
 export const userCodeCheckRepository = (request) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT user_branch.*, merchant.name AS merchant_name, merchant.secret_key, role.name as role_name, role.level as role_level FROM user_branch LEFT OUTER JOIN merchant ON (user_branch.merchant_id = CAST(merchant.id AS varchar(10))) LEFT OUTER JOIN role ON (user_branch.role_id = CAST(role.id AS varchar(10))) WHERE user_code LIKE '%${request.email}%'`,
+      `SELECT user_branch.*, merchant.name AS merchant_name, merchant.secret_key, role.name as role_name, role.level as role_level, branch.location AS branch_location FROM user_branch LEFT OUTER JOIN merchant ON (user_branch.merchant_id = CAST(merchant.id AS varchar(10))) LEFT OUTER JOIN role ON (user_branch.role_id = CAST(role.id AS varchar(10))) LEFT OUTER JOIN branch ON (user_branch.branch_id = CAST(branch.id AS varchar(10))) WHERE user_code LIKE '%${request.email}%'`,
       (error, result) => {
         if (error) {
           console.log(error);

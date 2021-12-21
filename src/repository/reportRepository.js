@@ -19,7 +19,7 @@ export const getGrossSalesRepository = (request) => {
 export const getPaymentMethodSummaryRepository = (request) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT lg_payment.payment_method, COUNT(*) as total_transaction, SUM(CAST(amount AS BIGINT)) AS total_collected FROM lg_payment WHERE merchant_id = '${request.merchant_id}' AND branch_id LIKE '%${request.branch_id}%' AND status = '${request.trx_status}' AND created_at >= '${request.start_date}' AND created_at <= '${request.end_date}' GROUP BY payment_method`,
+      `SELECT lg_payment.payment_method, COUNT(*) as total_transaction, SUM(CAST(amount AS BIGINT)) AS total_collected FROM lg_payment WHERE merchant_id = '${request.merchant_id}' AND branch_id LIKE '%${request.branch_id}%' AND status = '${request.trx_status}' AND payment_method = '${request.payment_method}' AND created_at >= '${request.start_date}' AND created_at <= '${request.end_date}' GROUP BY payment_method`,
       (error, result) => {
         if (error) {
           console.log(error);
@@ -211,7 +211,7 @@ export const getTotalCOGSRepository = (request) => {
 export const getSalesByDateRepository = (request) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT SUM(CAST(amount AS BIGINT)) AS gross_sales, DATE(created_at) AS date FROM lg_payment WHERE merchant_id = '${request.merchant_id}' AND branch_id LIKE '%${request.branch_id}%' AND status = '${request.trx_status}' AND created_at >= '${request.start_date}' AND created_at <= '${request.end_date}' GROUP BY DATE(created_at)`,
+      `SELECT * FROM (SELECT SUM(CAST(amount AS BIGINT)) AS gross_sales, COUNT(*) as total_transaction, DATE(created_at) + INTERVAL '1 DAY' AS date FROM lg_payment WHERE merchant_id = '${request.merchant_id}' AND branch_id LIKE '%${request.branch_id}%' AND status = '${request.trx_status}' AND created_at >= '${request.start_date}' AND created_at <= '${request.end_date}' GROUP BY DATE(created_at)) as tbl ORDER BY tbl.date ASC`,
       (error, result) => {
         if (error) {
           console.log(error);
@@ -227,7 +227,23 @@ export const getSalesByDateRepository = (request) => {
 export const getSalesByMonthRepository = (request) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT SUM(CAST(amount AS BIGINT)) AS gross_sales, DATE_TRUNC('month',created_at) AS date FROM lg_payment WHERE merchant_id = '${request.merchant_id}' AND branch_id LIKE '%${request.branch_id}%' AND status = '${request.trx_status}' AND created_at >= '${request.start_date}' AND created_at <= '${request.end_date}' GROUP BY DATE_TRUNC('month',created_at)`,
+      `SELECT * FROM (SELECT SUM(CAST(amount AS BIGINT)) AS gross_sales, COUNT(*) as total_transaction, DATE_TRUNC('month',created_at) + INTERVAL '1 MONTH' AS date FROM lg_payment WHERE merchant_id = '${request.merchant_id}' AND branch_id LIKE '%${request.branch_id}%' AND status = '${request.trx_status}' AND created_at >= '${request.start_date}' AND created_at <= '${request.end_date}' GROUP BY DATE_TRUNC('month',created_at)) as tbl ORDER BY tbl.date ASC`,
+      (error, result) => {
+        if (error) {
+          console.log(error);
+          reject(new Error(error));
+        } else {
+          resolve(result);
+        }
+      }
+    );
+  });
+};
+
+export const getTotalSalesRepository = (request) => {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `SELECT SUM(CAST(amount AS BIGINT)) AS gross_sales, COUNT(*) as total_transaction FROM lg_payment WHERE merchant_id = '${request.merchant_id}' AND branch_id LIKE '%${request.branch_id}%' AND status = '${request.trx_status}' AND created_at >= '${request.start_date}' AND created_at <= '${request.end_date}'`,
       (error, result) => {
         if (error) {
           console.log(error);

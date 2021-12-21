@@ -19,6 +19,7 @@ import {
   getTotalCategorySalesSummaryRepository,
   getTotalCOGSRepository,
   getTotalItemSalesSummaryRespository,
+  getTotalSalesRepository,
   getTotalSalesTypeSummaryRepository,
   getTotalServedBySummaryRepository,
 } from "../repository/reportRepository.js";
@@ -39,6 +40,12 @@ export const getSalesSummary = async (request, response) => {
     } else {
       result = await getSalesByDateRepository(request_data);
     }
+    let total = await getTotalSalesRepository(request_data);
+
+    result.rows = {
+      lists: result.rows,
+      total: total.rows[0],
+    };
 
     standardResponse(response, 200, success_RC, SUCCESS, result);
   } catch (error) {
@@ -53,6 +60,7 @@ export const getPaymentMethodSummary = async (request, response) => {
       branch_id: request.body.branch_id || "",
       merchant_id: request.body.merchant_id || "",
       trx_status: request.body.trx_status || "PAID",
+      payment_method: request.body.payment_method || "CASH",
       start_date: request.body.start_date || "",
       end_date: request.body.end_date + " 23:59:59" || "",
     };

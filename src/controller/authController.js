@@ -213,7 +213,7 @@ export const authorization = async (request, response, next) => {
         response,
         401,
         error_RC,
-        "Your signature_key is invalid!"
+        "Your signature key is invalid!"
       );
     } else {
       next();

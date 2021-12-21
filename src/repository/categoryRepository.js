@@ -82,3 +82,19 @@ export const deleteCategoryRepository = (request, id) => {
     });
   });
 };
+
+export const getDetailCategoryRepository = (request) => {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `SELECT * FROM category WHERE name LIKE '%${request.name}%' AND merchant_id = '${request.merchant_id}'`,
+      (error, result) => {
+        if (error) {
+          console.log(error);
+          reject(new Error(error));
+        } else {
+          resolve(result);
+        }
+      }
+    );
+  });
+};

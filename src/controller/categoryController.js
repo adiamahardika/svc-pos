@@ -5,6 +5,7 @@ import {
   createCategoryRepository,
   deleteCategoryRepository,
   getCategoryRepository,
+  getDetailCategoryRepository,
   updateCategoryRepository,
 } from "../repository/categoryRepository.js";
 
@@ -18,7 +19,7 @@ export const getCategory = async (request, response) => {
     standardResponse(response, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString(), []);
+    standardResponse(response, 400, error_RC, error.toString());
   }
 };
 
@@ -36,11 +37,21 @@ export const createCategory = async (request, response) => {
       created_by: request.body.created_by,
       created_at: date,
     };
-    const result = await createCategoryRepository(request_data);
-    standardResponse(response, 200, success_RC, SUCCESS, result);
+    const check_category = await getDetailCategoryRepository(request_data);
+    if (check_category.rows.length === 0) {
+      const result = await createCategoryRepository(request_data);
+      standardResponse(response, 200, success_RC, SUCCESS, result);
+    } else {
+      standardResponse(
+        response,
+        400,
+        error_RC,
+        "This category already created!"
+      );
+    }
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString(), []);
+    standardResponse(response, 400, error_RC, error.toString());
   }
 };
 
@@ -58,7 +69,7 @@ export const updateCategory = async (request, response) => {
     standardResponse(response, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString(), []);
+    standardResponse(response, 400, error_RC, error.toString());
   }
 };
 
@@ -72,6 +83,6 @@ export const deleteCategory = async (request, response) => {
     standardResponse(response, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString(), []);
+    standardResponse(response, 400, error_RC, error.toString());
   }
 };
