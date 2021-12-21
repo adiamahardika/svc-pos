@@ -70,12 +70,7 @@ export const changePasswordUser = async (request, response) => {
       );
       standardResponse(response, 200, success_RC, SUCCESS, result);
     } else {
-      standardResponse(
-        response,
-        200,
-        error_RC,
-        "Your old password is invalid!"
-      );
+      standardResponse(response, 200, error_RC, "Password lama anda salah!");
     }
   } catch (error) {
     console.log(error);

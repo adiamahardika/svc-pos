@@ -71,12 +71,7 @@ export const register = async (request, response) => {
       };
       standardResponse(response, 200, success_RC, SUCCESS, result);
     } else {
-      standardResponse(
-        response,
-        200,
-        error_RC,
-        "Email has already registered!"
-      );
+      standardResponse(response, 200, error_RC, "Email anda sudah terdaftar!");
     }
   } catch (error) {
     console.log(error);
@@ -141,21 +136,16 @@ export const login = async (request, response) => {
 
         standardResponse(response, 200, success_RC, SUCCESS, user_check);
       } else {
-        standardResponse(response, 200, error_RC, "Your password is invalid!");
+        standardResponse(response, 400, error_RC, "Password anda salah!");
       }
     } else if (user_check && user_check.rows[0].is_active !== "true") {
-      standardResponse(
-        response,
-        401,
-        error_RC,
-        "This user is no longer active!"
-      );
+      standardResponse(response, 401, error_RC, "Akun ini sudah tidak aktif!");
     } else {
       standardResponse(
         response,
-        200,
+        400,
         error_RC,
-        "Your email or user code is invalid!"
+        "Email ada kode user anda salah!"
       );
     }
   } catch (error) {
@@ -198,7 +188,7 @@ export const authorization = async (request, response, next) => {
       response,
       401,
       error_RC,
-      "Please provide your signature_key!"
+      "Please provide your signature key!"
     );
   } else {
     const decode = jwt.decode(header_token);
@@ -279,8 +269,8 @@ export const verifyEmail = async (request, response) => {
     const mail_options = {
       from: `"Finpos App" <${email_smtp}>`, // sender address
       to: request.body.email,
-      subject: "Verify Email",
-      html: `Please click this link to verify your email: <a href="${url}">${url}</a>`, // html body
+      subject: "Verifikasi Email",
+      html: `Silahkan klik link berikut untuk verifikasi email anda: <a href="${url}">${url}</a>`, // html body
     };
 
     let info = await transporter.sendMail(mail_options);
@@ -369,7 +359,7 @@ export const confirmPhoneNumber = async (request, response) => {
           await updateVerifyOtp(request_data, user_id);
           standardResponse(response, 200, success_RC, SUCCESS, result);
         } else {
-          standardResponse(response, 200, error_RC, "Wrong otp number!");
+          standardResponse(response, 200, error_RC, "Otp anda salah!");
         }
       });
   } catch (error) {

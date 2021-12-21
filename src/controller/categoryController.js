@@ -42,12 +42,7 @@ export const createCategory = async (request, response) => {
       const result = await createCategoryRepository(request_data);
       standardResponse(response, 200, success_RC, SUCCESS, result);
     } else {
-      standardResponse(
-        response,
-        400,
-        error_RC,
-        "This category already created!"
-      );
+      standardResponse(response, 400, error_RC, "Kategori ini sudah dibuat!");
     }
   } catch (error) {
     console.log(error);
