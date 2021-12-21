@@ -277,7 +277,7 @@ export const verifyEmail = async (request, response) => {
     });
     const url = `${host}auth/confirm-email/${token}`;
     const mail_options = {
-      from: `"Dev Trilogi" <${email_smtp}>`, // sender address
+      from: `"Finpos App" <${email_smtp}>`, // sender address
       to: request.body.email,
       subject: "Verify Email",
       html: `Please click this link to verify your email: <a href="${url}">${url}</a>`, // html body
