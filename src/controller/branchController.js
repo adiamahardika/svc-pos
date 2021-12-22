@@ -81,8 +81,8 @@ export const getBranch = async (request, response) => {
     const request_data = {
       search: request.body.search || "",
       merchant_id: request.body.merchant_id || "",
-      order_by: request.body.order_by || "location",
-      sort_by: request.body.sort_by || "asc",
+      order_by: request.body.order_by || "asc",
+      sort_by: request.body.sort_by || "location",
       is_active: request.body.is_active || "true",
       start_index: start_index || 0,
       limit: limit,

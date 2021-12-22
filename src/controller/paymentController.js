@@ -183,8 +183,8 @@ export const getPayment = async (request, response) => {
       response_code: request.body.response_code || "",
       start_date: request.body.start_date || "",
       end_date: request.body.end_date + " 23:59:59" || "",
-      order_by: request.body.order_by || "created_date",
-      sort_by: request.body.sort_by || "DESC",
+      order_by: request.body.order_by || "DESC",
+      sort_by: request.body.sort_by || "created_at",
       start_index: start_index || 0,
       limit: limit,
     };
