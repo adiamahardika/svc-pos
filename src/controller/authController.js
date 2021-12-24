@@ -267,7 +267,7 @@ export const verifyEmail = async (request, response) => {
     });
     const url = `${host}auth/confirm-email/${token}`;
     const mail_options = {
-      from: `"Finpos App" <${email_smtp}>`, // sender address
+      from: `"Warkatpos App" <${email_smtp}>`, // sender address
       to: request.body.email,
       subject: "Verifikasi Email",
       html: `Silahkan klik link berikut untuk verifikasi email anda: <a href="${url}">${url}</a>`, // html body
