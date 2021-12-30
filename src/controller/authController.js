@@ -145,7 +145,7 @@ export const login = async (request, response) => {
         response,
         400,
         error_RC,
-        "Email ada kode user anda salah!"
+        "Email atau kode user anda salah!"
       );
     }
   } catch (error) {

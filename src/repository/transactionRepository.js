@@ -151,13 +151,14 @@ export const getTrxHasInvoice = (transaction_id) => {
 
 export const updateTransactionHeaderRepository = (request, transaction_id) => {
   const query = {
-    text: `UPDATE transaction_header SET total_quantity = $1, total_starting_price = $2, total_selling_price = $3, updated_by = $4, updated_at = $5 WHERE transaction_id = $6 RETURNING transaction_header.*`,
+    text: `UPDATE transaction_header SET total_quantity = $1, total_starting_price = $2, total_selling_price = $3, updated_by = $4, updated_at = $5, trx_type = $6 WHERE transaction_id = $7 RETURNING transaction_header.*`,
     values: [
       request.total_quantity,
       request.total_starting_price,
       request.total_selling_price,
       request.updated_by,
       request.updated_at,
+      request.trx_type,
       transaction_id,
     ],
   };

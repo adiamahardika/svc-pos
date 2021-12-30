@@ -6,6 +6,7 @@ import { compress } from "../helpers/uploadFiles.js";
 import { emailCheckRepository } from "../repository/authRepository.js";
 import {
   changePasswordUserRepository,
+  changeUserStatusRepository,
   countUser,
   getUserRepository,
   updateUserRepository,
@@ -110,6 +111,24 @@ export const updateUser = async (request, response) => {
       ...result.rows[0],
       ktp: host + "ktp/" + result.rows[0].ktp,
     };
+
+    standardResponse(response, 200, success_RC, SUCCESS, result);
+  } catch (error) {
+    console.log(error);
+    standardResponse(response, 400, error_RC, error.toString());
+  }
+};
+
+export const changeUserStatus = async (request, response) => {
+  try {
+    const date = new Date();
+    const user_id = request.body.user_id;
+    const request_data = {
+      is_active: request.body.is_active,
+      updated_by: request.body.updated_by,
+      updated_at: date,
+    };
+    const result = await changeUserStatusRepository(request_data, user_id);
 
     standardResponse(response, 200, success_RC, SUCCESS, result);
   } catch (error) {

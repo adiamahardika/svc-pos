@@ -143,3 +143,20 @@ export const updateUserRepository = (request, id) => {
     });
   });
 };
+
+export const changeUserStatusRepository = (request, id) => {
+  const query = {
+    text: `UPDATE users SET is_active = $1, updated_by = $2, updated_at = $3 WHERE id = $4 RETURNING users.*`,
+    values: [request.is_active, request.updated_by, request.updated_at, id],
+  };
+  return new Promise((resolve, reject) => {
+    connection.query(query, (error, result) => {
+      if (error) {
+        console.log(error);
+        reject(new Error(error));
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
