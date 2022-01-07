@@ -8,6 +8,7 @@ import {
   changePasswordUserRepository,
   changeUserStatusRepository,
   countUser,
+  getDetailUserRepository,
   getUserRepository,
   updateUserRepository,
 } from "../repository/userRepository.js";
@@ -129,6 +130,24 @@ export const changeUserStatus = async (request, response) => {
       updated_at: date,
     };
     const result = await changeUserStatusRepository(request_data, user_id);
+
+    standardResponse(response, 200, success_RC, SUCCESS, result);
+  } catch (error) {
+    console.log(error);
+    standardResponse(response, 400, error_RC, error.toString());
+  }
+};
+
+export const getDetailUser = async (request, response) => {
+  try {
+    const user_id = request.params.user_id;
+    const result = await getDetailUserRepository(user_id);
+
+    delete result.rows[0].hash_password;
+    result.rows[0] = {
+      ...result.rows[0],
+      ktp: host + "ktp/" + result.rows[0].ktp,
+    };
 
     standardResponse(response, 200, success_RC, SUCCESS, result);
   } catch (error) {
