@@ -3,7 +3,11 @@ import { productRouter } from "./productRoutes.js";
 import { categoryRouter } from "./categoryRoutes.js";
 import { transactionRouter } from "./transactionRoutes.js";
 import { paymentRouter } from "./paymentRoutes.js";
-import { image_location, ktp_location } from "../../configs/index.js";
+import {
+  image_location,
+  ktp_location,
+  web_assets,
+} from "../../configs/index.js";
 import { authRouter } from "./authRoutes.js";
 import { roleRouter } from "./roleRoutes.js";
 import { merchantRouter } from "./merchantRoutes.js";
@@ -35,4 +39,5 @@ v1Router
   .use("/bank", bankRouter)
   .use("/report", reportRouter)
   .use("/assets", express.static(image_location))
-  .use("/ktp", express.static(ktp_location));
+  .use("/ktp", express.static(ktp_location))
+  .use("/web/assets/", express.static(web_assets));

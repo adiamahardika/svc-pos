@@ -33,6 +33,7 @@ import {
 import twilio from "twilio";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
+import { parseFullDate } from "../helpers/index.js";
 const client = new twilio(account_sid_otp, auth_token_otp);
 
 export const register = async (request, response) => {
@@ -265,12 +266,28 @@ export const verifyEmail = async (request, response) => {
     const token = jwt.sign({ id: user_data.rows[0].id }, jwt_secret_key, {
       expiresIn: "1h",
     });
+    const now = new Date();
+    const expired_link_time = now.setHours(now.getHours() + 1);
     const url = `${host}auth/confirm-email/${token}`;
     const mail_options = {
       from: `"Warkatpos App" <${email_smtp}>`, // sender address
       to: request.body.email,
       subject: "Verifikasi Email",
-      html: `Silahkan klik link berikut untuk verifikasi email anda: <a href="${url}">${url}</a>`, // html body
+      html: `<div style="font-family: 'Poppins', sans-serif; font-size:16px; text-align:center; font-weight: 500;">
+      <p style="color:black;">Silahkan klik tombol berikut untuk verifikasi email anda:</p> 
+      <button style="
+        background-color: #ff0025;
+        padding: 8px;
+        font-size: 16px;
+        border-radius: 6px;
+        border-width: 2px;
+        border-color: white;
+        border-style: solid;
+      ">
+      <a href="${url}" style="text-decoration: none; color: white">Verifikasi email</a>
+    </button>
+    <p style="font-size:14px; font-weight: 400; color:black;">Note: Link akan kadaluarsa 1 jam setelah link ini dikirim!</p>
+    </div>`, // html body
     };
 
     let info = await transporter.sendMail(mail_options);
