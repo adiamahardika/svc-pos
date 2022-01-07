@@ -19,7 +19,17 @@
         display: flex;
         flex-direction: column;
         align-items: center;
+        justify-content: center;
         text-align: center;
+        height: 100vh;
+        overflow-y: hidden;
+        color: white;
+        background-image: linear-gradient(
+          to top right,
+          #b90024,
+          #ff0025,
+          #fd195e
+        );
       }
       .mt-1 {
         margin: 0;
@@ -40,8 +50,15 @@
       .email-success-img {
         max-width: 25vw;
       }
+      .image-error {
+        width: 30vw;
+      }
     </style>
-    <p class="mt-1 fs-l bold">Error!</p>
-    <p class="mt-1 fs-m semi-bold">Link ini telah kadaluarsa!</p>
+    <img src="./assets/error.svg" class="image-error" />
+    <p class="mt-1 fs-l bold">Eror!</p>
+    <p class="mt-1 fs-m semi-bold">
+      Link anda sudah kadaluarsa!<br />
+      Silahkan kirim ulang verifikasi email melalui aplikasi.
+    </p>
   </body>
 </html>

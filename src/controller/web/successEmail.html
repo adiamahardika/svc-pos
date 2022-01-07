@@ -11,15 +11,24 @@
       href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap"
       rel="stylesheet"
     />
-  </head>
-  <body>
+
     <style type="text/css">
       body {
         font-family: "Poppins", sans-serif;
         display: flex;
         flex-direction: column;
         align-items: center;
+        justify-content: center;
         text-align: center;
+        height: 100vh;
+        overflow-y: hidden;
+        color: white;
+        background-image: linear-gradient(
+          to top right,
+          #b90024,
+          #ff0025,
+          #fd195e
+        );
       }
       .mt-1 {
         margin: 0;
@@ -40,8 +49,16 @@
       .email-success-img {
         max-width: 25vw;
       }
+      .image-success {
+        width: 30vw;
+      }
     </style>
+  </head>
+  <body>
+    <img src="./assets/success.svg" class="image-success" />
     <p class="mt-1 fs-l bold">Sukses!</p>
-    <p class="mt-1 fs-m semi-bold">Konfirmasi email anda telah sukses!</p>
+    <p class="mt-1 fs-m semi-bold">
+      Konfirmasi email anda telah berhasil! Silahkan kembali ke aplikasi.
+    </p>
   </body>
 </html>

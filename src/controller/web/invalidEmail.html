@@ -11,15 +11,23 @@
       href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap"
       rel="stylesheet"
     />
-  </head>
-  <body>
     <style type="text/css">
       body {
         font-family: "Poppins", sans-serif;
         display: flex;
         flex-direction: column;
         align-items: center;
+        justify-content: center;
         text-align: center;
+        height: 100vh;
+        overflow-y: hidden;
+        color: white;
+        background-image: linear-gradient(
+          to top right,
+          #b90024,
+          #ff0025,
+          #fd195e
+        );
       }
       .mt-1 {
         margin: 0;
@@ -40,8 +48,14 @@
       .email-success-img {
         max-width: 25vw;
       }
+      .image-error {
+        width: 30vw;
+      }
     </style>
-    <p class="mt-1 fs-l bold">Error!</p>
-    <p class="mt-1 fs-m semi-bold">This link has been invalid!</p>
+  </head>
+  <body>
+    <img src="./assets/error.svg" class="image-error" />
+    <p class="mt-1 fs-l bold">Eror!</p>
+    <p class="mt-1 fs-m semi-bold">Link anda tidak valid!</p>
   </body>
 </html>
