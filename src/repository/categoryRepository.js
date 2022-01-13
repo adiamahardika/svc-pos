@@ -86,7 +86,7 @@ export const deleteCategoryRepository = (request, id) => {
 export const getDetailCategoryRepository = (request) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT * FROM category WHERE name LIKE '%${request.name}%' AND merchant_id = '${request.merchant_id}'`,
+      `SELECT * FROM category WHERE name LIKE '%${request.name}%' AND merchant_id = '${request.merchant_id}' AND is_active LIKE '%${request.is_active}%'`,
       (error, result) => {
         if (error) {
           console.log(error);
