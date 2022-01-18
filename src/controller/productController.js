@@ -3,6 +3,7 @@ import { host } from "../configs/index.js";
 import { error_RC, SUCCESS, success_RC } from "../helpers/generalConstant.js";
 import { standardResponse } from "../helpers/standardResponse.js";
 import { compress } from "../helpers/uploadFiles.js";
+import { getDetailCategoryByIdRepository } from "../repository/categoryRepository.js";
 import { createPriceRepository } from "../repository/priceRepository.js";
 import {
   countProduct,
@@ -63,7 +64,7 @@ export const createProduct = async (request, response) => {
     }
     const request_data = {
       id: uid(6),
-      name: request.body.name,
+      name: request.body.name ? request.body.name : "",
       merchant_id: request.body.merchant_id,
       category_id: request.body.category_id,
       image: file_name,
@@ -77,8 +78,12 @@ export const createProduct = async (request, response) => {
 
     const price_request = {
       product_id: result.rows[0].id,
-      starting_price: request.body.starting_price,
-      selling_price: request.body.selling_price,
+      starting_price: request.body.starting_price
+        ? request.body.starting_price
+        : 0,
+      selling_price: request.body.selling_price
+        ? request.body.selling_price
+        : 0,
       updated_by: request.body.created_by,
       updated_at: date,
       created_by: request.body.created_by,
@@ -108,7 +113,7 @@ export const updateProduct = async (request, response) => {
 
     if (!request.file || Object.keys(request.file).length === 0) {
       const request_data = {
-        name: request.body.name,
+        name: request.body.name ? request.body.name : "",
         merchant_id: request.body.merchant_id,
         category_id: request.body.category_id,
         updated_by: request.body.updated_by,
@@ -118,7 +123,7 @@ export const updateProduct = async (request, response) => {
     } else {
       await compress(request.file.path);
       const request_data = {
-        name: request.body.name,
+        name: request.body.name ? request.body.name : "",
         merchant_id: request.body.merchant_id,
         category_id: request.body.category_id,
         image: request.file.filename,
@@ -127,11 +132,18 @@ export const updateProduct = async (request, response) => {
       };
       result = await updateProductRepository(request_data, product_id);
     }
+    const get_category = await getDetailCategoryByIdRepository(
+      request.body.category_id
+    );
 
     const price_request = {
       product_id: request.params.product_id,
-      starting_price: request.body.starting_price,
-      selling_price: request.body.selling_price,
+      starting_price: request.body.starting_price
+        ? request.body.starting_price
+        : 0,
+      selling_price: request.body.selling_price
+        ? request.body.selling_price
+        : 0,
       updated_by: request.body.updated_by,
       updated_at: date,
       created_by: request.body.updated_by,
@@ -144,6 +156,7 @@ export const updateProduct = async (request, response) => {
       image: host + "assets/" + result.rows[0].image,
       starting_price: price_result.rows[0].starting_price,
       selling_price: price_result.rows[0].selling_price,
+      category: get_category.rows[0].name,
     };
 
     standardResponse(response, 200, success_RC, SUCCESS, result);

@@ -98,3 +98,19 @@ export const getDetailCategoryRepository = (request) => {
     );
   });
 };
+
+export const getDetailCategoryByIdRepository = (category_id) => {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `SELECT * FROM category WHERE id LIKE '%${category_id}%'`,
+      (error, result) => {
+        if (error) {
+          console.log(error);
+          reject(new Error(error));
+        } else {
+          resolve(result);
+        }
+      }
+    );
+  });
+};
