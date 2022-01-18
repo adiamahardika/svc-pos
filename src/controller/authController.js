@@ -310,16 +310,17 @@ export const confirmEmail = async (request, response) => {
     const token = request.params.token;
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = dirname(__filename);
+    const path = __dirname.split("controller");
 
     jwt.verify(token, jwt_secret_key, async (error, decoded) => {
       if (error && error.name === "TokenExpiredError") {
         return response
           .status(200)
-          .sendFile(join(__dirname + "/web/expiredEmail.html"));
+          .sendFile(join(path[0] + "/web/expiredEmail.html"));
       } else if (error && error.name === "JsonWebTokenError") {
         return response
           .status(200)
-          .sendFile(join(__dirname + "/web/invalidEmail.html"));
+          .sendFile(join(path[0] + "/web/invalidEmail.html"));
       } else {
         const request_data = {
           is_email_validate: "true",
@@ -327,7 +328,7 @@ export const confirmEmail = async (request, response) => {
         await updateVerifyEmail(request_data, decoded.id);
         return response
           .status(200)
-          .sendFile(join(__dirname + "/web/successEmail.html"));
+          .sendFile(join(path[0] + "/web/successEmail.html"));
       }
     });
   } catch (error) {
@@ -348,7 +349,14 @@ export const verifyPhoneNumber = async (request, response) => {
         const result = {
           rows: [data],
         };
-        standardResponse(response, 200, success_RC, SUCCESS, result);
+        if (
+          data.lookup.carrier.error_code === null ||
+          !data.lookup.carrier.error_code
+        ) {
+          standardResponse(response, 200, success_RC, SUCCESS, result);
+        } else {
+          standardResponse(response, 400, error_RC, "Nomor anda salah");
+        }
       });
   } catch (error) {
     console.log(error);
