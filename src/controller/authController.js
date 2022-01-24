@@ -33,7 +33,6 @@ import {
 import twilio from "twilio";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
-import { parseFullDate } from "../helpers/index.js";
 const client = new twilio(account_sid_otp, auth_token_otp);
 
 export const register = async (request, response) => {
@@ -72,7 +71,7 @@ export const register = async (request, response) => {
       };
       standardResponse(response, 200, success_RC, SUCCESS, result);
     } else {
-      standardResponse(response, 200, error_RC, "Email anda sudah terdaftar!");
+      standardResponse(response, 400, error_RC, "Email anda sudah terdaftar!");
     }
   } catch (error) {
     console.log(error);
@@ -339,28 +338,26 @@ export const confirmEmail = async (request, response) => {
 
 export const verifyPhoneNumber = async (request, response) => {
   try {
-    client.verify
+    let verifiy = await client.verify
       .services(service_id_otp)
       .verifications.create({
         to: `+${request.body.no_hp}`,
         channel: "sms",
-      })
-      .then((data) => {
-        const result = {
-          rows: [data],
-        };
-        if (
-          data.lookup.carrier.error_code === null ||
-          !data.lookup.carrier.error_code
-        ) {
-          standardResponse(response, 200, success_RC, SUCCESS, result);
-        } else {
-          standardResponse(response, 400, error_RC, "Nomor anda salah");
-        }
       });
+    const result = {
+      rows: [verifiy],
+    };
+    if (
+      verifiy.lookup.carrier.error_code === null ||
+      !verifiy.lookup.carrier.error_code
+    ) {
+      standardResponse(response, 200, success_RC, SUCCESS, result);
+    } else {
+      standardResponse(response, 400, success_RC, "Nomor anda salah");
+    }
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, 400, success_RC, "Nomor anda salah");
   }
 };
 
