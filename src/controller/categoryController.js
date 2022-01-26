@@ -9,7 +9,7 @@ import {
   updateCategoryRepository,
 } from "../repository/categoryRepository.js";
 
-export const getCategory = async (request, response) => {
+export const getCategory = async (request, response, next) => {
   try {
     const request_data = {
       merchant_id: request.body.merchant_id || "",
@@ -17,6 +17,7 @@ export const getCategory = async (request, response) => {
     };
     const result = await getCategoryRepository(request_data);
     standardResponse(response, 200, success_RC, SUCCESS, result);
+    next();
   } catch (error) {
     console.log(error);
     standardResponse(response, 400, error_RC, error.toString());
