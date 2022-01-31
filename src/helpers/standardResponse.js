@@ -19,5 +19,7 @@ export const standardResponse = (
   result.total_data = parseInt(total_data) || "-";
   result.result = data ? data.rows : [];
 
+  response.body = result;
+
   return response.status(result.https_status).json(result);
 };
