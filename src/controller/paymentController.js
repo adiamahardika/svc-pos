@@ -57,12 +57,15 @@ export const createPayment = async (request, response) => {
         get_branch_number = "0" + get_branch_number;
       }
 
-      if (count_payment.length === 1) {
-        count_payment = "000" + (parseInt(count_payment) + 1);
-      } else if (count_payment.length === 2) {
-        count_payment = "00" + (parseInt(count_payment) + 1);
-      } else if (count_payment.length === 3) {
-        count_payment = "0" + (parseInt(count_payment) + 1);
+      let new_payment_number = parseInt(count_payment) + 1;
+      if (new_payment_number.toString().length === 1) {
+        count_payment = "000" + new_payment_number;
+      } else if (new_payment_number.toString().length === 2) {
+        count_payment = "00" + new_payment_number;
+      } else if (new_payment_number.toString().length === 3) {
+        count_payment = "0" + new_payment_number;
+      } else {
+        count_payment = new_payment_number;
       }
 
       const invoice_number =

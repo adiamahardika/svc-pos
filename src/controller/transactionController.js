@@ -54,12 +54,15 @@ export const createTransaction = async (request, response) => {
       get_branch_number = "0" + get_branch_number;
     }
 
-    if (count_transaction.length === 1) {
-      count_transaction = "000" + (parseInt(count_transaction) + 1);
-    } else if (count_transaction.length === 2) {
-      count_transaction = "00" + (parseInt(count_transaction) + 1);
-    } else if (count_transaction.length === 3) {
-      count_transaction = "0" + (parseInt(count_transaction) + 1);
+    let new_transaction_number = parseInt(count_transaction) + 1;
+    if (new_transaction_number.toString().length === 1) {
+      count_transaction = "000" + new_transaction_number;
+    } else if (new_transaction_number.toString().length === 2) {
+      count_transaction = "00" + new_transaction_number;
+    } else if (new_transaction_number.toString().length === 3) {
+      count_transaction = "0" + new_transaction_number;
+    } else {
+      count_transaction = new_transaction_number;
     }
 
     const transaction_id =

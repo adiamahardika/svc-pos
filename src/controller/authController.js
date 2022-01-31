@@ -46,7 +46,7 @@ export const register = async (request, response) => {
     const request_data = {
       id: uid(6),
       name: request.body.name,
-      email: request.body.email,
+      email: request.body.email.toLowerCase(),
       role_id: request.body.role_id,
       ktp: request.file.filename,
       no_hp: request.body.no_hp,
@@ -82,7 +82,7 @@ export const register = async (request, response) => {
 export const login = async (request, response) => {
   try {
     const request_data = {
-      email: request.body.email,
+      email: request.body.email.toLowerCase(),
       password: request.body.password,
     };
 

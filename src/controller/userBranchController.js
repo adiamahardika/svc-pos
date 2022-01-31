@@ -39,9 +39,13 @@ export const createUserBranch = async (request, response) => {
       get_branch_number = "0" + get_branch_number;
     }
 
-    if (count_user_branch.length === 1) {
-      count_user_branch = "0" + (parseInt(count_user_branch) + 1);
+    let last_user_branch = parseInt(count_user_branch) + 1;
+    if (last_user_branch.toString().length === 1) {
+      count_user_branch = "0" + last_user_branch;
+    } else {
+      count_user_branch = last_user_branch;
     }
+
     const user_code =
       detail_merchant.rows[0].merchant_code +
       get_branch_number +
