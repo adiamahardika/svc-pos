@@ -1,7 +1,7 @@
 import { createLogRepository } from "../repository/logRepository.js";
 
-function check_length(n) {
-  return n < 10 ? "0" + n : n;
+function check_length(value) {
+  return value < 10 ? "0" + value : value;
 }
 
 export const createLog = async (request, response) => {
