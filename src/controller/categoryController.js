@@ -17,14 +17,13 @@ export const getCategory = async (request, response, next) => {
     };
     const result = await getCategoryRepository(request_data);
     standardResponse(response, 200, success_RC, SUCCESS, result);
-    next();
   } catch (error) {
     console.log(error);
     standardResponse(response, 400, error_RC, error.toString());
   }
 };
 
-export const createCategory = async (request, response) => {
+export const createCategory = async (request, response, next) => {
   try {
     const date = new Date();
     const request_data = {

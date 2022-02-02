@@ -82,7 +82,7 @@ export const register = async (request, response) => {
 export const login = async (request, response) => {
   try {
     const request_data = {
-      email: request.body.email.toLowerCase(),
+      email: request.body.email,
       password: request.body.password,
     };
 
@@ -357,7 +357,7 @@ export const verifyPhoneNumber = async (request, response) => {
     }
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, success_RC, "Nomor anda salah");
+    standardResponse(response, 200, success_RC, "Nomor anda salah");
   }
 };
 
@@ -386,6 +386,6 @@ export const confirmPhoneNumber = async (request, response) => {
       });
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, 200, error_RC, "Otp anda salah!");
   }
 };
