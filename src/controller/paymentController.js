@@ -168,6 +168,7 @@ export const createPayment = async (request, response, next) => {
     } else {
       standardResponse(
         response,
+        next,
         200,
         error_RC,
         "Your submit amount is not enough!"

@@ -59,6 +59,8 @@ export const changePasswordUser = async (request, response, next) => {
       request_data.old_password,
       user_check.rows[0].hash_password
     );
+    request.body.new_password = "*********";
+    request.body.old_password = "*********";
     if (match) {
       const salt_rounds = 10;
       const hash = bcrypt.hashSync(request_data.new_password, salt_rounds);
@@ -70,6 +72,7 @@ export const changePasswordUser = async (request, response, next) => {
         request_data,
         request_data.email
       );
+
       standardResponse(response, next, 200, success_RC, SUCCESS, result);
     } else {
       standardResponse(

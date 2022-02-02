@@ -61,7 +61,7 @@ export const register = async (request, response, next) => {
     };
 
     const email_check = await emailCheckRepository(request_data);
-
+    request.body.password = "*********";
     if (email_check.rows.length === 0) {
       const result = await registerRepository(request_data);
 
@@ -101,7 +101,7 @@ export const login = async (request, response, next) => {
     } else if (user_code_check.rows.length > 0) {
       user_check = user_code_check;
     }
-
+    request.body.password = "*********";
     if (
       user_check &&
       user_check !== null &&
@@ -149,6 +149,7 @@ export const login = async (request, response, next) => {
     } else {
       standardResponse(
         response,
+        next,
         400,
         error_RC,
         "Email atau kode user anda salah!"
@@ -271,8 +272,6 @@ export const verifyEmail = async (request, response, next) => {
     const token = jwt.sign({ id: user_data.rows[0].id }, jwt_secret_key, {
       expiresIn: "1h",
     });
-    const now = new Date();
-    const expired_link_time = now.setHours(now.getHours() + 1);
     const url = `${host}auth/confirm-email/${token}`;
     const mail_options = {
       from: `"Warkatpos App" <${email_smtp}>`, // sender address

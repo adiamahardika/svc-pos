@@ -159,6 +159,7 @@ export const createMerchant = async (request, response, next) => {
     } else {
       standardResponse(
         response,
+        next,
         400,
         error_RC,
         "User ini sudah memiliki merchant!"
