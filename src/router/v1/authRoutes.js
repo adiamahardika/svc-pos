@@ -10,15 +10,16 @@ import {
   verifyEmail,
   verifyPhoneNumber,
 } from "../../controller/authController.js";
+import { createLog } from "../../controller/logController.js";
 import { uploadKtp } from "../../helpers/uploadFiles.js";
 
 export const authRouter = express.Router();
 
 authRouter
-  .post("/register", uploadKtp, register)
-  .post("/login", login)
-  .get("/refresh-token", authentication, authorization, refreshToken)
-  .post("/verify-email", verifyEmail)
-  .get("/confirm-email/:token", confirmEmail)
-  .post("/verify-phone-number", verifyPhoneNumber)
-  .post("/confirm-phone-number", confirmPhoneNumber);
+  .post("/register", uploadKtp, register, createLog)
+  .post("/login", login, createLog)
+  .get("/refresh-token", authentication, authorization, refreshToken, createLog)
+  .post("/verify-email", verifyEmail, createLog)
+  .get("/confirm-email/:token", confirmEmail, createLog)
+  .post("/verify-phone-number", verifyPhoneNumber, createLog)
+  .post("/confirm-phone-number", confirmPhoneNumber, createLog);

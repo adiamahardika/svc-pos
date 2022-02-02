@@ -5,11 +5,12 @@ import {
   getBranch,
   updateBranch,
 } from "../../controller/branchController.js";
+import { createLog } from "../../controller/logController.js";
 
 export const branchRouter = express.Router();
 
 branchRouter
-  .post("/create-branch", createBranch)
-  .put("/update-branch", updateBranch)
-  .post("/get-branch", getBranch)
-  .delete("/delete-branch/:branch_id", deleteBranch);
+  .post("/create-branch", createBranch, createLog)
+  .put("/update-branch", updateBranch, createLog)
+  .post("/get-branch", getBranch, createLog)
+  .delete("/delete-branch/:branch_id", deleteBranch, createLog);

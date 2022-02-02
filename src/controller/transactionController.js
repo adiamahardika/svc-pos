@@ -23,7 +23,7 @@ import { getDetailMerchantRepository } from "../repository/merchantRepository.js
 import { getDetailBranchRepository } from "../repository/branchRepository.js";
 import { parseFullDate, parseShortDate } from "../helpers/index.js";
 
-export const createTransaction = async (request, response) => {
+export const createTransaction = async (request, response, next) => {
   try {
     const new_date = new Date();
     const local_date =
@@ -116,14 +116,14 @@ export const createTransaction = async (request, response) => {
 
     header_result.rows[0].detail = detail_result.rows;
 
-    standardResponse(response, 200, success_RC, SUCCESS, header_result);
+    standardResponse(response, next, 200, success_RC, SUCCESS, header_result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };
 
-export const getTransaction = async (request, response) => {
+export const getTransaction = async (request, response, next) => {
   try {
     const active_page = parseInt(request.body.page);
     const limit = parseInt(request.body.limit) || 12;
@@ -157,11 +157,11 @@ export const getTransaction = async (request, response) => {
     );
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };
 
-export const getDetailTransaction = async (request, response) => {
+export const getDetailTransaction = async (request, response, next) => {
   try {
     const transaction_id = request.params.transaction_id;
 
@@ -180,14 +180,14 @@ export const getDetailTransaction = async (request, response) => {
       payment_list: payment_list.rows,
     };
 
-    standardResponse(response, 200, success_RC, SUCCESS, result);
+    standardResponse(response, next, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };
 
-export const updateTransactionStatus = async (request, response) => {
+export const updateTransactionStatus = async (request, response, next) => {
   try {
     const date = new Date();
     const transaction_id = request.body.transaction_id;
@@ -201,14 +201,14 @@ export const updateTransactionStatus = async (request, response) => {
       request_data,
       transaction_id
     );
-    standardResponse(response, 200, success_RC, SUCCESS, result);
+    standardResponse(response, next, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };
 
-export const updateTransaction = async (request, response) => {
+export const updateTransaction = async (request, response, next) => {
   try {
     const date = new Date();
     const transaction_id = request.body.header.transaction_id;
@@ -251,9 +251,9 @@ export const updateTransaction = async (request, response) => {
 
     header_result.rows[0].detail = detail_result.rows;
 
-    standardResponse(response, 200, success_RC, SUCCESS, header_result);
+    standardResponse(response, next, 200, success_RC, SUCCESS, header_result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };

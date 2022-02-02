@@ -17,7 +17,7 @@ import {
   updateMerchantRepository,
 } from "../repository/merchantRepository.js";
 
-export const getMerchant = async (request, response) => {
+export const getMerchant = async (request, response, next) => {
   try {
     const active_page = parseInt(request.body.page);
     const limit = parseInt(request.body.limit) || 25;
@@ -43,11 +43,11 @@ export const getMerchant = async (request, response) => {
     );
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };
 
-export const createMerchant = async (request, response) => {
+export const createMerchant = async (request, response, next) => {
   try {
     const check_merchant_by_owner = await getDetailMerchantByOwnerRepository(
       request.body.merchant.user_id
@@ -155,7 +155,7 @@ export const createMerchant = async (request, response) => {
         },
       };
 
-      standardResponse(response, 200, success_RC, SUCCESS, result);
+      standardResponse(response, next, 200, success_RC, SUCCESS, result);
     } else {
       standardResponse(
         response,
@@ -166,11 +166,11 @@ export const createMerchant = async (request, response) => {
     }
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };
 
-export const updateMerchant = async (request, response) => {
+export const updateMerchant = async (request, response, next) => {
   try {
     const date = new Date();
     const merchant_id = request.body.merchant_id;
@@ -183,22 +183,22 @@ export const updateMerchant = async (request, response) => {
       updated_at: date,
     };
     const result = await updateMerchantRepository(request_data, merchant_id);
-    standardResponse(response, 200, success_RC, SUCCESS, result);
+    standardResponse(response, next, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };
 
-export const getDetailMerchant = async (request, response) => {
+export const getDetailMerchant = async (request, response, next) => {
   try {
     const merchant_id = request.params.merchant_id;
     const result = await getDetailMerchantRepository(merchant_id);
 
     delete result.rows[0].secret_key;
-    standardResponse(response, 200, success_RC, SUCCESS, result);
+    standardResponse(response, next, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };

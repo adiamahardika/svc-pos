@@ -14,7 +14,7 @@ import {
   updateUserBranchRepository,
 } from "../repository/userBranchRepository.js";
 
-export const createUserBranch = async (request, response) => {
+export const createUserBranch = async (request, response, next) => {
   try {
     const date = new Date();
     const salt_rounds = 10;
@@ -65,14 +65,14 @@ export const createUserBranch = async (request, response) => {
       created_at: date,
     };
     const result = await createUserBranchRepository(request_data);
-    standardResponse(response, 200, success_RC, SUCCESS, result);
+    standardResponse(response, next, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };
 
-export const getUserBranch = async (request, response) => {
+export const getUserBranch = async (request, response, next) => {
   try {
     const request_data = {
       search: request.body.search || "",
@@ -82,14 +82,14 @@ export const getUserBranch = async (request, response) => {
       is_active: request.body.is_active || "true",
     };
     const result = await getUserBranchRepository(request_data);
-    standardResponse(response, 200, success_RC, SUCCESS, result);
+    standardResponse(response, next, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };
 
-export const updateUserBranch = async (request, response) => {
+export const updateUserBranch = async (request, response, next) => {
   try {
     const date = new Date();
     const user_branch_id = request.body.user_branch_id;
@@ -103,14 +103,14 @@ export const updateUserBranch = async (request, response) => {
       request_data,
       user_branch_id
     );
-    standardResponse(response, 200, success_RC, SUCCESS, result);
+    standardResponse(response, next, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };
 
-export const deleteUserBranch = async (request, response) => {
+export const deleteUserBranch = async (request, response, next) => {
   try {
     const user_branch_id = request.params.user_branch_id;
     const request_data = {
@@ -121,14 +121,14 @@ export const deleteUserBranch = async (request, response) => {
       request_data,
       user_branch_id
     );
-    standardResponse(response, 200, success_RC, SUCCESS, result);
+    standardResponse(response, next, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };
 
-export const changePasswordUserBranch = async (request, response) => {
+export const changePasswordUserBranch = async (request, response, next) => {
   try {
     const date = new Date();
     const user_code = request.body.user_code;
@@ -154,12 +154,18 @@ export const changePasswordUserBranch = async (request, response) => {
         request_data,
         user_code
       );
-      standardResponse(response, 200, success_RC, SUCCESS, result);
+      standardResponse(response, next, 200, success_RC, SUCCESS, result);
     } else {
-      standardResponse(response, 200, error_RC, "Password lama anda salah!");
+      standardResponse(
+        response,
+        next,
+        200,
+        error_RC,
+        "Password lama anda salah!"
+      );
     }
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };

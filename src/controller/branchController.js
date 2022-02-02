@@ -10,7 +10,7 @@ import {
   updateBranchRepository,
 } from "../repository/branchRepository.js";
 
-export const createBranch = async (request, response) => {
+export const createBranch = async (request, response, next) => {
   try {
     const date = new Date();
     const max_branch_number = await getMaxBranchNumberByMerchant(
@@ -39,14 +39,14 @@ export const createBranch = async (request, response) => {
     };
 
     const result = await createBranchRepository(request_data);
-    standardResponse(response, 200, success_RC, SUCCESS, result);
+    standardResponse(response, next, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };
 
-export const updateBranch = async (request, response) => {
+export const updateBranch = async (request, response, next) => {
   try {
     const date = new Date();
     const branch_id = request.body.branch_id;
@@ -66,14 +66,14 @@ export const updateBranch = async (request, response) => {
     };
 
     const result = await updateBranchRepository(request_data, branch_id);
-    standardResponse(response, 200, success_RC, SUCCESS, result);
+    standardResponse(response, next, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };
 
-export const getBranch = async (request, response) => {
+export const getBranch = async (request, response, next) => {
   try {
     const active_page = parseInt(request.body.page);
     const limit = parseInt(request.body.limit) || 25;
@@ -103,11 +103,11 @@ export const getBranch = async (request, response) => {
     );
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };
 
-export const deleteBranch = async (request, response) => {
+export const deleteBranch = async (request, response, next) => {
   try {
     const branch_id = request.params.branch_id;
     const request_data = {
@@ -115,9 +115,9 @@ export const deleteBranch = async (request, response) => {
     };
 
     const result = await deleteBranchRepository(request_data, branch_id);
-    standardResponse(response, 200, success_RC, SUCCESS, result);
+    standardResponse(response, next, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };

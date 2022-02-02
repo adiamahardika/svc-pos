@@ -1,4 +1,5 @@
 import express from "express";
+import { createLog } from "../../controller/logController.js";
 import {
   createRole,
   deleteRole,
@@ -9,7 +10,7 @@ import {
 export const roleRouter = express.Router();
 
 roleRouter
-  .post("/get-role", getRole)
-  .post("/create-role", createRole)
-  .put("/update-role", updateRole)
-  .delete("/delete-role/:role_id", deleteRole);
+  .post("/get-role", getRole, createLog)
+  .post("/create-role", createRole, createLog)
+  .put("/update-role", updateRole, createLog)
+  .delete("/delete-role/:role_id", deleteRole, createLog);

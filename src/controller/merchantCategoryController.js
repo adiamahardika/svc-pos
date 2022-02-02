@@ -8,20 +8,20 @@ import {
   updateMerchantCategoryRepository,
 } from "../repository/merchantCategoryRepository.js";
 
-export const getMerhcantCategory = async (request, response) => {
+export const getMerhcantCategory = async (request, response, next) => {
   try {
     const request_data = {
       is_active: "true",
     };
     const result = await getMerhcantCategoryRespository(request_data);
-    standardResponse(response, 200, success_RC, SUCCESS, result);
+    standardResponse(response, next, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };
 
-export const createMerchantCategory = async (request, response) => {
+export const createMerchantCategory = async (request, response, next) => {
   try {
     const date = new Date();
     const request_data = {
@@ -35,14 +35,14 @@ export const createMerchantCategory = async (request, response) => {
     };
 
     const result = await createMerchantCategoryRepository(request_data);
-    standardResponse(response, 200, success_RC, SUCCESS, result);
+    standardResponse(response, next, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };
 
-export const updateMerchantCategory = async (request, response) => {
+export const updateMerchantCategory = async (request, response, next) => {
   try {
     const date = new Date();
     const mc_id = request.body.mc_id;
@@ -53,14 +53,14 @@ export const updateMerchantCategory = async (request, response) => {
     };
 
     const result = await updateMerchantCategoryRepository(request_data, mc_id);
-    standardResponse(response, 200, success_RC, SUCCESS, result);
+    standardResponse(response, next, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };
 
-export const deleteMerchantCategory = async (request, response) => {
+export const deleteMerchantCategory = async (request, response, next) => {
   try {
     const mc_id = request.params.mc_id;
     const request_data = {
@@ -68,9 +68,9 @@ export const deleteMerchantCategory = async (request, response) => {
     };
 
     const result = await deleteMerchantCategoryRepository(request_data, mc_id);
-    standardResponse(response, 200, success_RC, SUCCESS, result);
+    standardResponse(response, next, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };

@@ -16,10 +16,10 @@ export const getCategory = async (request, response, next) => {
       is_active: request.body.is_active || "true",
     };
     const result = await getCategoryRepository(request_data);
-    standardResponse(response, 200, success_RC, SUCCESS, result);
+    standardResponse(response, next, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };
 
@@ -40,17 +40,23 @@ export const createCategory = async (request, response, next) => {
     const check_category = await getDetailCategoryRepository(request_data);
     if (check_category.rows.length === 0) {
       const result = await createCategoryRepository(request_data);
-      standardResponse(response, 200, success_RC, SUCCESS, result);
+      standardResponse(response, next, 200, success_RC, SUCCESS, result);
     } else {
-      standardResponse(response, 400, error_RC, "Kategori ini sudah dibuat!");
+      standardResponse(
+        response,
+        next,
+        400,
+        error_RC,
+        "Kategori ini sudah dibuat!"
+      );
     }
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };
 
-export const updateCategory = async (request, response) => {
+export const updateCategory = async (request, response, next) => {
   try {
     const date = new Date();
     const category_id = request.params.category_id;
@@ -61,23 +67,23 @@ export const updateCategory = async (request, response) => {
       updated_at: date,
     };
     const result = await updateCategoryRepository(request_data, category_id);
-    standardResponse(response, 200, success_RC, SUCCESS, result);
+    standardResponse(response, next, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };
 
-export const deleteCategory = async (request, response) => {
+export const deleteCategory = async (request, response, next) => {
   try {
     const category_id = request.params.category_id;
     const request_data = {
       is_active: "false",
     };
     const result = await deleteCategoryRepository(request_data, category_id);
-    standardResponse(response, 200, success_RC, SUCCESS, result);
+    standardResponse(response, next, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };

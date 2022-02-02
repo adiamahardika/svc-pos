@@ -4,7 +4,7 @@ function check_length(value) {
   return value < 10 ? "0" + value : value;
 }
 
-export const createLog = async (request, response) => {
+export const createLog = async (request, response, next) => {
   try {
     const date = new Date();
     const user = request.get("request-from")

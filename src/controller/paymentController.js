@@ -26,7 +26,7 @@ import {
 } from "../repository/paymentRepository.js";
 import { updateTransactionStatusRepository } from "../repository/transactionRepository.js";
 
-export const createPayment = async (request, response) => {
+export const createPayment = async (request, response, next) => {
   try {
     if (
       parseFloat(request.body.submit_amount) >= parseFloat(request.body.amount)
@@ -157,7 +157,14 @@ export const createPayment = async (request, response) => {
         payment_result.rows[0].detail = cash_result.rows[0];
       }
 
-      standardResponse(response, 200, success_RC, SUCCESS, payment_result);
+      standardResponse(
+        response,
+        next,
+        200,
+        success_RC,
+        SUCCESS,
+        payment_result
+      );
     } else {
       standardResponse(
         response,
@@ -168,11 +175,11 @@ export const createPayment = async (request, response) => {
     }
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };
 
-export const getPayment = async (request, response) => {
+export const getPayment = async (request, response, next) => {
   try {
     const active_page = parseInt(request.body.page);
     const limit = parseInt(request.body.limit) || 12;
@@ -207,11 +214,11 @@ export const getPayment = async (request, response) => {
     );
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };
 
-export const getDetailPayment = async (request, response) => {
+export const getDetailPayment = async (request, response, next) => {
   try {
     const invoice_number = request.query.invoice_number;
     const result = await getDetailPaymentRepository(invoice_number);
@@ -234,9 +241,9 @@ export const getDetailPayment = async (request, response) => {
       transaction_list: transaction_list.rows,
     };
 
-    standardResponse(response, 200, success_RC, SUCCESS, result);
+    standardResponse(response, next, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };

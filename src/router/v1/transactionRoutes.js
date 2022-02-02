@@ -1,4 +1,5 @@
 import express from "express";
+import { createLog } from "../../controller/logController.js";
 import {
   createTransaction,
   getDetailTransaction,
@@ -10,8 +11,8 @@ import {
 export const transactionRouter = express.Router();
 
 transactionRouter
-  .post("/create-transaction", createTransaction)
-  .post("/get-transaction", getTransaction)
-  .get("/detail-transaction/:transaction_id", getDetailTransaction)
-  .put("/update-transaction-status", updateTransactionStatus)
-  .put("/update-transaction", updateTransaction);
+  .post("/create-transaction", createTransaction, createLog)
+  .post("/get-transaction", getTransaction, createLog)
+  .get("/detail-transaction/:transaction_id", getDetailTransaction, createLog)
+  .put("/update-transaction-status", updateTransactionStatus, createLog)
+  .put("/update-transaction", updateTransaction, createLog);

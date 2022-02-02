@@ -1,6 +1,7 @@
 import { SUCCESS, success_RC } from "../helpers/generalConstant.js";
 export const standardResponse = (
   response,
+  next,
   http_status,
   response_code,
   description,
@@ -21,5 +22,5 @@ export const standardResponse = (
 
   response.body = result;
 
-  return response.status(result.https_status).json(result);
+  return response.status(result.https_status).json(result), next();
 };

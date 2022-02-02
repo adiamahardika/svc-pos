@@ -1,4 +1,5 @@
 import express from "express";
+import { createLog } from "../../controller/logController.js";
 import {
   createPayment,
   getDetailPayment,
@@ -8,6 +9,6 @@ import {
 export const paymentRouter = express.Router();
 
 paymentRouter
-  .post("/create-payment", createPayment)
-  .post("/get-payment", getPayment)
-  .get("/detail-payment", getDetailPayment);
+  .post("/create-payment", createPayment, createLog)
+  .post("/get-payment", getPayment, createLog)
+  .get("/detail-payment", getDetailPayment, createLog);

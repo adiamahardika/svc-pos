@@ -1,4 +1,5 @@
 import express from "express";
+import { createLog } from "../../controller/logController.js";
 import {
   getUser,
   changePasswordUser,
@@ -10,8 +11,8 @@ import {
 export const userRouter = express.Router();
 
 userRouter
-  .post("/get-user", getUser)
-  .put("/change-pass-user", changePasswordUser)
-  .put("/update-user", updateUser)
-  .put("/change-user-status", changeUserStatus)
-  .get("/get-detail-user/:user_id", getDetailUser);
+  .post("/get-user", getUser, createLog)
+  .put("/change-pass-user", changePasswordUser, createLog)
+  .put("/update-user", updateUser, createLog)
+  .put("/change-user-status", changeUserStatus, createLog)
+  .get("/get-detail-user/:user_id", getDetailUser, createLog);

@@ -24,7 +24,7 @@ import {
   getTotalServedBySummaryRepository,
 } from "../repository/reportRepository.js";
 
-export const getSalesSummary = async (request, response) => {
+export const getSalesSummary = async (request, response, next) => {
   try {
     const request_data = {
       branch_id: request.body.branch_id || "",
@@ -47,14 +47,14 @@ export const getSalesSummary = async (request, response) => {
       total: total.rows[0],
     };
 
-    standardResponse(response, 200, success_RC, SUCCESS, result);
+    standardResponse(response, next, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };
 
-export const getPaymentMethodSummary = async (request, response) => {
+export const getPaymentMethodSummary = async (request, response, next) => {
   try {
     const request_data = {
       branch_id: request.body.branch_id || "",
@@ -96,14 +96,14 @@ export const getPaymentMethodSummary = async (request, response) => {
       edc: bank_summary.rows,
     };
 
-    standardResponse(response, 200, success_RC, SUCCESS, result);
+    standardResponse(response, next, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };
 
-export const getItemSalesSummary = async (request, response) => {
+export const getItemSalesSummary = async (request, response, next) => {
   try {
     const request_data = {
       branch_id: request.body.branch_id || "",
@@ -120,14 +120,14 @@ export const getItemSalesSummary = async (request, response) => {
       lists: result.rows,
       total: total.rows[0],
     };
-    standardResponse(response, 200, success_RC, SUCCESS, result);
+    standardResponse(response, next, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };
 
-export const getCategorySalesSummary = async (request, response) => {
+export const getCategorySalesSummary = async (request, response, next) => {
   try {
     const request_data = {
       branch_id: request.body.branch_id || "",
@@ -144,14 +144,14 @@ export const getCategorySalesSummary = async (request, response) => {
       lists: result.rows,
       total: total.rows[0],
     };
-    standardResponse(response, 200, success_RC, SUCCESS, result);
+    standardResponse(response, next, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };
 
-export const getServedBySummary = async (request, response) => {
+export const getServedBySummary = async (request, response, next) => {
   try {
     const request_data = {
       branch_id: request.body.branch_id || "",
@@ -168,14 +168,14 @@ export const getServedBySummary = async (request, response) => {
       lists: result.rows,
       total: total.rows[0],
     };
-    standardResponse(response, 200, success_RC, SUCCESS, result);
+    standardResponse(response, next, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };
 
-export const getSalesTypeSummary = async (request, response) => {
+export const getSalesTypeSummary = async (request, response, next) => {
   try {
     const request_data = {
       branch_id: request.body.branch_id || "",
@@ -192,14 +192,14 @@ export const getSalesTypeSummary = async (request, response) => {
       lists: result.rows,
       total: total.rows[0],
     };
-    standardResponse(response, 200, success_RC, SUCCESS, result);
+    standardResponse(response, next, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };
 
-export const getGrossProfitSummary = async (request, response) => {
+export const getGrossProfitSummary = async (request, response, next) => {
   try {
     const request_data = {
       branch_id: request.body.branch_id || "",
@@ -230,9 +230,9 @@ export const getGrossProfitSummary = async (request, response) => {
       lists: get_cogs.rows,
       total: total_cogs.rows[0],
     };
-    standardResponse(response, 200, success_RC, SUCCESS, result);
+    standardResponse(response, next, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };

@@ -13,7 +13,7 @@ import {
   updateProductRepository,
 } from "../repository/productRepository.js";
 
-export const getProduct = async (request, response) => {
+export const getProduct = async (request, response, next) => {
   try {
     const active_page = parseInt(request.body.page);
     const limit = parseInt(request.body.limit) || 12;
@@ -48,11 +48,11 @@ export const getProduct = async (request, response) => {
     );
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString(), []);
+    standardResponse(response, next, 400, error_RC, error.toString(), []);
   }
 };
 
-export const createProduct = async (request, response) => {
+export const createProduct = async (request, response, next) => {
   try {
     const date = new Date();
     let file_name = null;
@@ -98,14 +98,14 @@ export const createProduct = async (request, response) => {
       selling_price: price_result.rows[0].selling_price,
     };
 
-    standardResponse(response, 200, success_RC, SUCCESS, result);
+    standardResponse(response, next, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString(), []);
+    standardResponse(response, next, 400, error_RC, error.toString(), []);
   }
 };
 
-export const updateProduct = async (request, response) => {
+export const updateProduct = async (request, response, next) => {
   try {
     const date = new Date();
     const product_id = request.params.product_id;
@@ -159,23 +159,23 @@ export const updateProduct = async (request, response) => {
       category: get_category.rows[0].name,
     };
 
-    standardResponse(response, 200, success_RC, SUCCESS, result);
+    standardResponse(response, next, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString(), []);
+    standardResponse(response, next, 400, error_RC, error.toString(), []);
   }
 };
 
-export const deleteProduct = async (request, response) => {
+export const deleteProduct = async (request, response, next) => {
   try {
     const product_id = request.params.product_id;
     const request_data = {
       is_active: "false",
     };
     const result = await deleteProductRepository(request_data, product_id);
-    standardResponse(response, 200, success_RC, SUCCESS, result);
+    standardResponse(response, next, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString(), []);
+    standardResponse(response, next, 400, error_RC, error.toString(), []);
   }
 };

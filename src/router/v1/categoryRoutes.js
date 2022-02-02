@@ -11,6 +11,6 @@ export const categoryRouter = express.Router();
 
 categoryRouter
   .post("/get-category", getCategory, createLog)
-  .post("/create-category", createCategory)
-  .put("/update-category/:category_id", updateCategory)
-  .delete("/delete-category/:category_id", deleteCategory);
+  .post("/create-category", createCategory, createLog)
+  .put("/update-category/:category_id", updateCategory, createLog)
+  .delete("/delete-category/:category_id", deleteCategory, createLog);

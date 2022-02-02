@@ -8,21 +8,21 @@ import {
   updateRoleRepository,
 } from "../repository/roleRepository.js";
 
-export const getRole = async (request, response) => {
+export const getRole = async (request, response, next) => {
   try {
     const request_data = {
       search: request.body.search || "",
       is_active: request.body.is_active || "true",
     };
     const result = await getRoleRepository(request_data);
-    standardResponse(response, 200, success_RC, SUCCESS, result);
+    standardResponse(response, next, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };
 
-export const createRole = async (request, response) => {
+export const createRole = async (request, response, next) => {
   try {
     const date = new Date();
     const request_data = {
@@ -36,14 +36,14 @@ export const createRole = async (request, response) => {
       created_at: date,
     };
     const result = await createRoleRepository(request_data);
-    standardResponse(response, 200, success_RC, SUCCESS, result);
+    standardResponse(response, next, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };
 
-export const updateRole = async (request, response) => {
+export const updateRole = async (request, response, next) => {
   try {
     const date = new Date();
     const role_id = request.body.role_id;
@@ -54,23 +54,23 @@ export const updateRole = async (request, response) => {
       updated_at: date,
     };
     const result = await updateRoleRepository(request_data, role_id);
-    standardResponse(response, 200, success_RC, SUCCESS, result);
+    standardResponse(response, next, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };
 
-export const deleteRole = async (request, response) => {
+export const deleteRole = async (request, response, next) => {
   try {
     const role_id = request.params.role_id;
     const request_data = {
       is_active: "false",
     };
     const result = await deleteRoleRepository(request_data, role_id);
-    standardResponse(response, 200, success_RC, SUCCESS, result);
+    standardResponse(response, next, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };

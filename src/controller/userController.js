@@ -13,7 +13,7 @@ import {
   updateUserRepository,
 } from "../repository/userRepository.js";
 
-export const getUser = async (request, response) => {
+export const getUser = async (request, response, next) => {
   try {
     const active_page = parseInt(request.body.page);
     const limit = parseInt(request.body.limit) || 12;
@@ -40,11 +40,11 @@ export const getUser = async (request, response) => {
     );
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };
 
-export const changePasswordUser = async (request, response) => {
+export const changePasswordUser = async (request, response, next) => {
   try {
     const date = new Date();
     let request_data = {
@@ -70,17 +70,23 @@ export const changePasswordUser = async (request, response) => {
         request_data,
         request_data.email
       );
-      standardResponse(response, 200, success_RC, SUCCESS, result);
+      standardResponse(response, next, 200, success_RC, SUCCESS, result);
     } else {
-      standardResponse(response, 200, error_RC, "Password lama anda salah!");
+      standardResponse(
+        response,
+        next,
+        200,
+        error_RC,
+        "Password lama anda salah!"
+      );
     }
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };
 
-export const updateUser = async (request, response) => {
+export const updateUser = async (request, response, next) => {
   try {
     const date = new Date();
     const user_id = request.body.user_id;
@@ -113,14 +119,14 @@ export const updateUser = async (request, response) => {
       ktp: host + "ktp/" + result.rows[0].ktp,
     };
 
-    standardResponse(response, 200, success_RC, SUCCESS, result);
+    standardResponse(response, next, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };
 
-export const changeUserStatus = async (request, response) => {
+export const changeUserStatus = async (request, response, next) => {
   try {
     const date = new Date();
     const user_id = request.body.user_id;
@@ -131,14 +137,14 @@ export const changeUserStatus = async (request, response) => {
     };
     const result = await changeUserStatusRepository(request_data, user_id);
 
-    standardResponse(response, 200, success_RC, SUCCESS, result);
+    standardResponse(response, next, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };
 
-export const getDetailUser = async (request, response) => {
+export const getDetailUser = async (request, response, next) => {
   try {
     const user_id = request.params.user_id;
     const result = await getDetailUserRepository(user_id);
@@ -149,9 +155,9 @@ export const getDetailUser = async (request, response) => {
       ktp: host + "ktp/" + result.rows[0].ktp,
     };
 
-    standardResponse(response, 200, success_RC, SUCCESS, result);
+    standardResponse(response, next, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };

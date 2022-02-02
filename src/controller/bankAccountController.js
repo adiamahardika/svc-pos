@@ -2,7 +2,7 @@ import { error_RC, SUCCESS, success_RC } from "../helpers/generalConstant.js";
 import { standardResponse } from "../helpers/standardResponse.js";
 import { updateBankAccountRepository } from "../repository/bankAccountRepository.js";
 
-export const updateBankAccount = async (request, response) => {
+export const updateBankAccount = async (request, response, next) => {
   try {
     const date = new Date();
     const ba_id = request.body.ba_id;
@@ -15,9 +15,9 @@ export const updateBankAccount = async (request, response) => {
     };
 
     const result = await updateBankAccountRepository(request_data, ba_id);
-    standardResponse(response, 200, success_RC, SUCCESS, result);
+    standardResponse(response, next, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };

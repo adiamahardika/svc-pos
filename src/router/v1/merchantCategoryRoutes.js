@@ -1,4 +1,5 @@
 import express from "express";
+import { createLog } from "../../controller/logController.js";
 import {
   createMerchantCategory,
   deleteMerchantCategory,
@@ -9,7 +10,11 @@ import {
 export const merchantCategoryRouter = express.Router();
 
 merchantCategoryRouter
-  .get("/get-merchant-category", getMerhcantCategory)
-  .post("/create-merchant-category", createMerchantCategory)
-  .put("/update-merchant-category", updateMerchantCategory)
-  .delete("/delete-merchant-category/:mc_id", deleteMerchantCategory);
+  .get("/get-merchant-category", getMerhcantCategory, createLog)
+  .post("/create-merchant-category", createMerchantCategory, createLog)
+  .put("/update-merchant-category", updateMerchantCategory, createLog)
+  .delete(
+    "/delete-merchant-category/:mc_id",
+    deleteMerchantCategory,
+    createLog
+  );

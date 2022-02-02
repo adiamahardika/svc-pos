@@ -35,7 +35,7 @@ import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 const client = new twilio(account_sid_otp, auth_token_otp);
 
-export const register = async (request, response) => {
+export const register = async (request, response, next) => {
   try {
     await compress(request.file.path);
     const date = new Date();
@@ -69,17 +69,23 @@ export const register = async (request, response) => {
         ...result.rows[0],
         ktp: host + "ktp/" + result.rows[0].ktp,
       };
-      standardResponse(response, 200, success_RC, SUCCESS, result);
+      standardResponse(response, next, 200, success_RC, SUCCESS, result);
     } else {
-      standardResponse(response, 400, error_RC, "Email anda sudah terdaftar!");
+      standardResponse(
+        response,
+        next,
+        400,
+        error_RC,
+        "Email anda sudah terdaftar!"
+      );
     }
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };
 
-export const login = async (request, response) => {
+export const login = async (request, response, next) => {
   try {
     const request_data = {
       email: request.body.email,
@@ -134,9 +140,9 @@ export const login = async (request, response) => {
 
         user_check.rows[0] = user_data;
 
-        standardResponse(response, 200, success_RC, SUCCESS, user_check);
+        standardResponse(response, next, 200, success_RC, SUCCESS, user_check);
       } else {
-        standardResponse(response, 400, error_RC, "Password anda salah!");
+        standardResponse(response, next, 400, error_RC, "Password anda salah!");
       }
     } else if (user_check && user_check.rows[0].is_active !== "true") {
       standardResponse(response, 401, error_RC, "Akun ini sudah tidak aktif!");
@@ -150,7 +156,7 @@ export const login = async (request, response) => {
     }
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };
 
@@ -211,7 +217,7 @@ export const authorization = async (request, response, next) => {
   }
 };
 
-export const refreshToken = async (request, response) => {
+export const refreshToken = async (request, response, next) => {
   try {
     const signature_key = request.get("signature-key");
     const header_token = request.get("token");
@@ -233,14 +239,14 @@ export const refreshToken = async (request, response) => {
         },
       ],
     };
-    standardResponse(response, 200, success_RC, SUCCESS, result);
+    standardResponse(response, next, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };
 
-export const verifyEmail = async (request, response) => {
+export const verifyEmail = async (request, response, next) => {
   try {
     const oAuth2Client = new google.auth.OAuth2(
       client_id,
@@ -297,14 +303,14 @@ export const verifyEmail = async (request, response) => {
         },
       ],
     };
-    standardResponse(response, 200, success_RC, SUCCESS, result);
+    standardResponse(response, next, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };
 
-export const confirmEmail = async (request, response) => {
+export const confirmEmail = async (request, response, next) => {
   try {
     const token = request.params.token;
     const __filename = fileURLToPath(import.meta.url);
@@ -332,11 +338,11 @@ export const confirmEmail = async (request, response) => {
     });
   } catch (error) {
     console.log(error);
-    standardResponse(response, 400, error_RC, error.toString());
+    standardResponse(response, next, 400, error_RC, error.toString());
   }
 };
 
-export const verifyPhoneNumber = async (request, response) => {
+export const verifyPhoneNumber = async (request, response, next) => {
   try {
     let verifiy = await client.verify
       .services(service_id_otp)
@@ -351,17 +357,17 @@ export const verifyPhoneNumber = async (request, response) => {
       verifiy.lookup.carrier.error_code === null ||
       !verifiy.lookup.carrier.error_code
     ) {
-      standardResponse(response, 200, success_RC, SUCCESS, result);
+      standardResponse(response, next, 200, success_RC, SUCCESS, result);
     } else {
-      standardResponse(response, 400, success_RC, "Nomor anda salah");
+      standardResponse(response, next, 400, success_RC, "Nomor anda salah");
     }
   } catch (error) {
     console.log(error);
-    standardResponse(response, 200, success_RC, "Nomor anda salah");
+    standardResponse(response, next, 200, success_RC, "Nomor anda salah");
   }
 };
 
-export const confirmPhoneNumber = async (request, response) => {
+export const confirmPhoneNumber = async (request, response, next) => {
   try {
     await client.verify
       .services(service_id_otp)
@@ -379,13 +385,13 @@ export const confirmPhoneNumber = async (request, response) => {
             is_otp_validate: "true",
           };
           await updateVerifyOtp(request_data, user_id);
-          standardResponse(response, 200, success_RC, SUCCESS, result);
+          standardResponse(response, next, 200, success_RC, SUCCESS, result);
         } else {
-          standardResponse(response, 200, error_RC, "Otp anda salah!");
+          standardResponse(response, next, 200, error_RC, "Otp anda salah!");
         }
       });
   } catch (error) {
     console.log(error);
-    standardResponse(response, 200, error_RC, "Otp anda salah!");
+    standardResponse(response, next, 200, error_RC, "Otp anda salah!");
   }
 };
