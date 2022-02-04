@@ -93,6 +93,7 @@ export const getBranch = async (request, response, next) => {
     const result = await getBranchRepository(request_data);
     standardResponse(
       response,
+      next,
       200,
       success_RC,
       SUCCESS,

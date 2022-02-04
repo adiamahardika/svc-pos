@@ -205,6 +205,7 @@ export const getPayment = async (request, response, next) => {
 
     standardResponse(
       response,
+      next,
       200,
       success_RC,
       SUCCESS,

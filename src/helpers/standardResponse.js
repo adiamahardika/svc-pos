@@ -22,5 +22,8 @@ export const standardResponse = (
 
   response.body = result;
 
-  return response.status(result.https_status).json(result), next();
+  return (
+    response.status(result.https_status).json(result),
+    http_status !== 401 && next()
+  );
 };
