@@ -47,7 +47,7 @@ export const createProductRepository = (request) => {
 export const countProduct = (request) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT count(*) as total_data FROM product WHERE product.merchant_id LIKE '%${request.merchant_id}%' AND product.name LIKE '%${request.search}%' AND product.category_id LIKE '%${request.category_id}%' AND product.is_active = '${request.is_active}'`,
+      `SELECT count(*) as total_data FROM product LEFT OUTER JOIN branch_has_product ON (product.id = branch_has_product.product_id) WHERE product.merchant_id LIKE '%${request.merchant_id}%' AND product.name LIKE '%${request.search}%' AND product.category_id LIKE '%${request.category_id}%' AND product.is_active = '${request.is_active}'`,
       (error, result) => {
         if (error) {
           console.log(error);
@@ -112,5 +112,37 @@ export const deleteProductRepository = (request, id) => {
         resolve(result);
       }
     });
+  });
+};
+
+export const getBranchProductRepository = (request) => {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `SELECT product.*, category.name as category, merchant.name as merchant_name, branch.location as branch_location, branch_has_product.quantity, CAST(branch_has_product.branch_price AS INTEGER), CAST(price.starting_price AS INTEGER), CAST(price.selling_price AS INTEGER) FROM product LEFT OUTER JOIN category ON (product.category_id = CAST(category.id AS varchar(10))) LEFT OUTER JOIN merchant ON (product.merchant_id = CAST(merchant.id AS varchar(10))) LEFT OUTER JOIN branch_has_product ON (product.id = branch_has_product.product_id) LEFT OUTER JOIN branch ON (branch.id = branch_has_product.branch_id) LEFT OUTER JOIN price ON (CAST(product.id AS varchar(10)) = price.product_id) AND price.created_at = (SELECT MAX(created_at) FROM price WHERE CAST(product.id AS varchar(10)) = price.product_id) WHERE product.merchant_id LIKE '%${request.merchant_id}%' AND branch_has_product.branch_id LIKE '%${request.branch_id}%' AND product.name LIKE '%${request.search}%' AND product.category_id LIKE '%${request.category_id}%' AND product.is_active = '${request.is_active}' ORDER BY ${request.sort_by} ${request.order_by} LIMIT ${request.limit} OFFSET ${request.start_index} `,
+      (error, result) => {
+        if (error) {
+          console.log(error);
+          reject(new Error(error));
+        } else {
+          resolve(result);
+        }
+      }
+    );
+  });
+};
+
+export const countBranchProduct = (request) => {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `SELECT count(*) as total_data FROM product LEFT OUTER JOIN branch_has_product ON (product.id = branch_has_product.product_id) WHERE product.merchant_id LIKE '%${request.merchant_id}%' AND branch_has_product.branch_id LIKE '%${request.branch_id}%' AND product.name LIKE '%${request.search}%' AND product.category_id LIKE '%${request.category_id}%' AND product.is_active = '${request.is_active}'`,
+      (error, result) => {
+        if (error) {
+          console.log(error);
+          reject(new Error(error));
+        } else {
+          resolve(result.rows[0].total_data);
+        }
+      }
+    );
   });
 };
