@@ -7,9 +7,7 @@ function check_length(value) {
 export const createLog = async (request, response, next) => {
   try {
     const date = new Date();
-    const user = request.get("request-from")
-      ? request.get("request-from")
-      : "-";
+    const user = request.get("request-by") ? request.get("request-by") : "-";
     const log_id =
       date.getFullYear().toString() +
       check_length(date.getMonth() + 1) +

@@ -53,7 +53,15 @@ export const createMerchant = async (request, response, next) => {
     const check_merchant_by_owner = await getDetailMerchantByOwnerRepository(
       request.body.merchant.user_id
     );
-    if (check_merchant_by_owner.rows.length < 1) {
+    const user_request = {
+      email: request.body.user.email,
+    };
+    const email_check = await emailCheckRepository(user_request);
+    if (
+      email_check &&
+      email_check.rows.length > 0 &&
+      check_merchant_by_owner.rows.length < 1
+    ) {
       const date = new Date();
       const merchant_name = request.body.merchant.name;
       const remove_space = await merchant_name
@@ -122,10 +130,6 @@ export const createMerchant = async (request, response, next) => {
       };
       const branch_result = await createBranchRepository(branch_request);
 
-      const user_request = {
-        email: request.body.user.email,
-      };
-      const email_check = await emailCheckRepository(user_request);
       let user_data = email_check.rows[0];
       const signature_key = crypto_js
         .MD5(user_data.merchant_id + user_data.secret_key)
@@ -157,6 +161,14 @@ export const createMerchant = async (request, response, next) => {
       };
 
       standardResponse(response, next, 200, success_RC, SUCCESS, result);
+    } else if (email_check && email_check.rows.length <= 0) {
+      standardResponse(
+        response,
+        next,
+        400,
+        error_RC,
+        "Email anda tidak terdaftar!"
+      );
     } else {
       standardResponse(
         response,
