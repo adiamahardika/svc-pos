@@ -9,10 +9,6 @@ import {
   createProduct,
   updateProduct,
   deleteProduct,
-  getBranchProduct,
-  createBranchProduct,
-  deleteBranchProduct,
-  updateBranchProduct,
 } from "../../controller/productController.js";
 import { uploadImages } from "../../helpers/uploadFiles.js";
 
@@ -41,33 +37,5 @@ productRouter
     authentication,
     authorization,
     deleteProduct,
-    createLog
-  )
-  .post(
-    "/get-branch-product",
-    authentication,
-    authorization,
-    getBranchProduct,
-    createLog
-  )
-  .post(
-    "/create-branch-product",
-    authentication,
-    authorization,
-    createBranchProduct,
-    createLog
-  )
-  .put(
-    "/update-branch-product/:id",
-    authentication,
-    authorization,
-    updateBranchProduct,
-    createLog
-  )
-  .delete(
-    "/delete-branch-product/:id",
-    authentication,
-    authorization,
-    deleteBranchProduct,
     createLog
   );
