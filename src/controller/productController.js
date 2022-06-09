@@ -8,6 +8,7 @@ import { createPriceRepository } from "../repository/priceRepository.js";
 import {
   countBranchProduct,
   countProduct,
+  createBranchProductRepository,
   createProductRepository,
   deleteProductRepository,
   getBranchProductRepository,
@@ -216,6 +217,29 @@ export const getBranchProduct = async (request, response, next) => {
       total_pages,
       total_data
     );
+  } catch (error) {
+    console.log(error);
+    standardResponse(response, next, 400, error_RC, error.toString(), []);
+  }
+};
+
+export const createBranchProduct = async (request, response, next) => {
+  try {
+    const date = new Date();
+
+    const request_data = {
+      product_id: request.body.product_id,
+      branch_id: request.body.branch_id,
+      quantity: request.body.quantity,
+      branch_price: request.body.branch_price,
+      updated_by: request.body.created_by,
+      updated_at: date,
+      created_by: request.body.created_by,
+      created_at: date,
+    };
+    const result = await createBranchProductRepository(request_data);
+
+    standardResponse(response, next, 200, success_RC, SUCCESS, result);
   } catch (error) {
     console.log(error);
     standardResponse(response, next, 400, error_RC, error.toString(), []);
