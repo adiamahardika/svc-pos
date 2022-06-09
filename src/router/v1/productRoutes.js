@@ -11,6 +11,8 @@ import {
   deleteProduct,
   getBranchProduct,
   createBranchProduct,
+  deleteBranchProduct,
+  updateBranchProduct,
 } from "../../controller/productController.js";
 import { uploadImages } from "../../helpers/uploadFiles.js";
 
@@ -53,5 +55,19 @@ productRouter
     authentication,
     authorization,
     createBranchProduct,
+    createLog
+  )
+  .put(
+    "/update-branch-product/:id",
+    authentication,
+    authorization,
+    updateBranchProduct,
+    createLog
+  )
+  .delete(
+    "/delete-branch-product/:id",
+    authentication,
+    authorization,
+    deleteBranchProduct,
     createLog
   );

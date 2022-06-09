@@ -10,9 +10,11 @@ import {
   countProduct,
   createBranchProductRepository,
   createProductRepository,
+  deleteBranchProductRepository,
   deleteProductRepository,
   getBranchProductRepository,
   getProductRepository,
+  updateBranchProductRepository,
   updateProductRepository,
 } from "../repository/productRepository.js";
 
@@ -238,6 +240,38 @@ export const createBranchProduct = async (request, response, next) => {
       created_at: date,
     };
     const result = await createBranchProductRepository(request_data);
+
+    standardResponse(response, next, 200, success_RC, SUCCESS, result);
+  } catch (error) {
+    console.log(error);
+    standardResponse(response, next, 400, error_RC, error.toString(), []);
+  }
+};
+
+export const deleteBranchProduct = async (request, response, next) => {
+  try {
+    const id = request.params.id;
+    const result = await deleteBranchProductRepository(id);
+
+    standardResponse(response, next, 200, success_RC, SUCCESS, result);
+  } catch (error) {
+    console.log(error);
+    standardResponse(response, next, 400, error_RC, error.toString(), []);
+  }
+};
+
+export const updateBranchProduct = async (request, response, next) => {
+  try {
+    const id = request.params.id;
+    const date = new Date();
+
+    const request_data = {
+      quantity: request.body.quantity,
+      branch_price: request.body.branch_price,
+      updated_by: request.body.updated_by,
+      updated_at: date,
+    };
+    const result = await updateBranchProductRepository(request_data, id);
 
     standardResponse(response, next, 200, success_RC, SUCCESS, result);
   } catch (error) {
